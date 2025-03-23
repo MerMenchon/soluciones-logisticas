@@ -1,10 +1,9 @@
-
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { ServiceType } from "@/components/ServiceSelector";
 import { useToast } from "@/components/ui/use-toast";
 
 // Webhook URL for form submission
-const WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/f3df93f6-9eee-498e-8a85-e33b1b577ada";
+const WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/recepcionFormulario";
 
 interface FormContextType {
   // Form state
