@@ -8,9 +8,13 @@ import ProductDetails from "@/components/ProductDetails";
 import SuccessMessage from "@/components/SuccessMessage";
 import { MapPin, PackageCheck, RotateCcw, Send, Warehouse, Truck } from "lucide-react";
 
+// Webhook URL for form submission
+const WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/31c666e5-5f6e-4024-9e8e-5f3d6dc2ab9a";
+
 const Index = () => {
   const { toast } = useToast();
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Service selection
   const [selectedService, setSelectedService] = useState<ServiceType | null>(null);
@@ -166,7 +170,48 @@ const Index = () => {
     return null;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const submitFormData = async () => {
+    const formData = {
+      service: selectedService,
+      storage: selectedService === "storage" || selectedService === "both" 
+        ? { province: storageProvince, city: storageCity }
+        : null,
+      transport: selectedService === "transport" || selectedService === "both" 
+        ? {
+            origin: { province: originProvince, city: originCity },
+            destination: { province: destinationProvince, city: destinationCity }
+          }
+        : null,
+      product: {
+        type: productType,
+        weight: weight || null,
+        volume: volume || null,
+        value: cargoValue
+      },
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      const response = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al enviar los datos');
+      }
+      
+      return true;
+    } catch (error) {
+      console.error("Error al enviar los datos:", error);
+      throw error;
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const validationError = validateForm();
@@ -179,7 +224,20 @@ const Index = () => {
       return;
     }
     
-    setFormSubmitted(true);
+    setIsSubmitting(true);
+    
+    try {
+      await submitFormData();
+      setFormSubmitted(true);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo enviar el formulario. Intente nuevamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (formSubmitted) {
@@ -191,10 +249,10 @@ const Index = () => {
       <div className="container max-w-4xl mx-auto px-4">
         <header className="text-center mb-12">
           <h1 className="text-4xl font-bold text-agri-primary mb-3">
-            Servicio de Logística Agrícola
+            Servicio de logística
           </h1>
           <p className="text-lg text-agri-secondary max-w-2xl mx-auto">
-            Seleccione el servicio que necesita para su mercadería agrícola
+            Seleccione el servicio que necesita para su mercadería
           </p>
         </header>
 
@@ -288,6 +346,7 @@ const Index = () => {
                   variant="outline"
                   className="border-agri-secondary text-agri-secondary hover:bg-agri-light"
                   onClick={resetForm}
+                  disabled={isSubmitting}
                 >
                   <RotateCcw className="w-4 h-4 mr-2" />
                   Restablecer
@@ -296,9 +355,19 @@ const Index = () => {
                 <Button
                   type="submit"
                   className="bg-agri-primary hover:bg-agri-dark text-white"
+                  disabled={isSubmitting}
                 >
-                  <Send className="w-4 h-4 mr-2" />
-                  Enviar consulta
+                  {isSubmitting ? (
+                    <>
+                      <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
+                      Enviando...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 mr-2" />
+                      Enviar consulta
+                    </>
+                  )}
                 </Button>
               </div>
             </>

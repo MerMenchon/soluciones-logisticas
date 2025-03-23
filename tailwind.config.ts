@@ -58,10 +58,10 @@ export default {
 					foreground: 'hsl(var(--card-foreground))'
 				},
 				agri: {
-					primary: '#4B5945',
+					primary: '#213555',  // Updated primary color
 					secondary: '#66785F',
 					light: '#E8EDDE',
-					dark: '#2F3A2A',
+					dark: '#1A2A44',    // Adjusted dark shade for new primary color
 					accent: '#8A9B85',
 				},
 				sidebar: {
