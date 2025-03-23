@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -8,8 +7,8 @@ import ProductDetails from "@/components/ProductDetails";
 import SuccessMessage from "@/components/SuccessMessage";
 import { MapPin, PackageCheck, RotateCcw, Send, Warehouse, Truck } from "lucide-react";
 
-// Webhook URL for form submission
-const WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/31c666e5-5f6e-4024-9e8e-5f3d6dc2ab9a";
+// Updated webhook URL for form submission
+const WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/f3df93f6-9eee-498e-8a85-e33b1b577ada";
 
 const Index = () => {
   const { toast } = useToast();
@@ -344,7 +343,7 @@ const Index = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  className="border-agri-secondary text-agri-secondary hover:bg-agri-light"
+                  className="border-agri-primary text-agri-primary hover:bg-agri-light"
                   onClick={resetForm}
                   disabled={isSubmitting}
                 >
