@@ -23,6 +23,7 @@ const LogisticsForm = () => {
     weight,
     volume,
     cargoValue,
+    shippingTime,
     email,
     additionalInfo,
     isSubmitting,
@@ -38,6 +39,7 @@ const LogisticsForm = () => {
     setWeight,
     setVolume,
     setCargoValue,
+    setShippingTime,
     setEmail,
     setAdditionalInfo,
     resetForm,
@@ -127,6 +129,8 @@ const LogisticsForm = () => {
             onVolumeChange={setVolume}
             value={cargoValue}
             onValueChange={setCargoValue}
+            shippingTime={shippingTime}
+            onShippingTimeChange={setShippingTime}
           />
           
           <ContactDetails

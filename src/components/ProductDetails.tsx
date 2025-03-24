@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Package } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { fetchShippingTimes } from "@/data/locations";
 
 interface ProductDetailsProps {
   productType: string;
@@ -13,6 +14,8 @@ interface ProductDetailsProps {
   onVolumeChange: (volume: string) => void;
   value: string;
   onValueChange: (value: string) => void;
+  shippingTime: string;
+  onShippingTimeChange: (time: string) => void;
 }
 
 const ProductDetails = ({
@@ -24,14 +27,18 @@ const ProductDetails = ({
   onVolumeChange,
   value,
   onValueChange,
+  shippingTime,
+  onShippingTimeChange,
 }: ProductDetailsProps) => {
   const [productOptions, setProductOptions] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [shippingTimeOptions, setShippingTimeOptions] = useState<string[]>([]);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
+  const [isLoadingShippingTimes, setIsLoadingShippingTimes] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
     const fetchProductTypes = async () => {
-      setIsLoading(true);
+      setIsLoadingProducts(true);
       try {
         // Google Sheets needs to be published to the web as CSV
         // Using the shared sheet with the correct sheet name
@@ -93,11 +100,29 @@ const ProductDetails = ({
           "Otros"
         ]);
       } finally {
-        setIsLoading(false);
+        setIsLoadingProducts(false);
+      }
+    };
+    
+    const fetchAvailableShippingTimes = async () => {
+      setIsLoadingShippingTimes(true);
+      try {
+        const times = await fetchShippingTimes();
+        setShippingTimeOptions(times);
+      } catch (error) {
+        console.error("Error fetching shipping times:", error);
+        toast({
+          title: "Error",
+          description: "No se pudieron cargar los tiempos de envío. Usando opciones predeterminadas.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoadingShippingTimes(false);
       }
     };
 
     fetchProductTypes();
+    fetchAvailableShippingTimes();
   }, [toast]);
 
   // Handle numeric input validation
@@ -130,12 +155,34 @@ const ProductDetails = ({
             onChange={(e) => onProductTypeChange(e.target.value)}
             className="w-full h-10 px-3 py-2 text-sm border border-input rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             required
-            disabled={isLoading}
+            disabled={isLoadingProducts}
           >
             <option value="" disabled>
-              {isLoading ? "Cargando tipos de producto..." : "Seleccione un tipo de producto"}
+              {isLoadingProducts ? "Cargando tipos de producto..." : "Seleccione un tipo de producto"}
             </option>
             {productOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        <div>
+          <label htmlFor="shippingTime" className="block text-sm font-medium text-agri-secondary mb-1">
+            Tiempo de envío estimado
+          </label>
+          <select
+            id="shippingTime"
+            value={shippingTime}
+            onChange={(e) => onShippingTimeChange(e.target.value)}
+            className="w-full h-10 px-3 py-2 text-sm border border-input rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            disabled={isLoadingShippingTimes}
+          >
+            <option value="" disabled>
+              {isLoadingShippingTimes ? "Cargando tiempos de envío..." : "Seleccione un tiempo estimado"}
+            </option>
+            {shippingTimeOptions.map((option) => (
               <option key={option} value={option}>
                 {option}
               </option>

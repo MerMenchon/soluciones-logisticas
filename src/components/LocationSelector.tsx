@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { getProvincias, getCiudades, isStorageAvailable, Location } from "@/data/locations";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useToast } from "@/hooks/use-toast";
 
 interface LocationSelectorProps {
   type: "origin" | "destination" | "storage";
@@ -29,27 +30,81 @@ const LocationSelector = ({
   onUseAsStorageChange,
 }: LocationSelectorProps) => {
   const [cities, setCities] = useState<Location[]>([]);
+  const [provinces, setProvinces] = useState<string[]>([]);
   const [hasStorage, setHasStorage] = useState(false);
-  const provincias = getProvincias();
+  const [isLoadingProvinces, setIsLoadingProvinces] = useState(true);
+  const [isLoadingCities, setIsLoadingCities] = useState(false);
+  const { toast } = useToast();
 
+  // Fetch provinces on component mount
   useEffect(() => {
-    if (provinceValue) {
-      setCities(getCiudades(provinceValue));
-    } else {
-      setCities([]);
-    }
-  }, [provinceValue]);
+    const loadProvinces = async () => {
+      setIsLoadingProvinces(true);
+      try {
+        const provincesData = await getProvincias();
+        setProvinces(provincesData);
+      } catch (error) {
+        console.error("Error loading provinces:", error);
+        toast({
+          title: "Error",
+          description: "No se pudieron cargar las provincias. Intente nuevamente.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoadingProvinces(false);
+      }
+    };
 
+    loadProvinces();
+  }, [toast]);
+
+  // Fetch cities when province changes
   useEffect(() => {
-    if (provinceValue && cityValue) {
-      const storageAvailable = isStorageAvailable(provinceValue, cityValue);
-      setHasStorage(storageAvailable);
-    } else {
-      setHasStorage(false);
-    }
+    const loadCities = async () => {
+      if (provinceValue) {
+        setIsLoadingCities(true);
+        try {
+          const citiesData = await getCiudades(provinceValue);
+          setCities(citiesData);
+        } catch (error) {
+          console.error("Error loading cities:", error);
+          toast({
+            title: "Error",
+            description: "No se pudieron cargar las ciudades. Intente nuevamente.",
+            variant: "destructive",
+          });
+          setCities([]);
+        } finally {
+          setIsLoadingCities(false);
+        }
+      } else {
+        setCities([]);
+      }
+    };
+
+    loadCities();
+  }, [provinceValue, toast]);
+
+  // Check storage availability when city changes
+  useEffect(() => {
+    const checkStorageAvailability = async () => {
+      if (provinceValue && cityValue) {
+        try {
+          const storageAvailable = await isStorageAvailable(provinceValue, cityValue);
+          setHasStorage(storageAvailable);
+        } catch (error) {
+          console.error("Error checking storage availability:", error);
+          setHasStorage(false);
+        }
+      } else {
+        setHasStorage(false);
+      }
+    };
+
+    checkStorageAvailability();
   }, [provinceValue, cityValue]);
 
-  const handleCityChange = (value: string) => {
+  const handleCityChange = async (value: string) => {
     const selectedLocation = cities.find(city => city.ciudad === value);
     onCityChange(value, selectedLocation?.hasStorage || false);
   };
@@ -60,12 +115,16 @@ const LocationSelector = ({
         <div className="flex items-center justify-between">
           <Label htmlFor={`${type}-provincia`}>{label} - Provincia</Label>
         </div>
-        <Select value={provinceValue} onValueChange={onProvinceChange}>
+        <Select 
+          value={provinceValue} 
+          onValueChange={onProvinceChange}
+          disabled={isLoadingProvinces}
+        >
           <SelectTrigger id={`${type}-provincia`} className="w-full">
-            <SelectValue placeholder="Seleccione provincia" />
+            <SelectValue placeholder={isLoadingProvinces ? "Cargando provincias..." : "Seleccione provincia"} />
           </SelectTrigger>
           <SelectContent>
-            {provincias.map((provincia) => (
+            {provinces.map((provincia) => (
               <SelectItem key={provincia} value={provincia}>
                 {provincia}
               </SelectItem>
@@ -81,15 +140,21 @@ const LocationSelector = ({
         <Select 
           value={cityValue} 
           onValueChange={handleCityChange}
-          disabled={!provinceValue}
+          disabled={!provinceValue || isLoadingCities}
         >
           <SelectTrigger id={`${type}-ciudad`} className="w-full">
-            <SelectValue placeholder="Seleccione ciudad" />
+            <SelectValue placeholder={
+              !provinceValue 
+                ? "Primero seleccione provincia" 
+                : isLoadingCities 
+                  ? "Cargando ciudades..." 
+                  : "Seleccione ciudad"
+            } />
           </SelectTrigger>
           <SelectContent>
             {cities.map((city) => (
               <SelectItem key={city.ciudad} value={city.ciudad}>
-                {city.ciudad}
+                {city.ciudad} {city.hasStorage && " (Depósito disponible)"}
               </SelectItem>
             ))}
           </SelectContent>

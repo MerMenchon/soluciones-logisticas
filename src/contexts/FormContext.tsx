@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { ServiceType } from "@/components/ServiceSelector";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 // Webhook URL for form submission
 const WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/recepcionFormulario";
@@ -27,6 +27,7 @@ interface FormContextType {
   weight: string;
   volume: string;
   cargoValue: string;
+  shippingTime: string;
   
   // Contact information
   email: string;
@@ -46,6 +47,7 @@ interface FormContextType {
   setWeight: (weight: string) => void;
   setVolume: (volume: string) => void;
   setCargoValue: (value: string) => void;
+  setShippingTime: (time: string) => void;
   setEmail: (email: string) => void;
   setAdditionalInfo: (info: string) => void;
   resetForm: () => void;
@@ -80,6 +82,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [weight, setWeight] = useState("");
   const [volume, setVolume] = useState("");
   const [cargoValue, setCargoValue] = useState("");
+  const [shippingTime, setShippingTime] = useState("");
   
   // Contact information
   const [email, setEmail] = useState("");
@@ -103,6 +106,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setWeight("");
     setVolume("");
     setCargoValue("");
+    setShippingTime("");
     
     setEmail("");
     setAdditionalInfo("");
@@ -243,6 +247,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       "destino provincia": destinationProvince || null,
       "destino ciudad": destinationCity || null,
       "Tipo Producto": productType || null,
+      "Tiempo de Envío": shippingTime || null,
       "Peso (kg)": weight ? parseFloat(weight) : null,
       "Volumen": volume ? parseFloat(volume) : null,
       "Valor": cargoValue ? parseFloat(cargoValue) : null,
@@ -318,6 +323,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         weight,
         volume,
         cargoValue,
+        shippingTime,
         email,
         additionalInfo,
         setSelectedService: handleServiceChange,
@@ -333,6 +339,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setWeight,
         setVolume,
         setCargoValue,
+        setShippingTime,
         setEmail,
         setAdditionalInfo,
         resetForm,
