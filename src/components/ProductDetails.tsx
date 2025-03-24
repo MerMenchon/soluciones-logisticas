@@ -1,20 +1,8 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Package } from "lucide-react";
-
-const productOptions = [
-  "Alimentos",
-  "Alimentos refrigerados",
-  "Bebidas",
-  "Textiles",
-  "Electrónica",
-  "Maquinaria",
-  "Químicos",
-  "Materiales de construcción",
-  "Productos farmacéuticos",
-  "Otros"
-];
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductDetailsProps {
   productType: string;
@@ -37,13 +25,89 @@ const ProductDetails = ({
   value,
   onValueChange,
 }: ProductDetailsProps) => {
+  const [productOptions, setProductOptions] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchProductTypes = async () => {
+      setIsLoading(true);
+      try {
+        // Google Sheets needs to be published to the web as CSV
+        // This URL is formed from the published sheet ID
+        const sheetId = "1VYDCQfaz3-7IrhPUGpAO4UBLMDR1mEyl6UCHU1hznwQ";
+        const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
+        
+        const response = await fetch(sheetUrl);
+        
+        if (!response.ok) {
+          throw new Error("Error al cargar los tipos de productos");
+        }
+        
+        const csvText = await response.text();
+        
+        // Parse CSV to extract product types
+        const rows = csvText.split('\n');
+        
+        // Find the column index for "productos"
+        const headers = rows[0].split(',');
+        const productColumnIndex = headers.findIndex(
+          header => header.toLowerCase().trim() === 'productos'
+        );
+        
+        if (productColumnIndex === -1) {
+          throw new Error("No se encontró la columna 'productos' en la hoja");
+        }
+        
+        // Extract product types
+        const products = rows
+          .slice(1) // Skip header row
+          .map(row => {
+            const columns = row.split(',');
+            return columns[productColumnIndex]?.trim();
+          })
+          .filter(product => product && product.length > 0); // Filter out empty values
+        
+        setProductOptions(products);
+      } catch (error) {
+        console.error("Error fetching product types:", error);
+        toast({
+          title: "Error",
+          description: "No se pudieron cargar los tipos de productos. Usando opciones predeterminadas.",
+          variant: "destructive",
+        });
+        
+        // Fallback to default options if fetch fails
+        setProductOptions([
+          "Alimentos",
+          "Alimentos refrigerados",
+          "Bebidas",
+          "Textiles",
+          "Electrónica",
+          "Maquinaria",
+          "Químicos",
+          "Materiales de construcción",
+          "Productos farmacéuticos",
+          "Otros"
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProductTypes();
+  }, [toast]);
+
   // Handle numeric input validation
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     
     // Allow decimals and empty values (for UX)
     if (newValue === '' || /^\d*\.?\d*$/.test(newValue)) {
-      onValueChange(newValue);
+      // Check if value is greater than 0
+      if (newValue === '' || parseFloat(newValue) > 0) {
+        onValueChange(newValue);
+      }
     }
   };
 
@@ -64,9 +128,10 @@ const ProductDetails = ({
             onChange={(e) => onProductTypeChange(e.target.value)}
             className="w-full h-10 px-3 py-2 text-sm border border-input rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             required
+            disabled={isLoading}
           >
             <option value="" disabled>
-              Seleccione un tipo de producto
+              {isLoading ? "Cargando tipos de producto..." : "Seleccione un tipo de producto"}
             </option>
             {productOptions.map((option) => (
               <option key={option} value={option}>
