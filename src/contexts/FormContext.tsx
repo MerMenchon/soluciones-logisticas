@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { ServiceType } from "@/components/ServiceSelector";
 import { useToast } from "@/components/ui/use-toast";
@@ -27,6 +28,10 @@ interface FormContextType {
   volume: string;
   cargoValue: string;
   
+  // Contact information
+  email: string;
+  additionalInfo: string;
+  
   // Form actions
   setSelectedService: (service: ServiceType) => void;
   setStorageProvince: (province: string) => void;
@@ -41,6 +46,8 @@ interface FormContextType {
   setWeight: (weight: string) => void;
   setVolume: (volume: string) => void;
   setCargoValue: (value: string) => void;
+  setEmail: (email: string) => void;
+  setAdditionalInfo: (info: string) => void;
   resetForm: () => void;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
   validateForm: () => string | null;
@@ -73,6 +80,10 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [weight, setWeight] = useState("");
   const [volume, setVolume] = useState("");
   const [cargoValue, setCargoValue] = useState("");
+  
+  // Contact information
+  const [email, setEmail] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
 
   const resetForm = () => {
     setSelectedService(null);
@@ -92,6 +103,9 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setWeight("");
     setVolume("");
     setCargoValue("");
+    
+    setEmail("");
+    setAdditionalInfo("");
     
     setFormSubmitted(false);
   };
@@ -201,15 +215,27 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     if (!cargoValue || parseFloat(cargoValue) <= 0) {
-      return "Debe ingresar un valor de carga válido (mayor a cero)";
+      return "Debe ingresar un valor de carga válido (mayor a cero USD)";
+    }
+    
+    // Email validation using regex
+    if (!email) {
+      return "Debe ingresar un email de contacto";
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return "Debe ingresar un email válido";
     }
 
     return null;
   };
 
   const submitFormData = async () => {
+    const serviceTypeLabel = selectedService === "both" ? "almacenamiento y transporte" : selectedService;
+    
     const formData = {
-      "Tipo Servicio": selectedService,
+      "Tipo Servicio": serviceTypeLabel,
       "almacenamiento provincia": storageProvince || null,
       "almacenamiento ciudad": storageCity || null,
       "origen provincia": originProvince || null,
@@ -220,6 +246,8 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       "Peso (kg)": weight ? parseFloat(weight) : null,
       "Volumen": volume ? parseFloat(volume) : null,
       "Valor": cargoValue ? parseFloat(cargoValue) : null,
+      "Email": email,
+      "Información Adicional": additionalInfo || null,
       "Fecha y Hora": new Date().toISOString()
     };
 
@@ -290,6 +318,8 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         weight,
         volume,
         cargoValue,
+        email,
+        additionalInfo,
         setSelectedService: handleServiceChange,
         setStorageProvince,
         setStorageCity: handleStorageCityChange,
@@ -303,6 +333,8 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setWeight,
         setVolume,
         setCargoValue,
+        setEmail,
+        setAdditionalInfo,
         resetForm,
         handleSubmit,
         validateForm

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import ServiceSelector from "@/components/ServiceSelector";
 import LocationSelector from "@/components/LocationSelector";
 import ProductDetails from "@/components/ProductDetails";
+import ContactDetails from "@/components/ContactDetails";
 import { RotateCcw, Send, Warehouse, Truck } from "lucide-react";
 import { useFormContext } from "@/contexts/FormContext";
 
@@ -22,6 +23,8 @@ const LogisticsForm = () => {
     weight,
     volume,
     cargoValue,
+    email,
+    additionalInfo,
     isSubmitting,
     setStorageProvince,
     setStorageCity,
@@ -35,6 +38,8 @@ const LogisticsForm = () => {
     setWeight,
     setVolume,
     setCargoValue,
+    setEmail,
+    setAdditionalInfo,
     resetForm,
     handleSubmit
   } = useFormContext();
@@ -122,6 +127,13 @@ const LogisticsForm = () => {
             onVolumeChange={setVolume}
             value={cargoValue}
             onValueChange={setCargoValue}
+          />
+          
+          <ContactDetails
+            email={email}
+            onEmailChange={setEmail}
+            additionalInfo={additionalInfo}
+            onAdditionalInfoChange={setAdditionalInfo}
           />
 
           <div className="flex flex-col sm:flex-row gap-4 justify-end mt-8">
