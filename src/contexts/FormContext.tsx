@@ -209,23 +209,18 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const submitFormData = async () => {
     const formData = {
-      service: selectedService,
-      storage: selectedService === "storage" || selectedService === "both" 
-        ? { province: storageProvince, city: storageCity }
-        : null,
-      transport: selectedService === "transport" || selectedService === "both" 
-        ? {
-            origin: { province: originProvince, city: originCity },
-            destination: { province: destinationProvince, city: destinationCity }
-          }
-        : null,
-      product: {
-        type: productType,
-        weight: weight || null,
-        volume: volume || null,
-        value: cargoValue
-      },
-      timestamp: new Date().toISOString()
+      "Tipo Servicio": selectedService,
+      "almacenamiento provincia": storageProvince || null,
+      "almacenamiento ciudad": storageCity || null,
+      "origen provincia": originProvince || null,
+      "origen ciudad": originCity || null,
+      "destino provincia": destinationProvince || null,
+      "destino ciudad": destinationCity || null,
+      "Tipo Producto": productType || null,
+      "Peso (kg)": weight ? parseFloat(weight) : null,
+      "Volumen": volume ? parseFloat(volume) : null,
+      "Valor": cargoValue ? parseFloat(cargoValue) : null,
+      "Fecha y Hora": new Date().toISOString()
     };
 
     try {
