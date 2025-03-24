@@ -34,9 +34,10 @@ const ProductDetails = ({
       setIsLoading(true);
       try {
         // Google Sheets needs to be published to the web as CSV
-        // This URL is formed from the published sheet ID
+        // Using the shared sheet with the correct sheet name
         const sheetId = "1VYDCQfaz3-7IrhPUGpAO4UBLMDR1mEyl6UCHU1hznwQ";
-        const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
+        const sheetName = "PRODUCTOS"; // Specific sheet name
+        const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
         
         const response = await fetch(sheetUrl);
         
@@ -49,14 +50,14 @@ const ProductDetails = ({
         // Parse CSV to extract product types
         const rows = csvText.split('\n');
         
-        // Find the column index for "productos"
+        // Find the column index for "PRODUCTOS"
         const headers = rows[0].split(',');
         const productColumnIndex = headers.findIndex(
-          header => header.toLowerCase().trim() === 'productos'
+          header => header.trim().replace(/"/g, '').toUpperCase() === 'PRODUCTOS'
         );
         
         if (productColumnIndex === -1) {
-          throw new Error("No se encontró la columna 'productos' en la hoja");
+          throw new Error("No se encontró la columna 'PRODUCTOS' en la hoja");
         }
         
         // Extract product types
@@ -64,9 +65,10 @@ const ProductDetails = ({
           .slice(1) // Skip header row
           .map(row => {
             const columns = row.split(',');
-            return columns[productColumnIndex]?.trim();
+            return columns[productColumnIndex]?.replace(/"/g, '').trim();
           })
-          .filter(product => product && product.length > 0); // Filter out empty values
+          .filter(product => product && product.length > 0) // Filter out empty values
+          .filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates
         
         setProductOptions(products);
       } catch (error) {
