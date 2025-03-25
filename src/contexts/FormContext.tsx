@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { ServiceType } from "@/components/ServiceSelector";
 import { useToast } from "@/hooks/use-toast";
@@ -292,11 +293,16 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const confirmRequest = async () => {
     setShowConfirmation(false);
+    setIsSubmitting(true);
     
     try {
-      // Send confirmation to webhook
+      // Send confirmation to webhook using POST method instead of GET
       const response = await fetch(CONFIRMATION_WEBHOOK_URL, {
-        method: "GET",
+        method: "POST", // Changed from GET to POST
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ confirmed: true, distance: distanceValue }),
       });
       
       if (!response.ok) {
@@ -317,6 +323,8 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         description: "No se pudo confirmar la solicitud. Intente nuevamente.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
