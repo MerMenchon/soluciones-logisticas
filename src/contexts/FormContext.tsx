@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 
 // Webhook URLs
 const WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/recepcionFormulario";
-const CONFIRMATION_WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/d2d6a0f1-2c83-4d50-8ae4-d2ab29b86f97";
+const CONFIRMATION_WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/confirmacion";
 
 interface FormContextType {
   // Form state
