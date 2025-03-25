@@ -3,7 +3,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, TrendingUp } from "lucide-react";
+import { CheckCircle, TrendingUp, Loader2 } from "lucide-react";
+import { useFormContext } from "@/contexts/FormContext";
 
 interface ConfirmationDialogProps {
   distanceValue: string;
@@ -11,6 +12,8 @@ interface ConfirmationDialogProps {
 }
 
 const ConfirmationDialog = ({ distanceValue, onConfirm }: ConfirmationDialogProps) => {
+  const { isSubmitting } = useFormContext();
+  
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <motion.div
@@ -40,10 +43,20 @@ const ConfirmationDialog = ({ distanceValue, onConfirm }: ConfirmationDialogProp
           <CardFooter className="flex justify-center pb-6">
             <Button 
               onClick={onConfirm}
+              disabled={isSubmitting}
               className="bg-agri-primary hover:bg-agri-dark text-white"
             >
-              <CheckCircle className="w-4 h-4 mr-2" />
-              Confirmar
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Procesando...
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Confirmar
+                </>
+              )}
             </Button>
           </CardFooter>
         </Card>

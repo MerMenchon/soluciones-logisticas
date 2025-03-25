@@ -2,8 +2,9 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 import { ServiceType } from "@/components/ServiceSelector";
 import { useToast } from "@/hooks/use-toast";
 
-// Webhook URL for form submission
+// Webhook URLs
 const WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/recepcionFormulario";
+const CONFIRMATION_WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/d2d6a0f1-2c83-4d50-8ae4-d2ab29b86f97";
 
 interface FormContextType {
   // Form state
@@ -289,9 +290,34 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const confirmRequest = () => {
+  const confirmRequest = async () => {
     setShowConfirmation(false);
-    setFormSubmitted(true);
+    
+    try {
+      // Send confirmation to webhook
+      const response = await fetch(CONFIRMATION_WEBHOOK_URL, {
+        method: "GET",
+      });
+      
+      if (!response.ok) {
+        throw new Error('Error al confirmar la solicitud');
+      }
+      
+      // Only set form as submitted if the confirmation webhook was successful
+      setFormSubmitted(true);
+      
+      toast({
+        title: "Éxito",
+        description: "Solicitud confirmada correctamente",
+      });
+    } catch (error) {
+      console.error("Error al confirmar la solicitud:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo confirmar la solicitud. Intente nuevamente.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
