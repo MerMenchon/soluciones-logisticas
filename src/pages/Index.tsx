@@ -3,10 +3,17 @@ import React from "react";
 import { FormProvider } from "@/contexts/FormContext";
 import LogisticsForm from "@/components/LogisticsForm";
 import SuccessMessage from "@/components/SuccessMessage";
+import ConfirmationDialog from "@/components/ConfirmationDialog";
 import { useFormContext } from "@/contexts/FormContext";
 
 const FormContent = () => {
-  const { formSubmitted, resetForm } = useFormContext();
+  const { 
+    formSubmitted, 
+    resetForm, 
+    showConfirmation, 
+    distanceValue, 
+    confirmRequest 
+  } = useFormContext();
 
   if (formSubmitted) {
     return <SuccessMessage onReset={resetForm} />;
@@ -25,6 +32,13 @@ const FormContent = () => {
         </header>
 
         <LogisticsForm />
+
+        {showConfirmation && distanceValue && (
+          <ConfirmationDialog 
+            distanceValue={distanceValue} 
+            onConfirm={confirmRequest} 
+          />
+        )}
       </div>
     </div>
   );

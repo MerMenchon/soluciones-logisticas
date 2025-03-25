@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { ServiceType } from "@/components/ServiceSelector";
 import { useToast } from "@/hooks/use-toast";
@@ -11,6 +10,10 @@ interface FormContextType {
   formSubmitted: boolean;
   isSubmitting: boolean;
   selectedService: ServiceType | null;
+  
+  // Response data
+  distanceValue: string | null;
+  showConfirmation: boolean;
   
   // Location states
   storageProvince: string;
@@ -53,6 +56,7 @@ interface FormContextType {
   resetForm: () => void;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
   validateForm: () => string | null;
+  confirmRequest: () => void;
 }
 
 const FormContext = createContext<FormContextType | undefined>(undefined);
@@ -61,6 +65,10 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const { toast } = useToast();
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Response data
+  const [distanceValue, setDistanceValue] = useState<string | null>(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   
   // Service selection
   const [selectedService, setSelectedService] = useState<ServiceType | null>(null);
@@ -112,6 +120,10 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setAdditionalInfo("");
     
     setFormSubmitted(false);
+    
+    // Reset response data
+    setDistanceValue(null);
+    setShowConfirmation(false);
   };
 
   const handleServiceChange = (service: ServiceType) => {
@@ -269,11 +281,17 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         throw new Error('Error al enviar los datos');
       }
       
-      return true;
+      const responseData = await response.json();
+      return responseData;
     } catch (error) {
       console.error("Error al enviar los datos:", error);
       throw error;
     }
+  };
+
+  const confirmRequest = () => {
+    setShowConfirmation(false);
+    setFormSubmitted(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -292,8 +310,15 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsSubmitting(true);
     
     try {
-      await submitFormData();
-      setFormSubmitted(true);
+      const responseData = await submitFormData();
+      
+      if (responseData && responseData.distancia !== undefined) {
+        setDistanceValue(responseData.distancia.toString());
+        setShowConfirmation(true);
+      } else {
+        // If the response doesn't contain distance, proceed with normal flow
+        setFormSubmitted(true);
+      }
     } catch (error) {
       toast({
         title: "Error",
@@ -311,6 +336,8 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         formSubmitted,
         isSubmitting,
         selectedService,
+        distanceValue,
+        showConfirmation,
         storageProvince,
         storageCity,
         originProvince,
@@ -344,7 +371,8 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setAdditionalInfo,
         resetForm,
         handleSubmit,
-        validateForm
+        validateForm,
+        confirmRequest
       }}
     >
       {children}
