@@ -3,15 +3,16 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, TrendingUp, Loader2 } from "lucide-react";
+import { CheckCircle, TrendingUp, Loader2, ArrowLeft } from "lucide-react";
 import { useFormContext } from "@/contexts/FormContext";
 
 interface ConfirmationDialogProps {
   distanceValue: string;
   onConfirm: () => void;
+  onCancel: () => void;
 }
 
-const ConfirmationDialog = ({ distanceValue, onConfirm }: ConfirmationDialogProps) => {
+const ConfirmationDialog = ({ distanceValue, onConfirm, onCancel }: ConfirmationDialogProps) => {
   const { isSubmitting } = useFormContext();
   
   return (
@@ -40,7 +41,23 @@ const ConfirmationDialog = ({ distanceValue, onConfirm }: ConfirmationDialogProp
             </p>
           </CardContent>
           
-          <CardFooter className="flex justify-center pb-6">
+          <CardFooter className="flex justify-between pb-6">
+            <Button 
+              onClick={onCancel}
+              disabled={isSubmitting}
+              variant="outline"
+              className="border-agri-primary text-agri-primary"
+            >
+              {isSubmitting ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <>
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Atrás
+                </>
+              )}
+            </Button>
+            
             <Button 
               onClick={onConfirm}
               disabled={isSubmitting}

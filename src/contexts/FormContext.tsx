@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { ServiceType } from "@/components/ServiceSelector";
 import { useToast } from "@/hooks/use-toast";
@@ -59,6 +58,7 @@ interface FormContextType {
   handleSubmit: (e: React.FormEvent) => Promise<void>;
   validateForm: () => string | null;
   confirmRequest: () => void;
+  cancelRequest: () => void;
 }
 
 const FormContext = createContext<FormContextType | undefined>(undefined);
@@ -296,13 +296,13 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsSubmitting(true);
     
     try {
-      // Send confirmation to webhook using POST method instead of GET
+      // Send confirmation to webhook using POST method
       const response = await fetch(CONFIRMATION_WEBHOOK_URL, {
-        method: "POST", // Changed from GET to POST
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ confirmed: true, distance: distanceValue }),
+        body: JSON.stringify({ confirmacion: "si", distance: distanceValue }),
       });
       
       if (!response.ok) {
@@ -321,6 +321,43 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       toast({
         title: "Error",
         description: "No se pudo confirmar la solicitud. Intente nuevamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const cancelRequest = async () => {
+    setShowConfirmation(false);
+    setIsSubmitting(true);
+    
+    try {
+      // Send cancellation to webhook using POST method
+      const response = await fetch(CONFIRMATION_WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ confirmacion: "no", distance: distanceValue }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Error al cancelar la solicitud');
+      }
+      
+      toast({
+        title: "Información",
+        description: "Solicitud cancelada",
+      });
+      
+      // Reset form after cancellation
+      resetForm();
+    } catch (error) {
+      console.error("Error al cancelar la solicitud:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo cancelar la solicitud. Intente nuevamente.",
         variant: "destructive",
       });
     } finally {
@@ -406,7 +443,8 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         resetForm,
         handleSubmit,
         validateForm,
-        confirmRequest
+        confirmRequest,
+        cancelRequest
       }}
     >
       {children}

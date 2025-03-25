@@ -12,7 +12,8 @@ const FormContent = () => {
     resetForm, 
     showConfirmation, 
     distanceValue, 
-    confirmRequest 
+    confirmRequest,
+    cancelRequest
   } = useFormContext();
 
   if (formSubmitted) {
@@ -36,7 +37,8 @@ const FormContent = () => {
         {showConfirmation && distanceValue && (
           <ConfirmationDialog 
             distanceValue={distanceValue} 
-            onConfirm={confirmRequest} 
+            onConfirm={confirmRequest}
+            onCancel={cancelRequest}
           />
         )}
       </div>
