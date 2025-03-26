@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { ServiceType } from "@/components/ServiceSelector";
 import { useToast } from "@/hooks/use-toast";
@@ -401,19 +400,41 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const responseData = await submitFormData();
       
       if (responseData) {
-        if (responseData.distancia !== undefined) {
+        // Handle array response format
+        if (Array.isArray(responseData) && responseData.length > 0) {
+          const firstItem = responseData[0];
+          
+          if (firstItem.DISTANCIA !== undefined) {
+            setDistanceValue(firstItem.DISTANCIA.toString());
+          }
+          
+          if (firstItem.CONTACTO !== undefined) {
+            setContactValue(firstItem.CONTACTO);
+          }
+          
+          if (firstItem["FECHA Y HORA"] !== undefined) {
+            setDateTimeValue(firstItem["FECHA Y HORA"]);
+          }
+          
+          setShowConfirmation(true);
+        } 
+        // Handle the previous response format for backward compatibility
+        else if (responseData.distancia !== undefined) {
           setDistanceValue(responseData.distancia.toString());
+          
+          if (responseData.contacto !== undefined) {
+            setContactValue(responseData.contacto);
+          }
+          
+          if (responseData["fecha y hora"] !== undefined) {
+            setDateTimeValue(responseData["fecha y hora"]);
+          }
+          
+          setShowConfirmation(true);
+        } else {
+          // If the response doesn't contain any data, proceed with normal flow
+          setFormSubmitted(true);
         }
-        
-        if (responseData.contacto !== undefined) {
-          setContactValue(responseData.contacto);
-        }
-        
-        if (responseData["fecha y hora"] !== undefined) {
-          setDateTimeValue(responseData["fecha y hora"]);
-        }
-        
-        setShowConfirmation(true);
       } else {
         // If the response doesn't contain any data, proceed with normal flow
         setFormSubmitted(true);
