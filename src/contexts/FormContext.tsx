@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { ServiceType } from "@/components/ServiceSelector";
 import { useToast } from "@/hooks/use-toast";
@@ -14,6 +15,8 @@ interface FormContextType {
   
   // Response data
   distanceValue: string | null;
+  contactValue: string | null;
+  dateTimeValue: string | null;
   showConfirmation: boolean;
   
   // Location states
@@ -70,6 +73,8 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   
   // Response data
   const [distanceValue, setDistanceValue] = useState<string | null>(null);
+  const [contactValue, setContactValue] = useState<string | null>(null);
+  const [dateTimeValue, setDateTimeValue] = useState<string | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   
   // Service selection
@@ -125,6 +130,8 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     // Reset response data
     setDistanceValue(null);
+    setContactValue(null);
+    setDateTimeValue(null);
     setShowConfirmation(false);
   };
 
@@ -302,7 +309,12 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ confirmacion: "si", distance: distanceValue }),
+        body: JSON.stringify({ 
+          confirmacion: "si", 
+          distance: distanceValue,
+          contacto: contactValue,
+          "fecha y hora": dateTimeValue
+        }),
       });
       
       if (!response.ok) {
@@ -339,7 +351,12 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ confirmacion: "no", distance: distanceValue }),
+        body: JSON.stringify({ 
+          confirmacion: "no", 
+          distance: distanceValue,
+          contacto: contactValue,
+          "fecha y hora": dateTimeValue
+        }),
       });
       
       if (!response.ok) {
@@ -383,11 +400,22 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const responseData = await submitFormData();
       
-      if (responseData && responseData.distancia !== undefined) {
-        setDistanceValue(responseData.distancia.toString());
+      if (responseData) {
+        if (responseData.distancia !== undefined) {
+          setDistanceValue(responseData.distancia.toString());
+        }
+        
+        if (responseData.contacto !== undefined) {
+          setContactValue(responseData.contacto);
+        }
+        
+        if (responseData["fecha y hora"] !== undefined) {
+          setDateTimeValue(responseData["fecha y hora"]);
+        }
+        
         setShowConfirmation(true);
       } else {
-        // If the response doesn't contain distance, proceed with normal flow
+        // If the response doesn't contain any data, proceed with normal flow
         setFormSubmitted(true);
       }
     } catch (error) {
@@ -408,6 +436,8 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         isSubmitting,
         selectedService,
         distanceValue,
+        contactValue,
+        dateTimeValue,
         showConfirmation,
         storageProvince,
         storageCity,
