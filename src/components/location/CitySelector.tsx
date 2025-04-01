@@ -47,7 +47,8 @@ const CitySelector = ({
         <SelectContent>
           {cities.map((city) => (
             <SelectItem key={city.ciudad} value={city.ciudad}>
-              {city.ciudad} {type !== "storage" && type !== "transport" && city.hasStorage && " (Depósito disponible)"}
+              {city.ciudad}
+              {type !== "storage" && type !== "transport" && city.hasStorage && " (Depósito disponible)"}
             </SelectItem>
           ))}
         </SelectContent>
