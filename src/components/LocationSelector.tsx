@@ -7,6 +7,10 @@ import StorageCheckbox from "@/components/location/StorageCheckbox";
 import StorageAlert from "@/components/location/StorageAlert";
 import { LocationSelectorProps } from "@/types/location";
 
+interface ExtendedLocationSelectorProps extends LocationSelectorProps {
+  serviceType?: "storage" | "transport" | "both";
+}
+
 const LocationSelector = ({
   type,
   provinceValue,
@@ -16,7 +20,8 @@ const LocationSelector = ({
   label,
   useAsStorage,
   onUseAsStorageChange,
-}: LocationSelectorProps) => {
+  serviceType,
+}: ExtendedLocationSelectorProps) => {
   const {
     cities,
     provinces,

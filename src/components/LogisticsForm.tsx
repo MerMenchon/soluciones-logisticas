@@ -36,7 +36,7 @@ const LogisticsForm = () => {
     <form onSubmit={handleSubmit} className="space-y-8">
       <ServiceSelector
         selectedService={selectedService}
-        onServiceChange={setSelectedService}
+        onSelectService={setSelectedService}
       />
 
       {selectedService && (
