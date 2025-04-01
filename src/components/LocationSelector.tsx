@@ -65,7 +65,15 @@ const LocationSelector = ({
         setIsLoadingCities(true);
         try {
           const citiesData = await getCiudades(provinceValue);
-          setCities(citiesData);
+          
+          // Filter cities based on type
+          if (type === "storage") {
+            // For storage type, only show cities with storage
+            setCities(citiesData.filter(city => city.hasStorage));
+          } else {
+            // For transport or other types, show all cities
+            setCities(citiesData);
+          }
         } catch (error) {
           console.error("Error loading cities:", error);
           toast({
@@ -83,7 +91,7 @@ const LocationSelector = ({
     };
 
     loadCities();
-  }, [provinceValue, toast]);
+  }, [provinceValue, toast, type]);
 
   // Check storage availability when city changes
   useEffect(() => {
@@ -154,7 +162,7 @@ const LocationSelector = ({
           <SelectContent>
             {cities.map((city) => (
               <SelectItem key={city.ciudad} value={city.ciudad}>
-                {city.ciudad} {city.hasStorage && " (Depósito disponible)"}
+                {city.ciudad} {type !== "transport" && city.hasStorage && " (Depósito disponible)"}
               </SelectItem>
             ))}
           </SelectContent>
