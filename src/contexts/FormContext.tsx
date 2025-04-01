@@ -34,6 +34,7 @@ interface FormContextType {
   volume: string;
   cargoValue: string;
   shippingTime: string;
+  productDescription: string;
   
   // Contact information
   email: string;
@@ -54,6 +55,7 @@ interface FormContextType {
   setVolume: (volume: string) => void;
   setCargoValue: (value: string) => void;
   setShippingTime: (time: string) => void;
+  setProductDescription: (description: string) => void;
   setEmail: (email: string) => void;
   setAdditionalInfo: (info: string) => void;
   resetForm: () => void;
@@ -97,6 +99,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [volume, setVolume] = useState("");
   const [cargoValue, setCargoValue] = useState("");
   const [shippingTime, setShippingTime] = useState("");
+  const [productDescription, setProductDescription] = useState("");
   
   // Contact information
   const [email, setEmail] = useState("");
@@ -121,6 +124,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setVolume("");
     setCargoValue("");
     setShippingTime("");
+    setProductDescription("");
     
     setEmail("");
     setAdditionalInfo("");
@@ -267,6 +271,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       "destino provincia": destinationProvince || null,
       "destino ciudad": destinationCity || null,
       "Tipo Producto": productType || null,
+      "Descripción Producto": productType === "Otros" ? productDescription || null : null,
       "Tiempo de Envío": shippingTime || null,
       "Peso (kg)": weight ? parseFloat(weight) : null,
       "Volumen": volume ? parseFloat(volume) : null,
@@ -473,6 +478,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         volume,
         cargoValue,
         shippingTime,
+        productDescription,
         email,
         additionalInfo,
         setSelectedService: handleServiceChange,
@@ -489,6 +495,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setVolume,
         setCargoValue,
         setShippingTime,
+        setProductDescription,
         setEmail,
         setAdditionalInfo,
         resetForm,
