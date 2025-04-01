@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -160,7 +159,7 @@ const LocationSelector = ({
           <SelectContent>
             {cities.map((city) => (
               <SelectItem key={city.ciudad} value={city.ciudad}>
-                {city.ciudad} {type !== "storage" && city.hasStorage && " (Depósito disponible)"}
+                {city.ciudad} {type !== "storage" && type !== "transport" && city.hasStorage && " (Depósito disponible)"}
               </SelectItem>
             ))}
           </SelectContent>
