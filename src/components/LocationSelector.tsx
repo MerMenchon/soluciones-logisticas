@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -8,7 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 
 interface LocationSelectorProps {
-  type: "origin" | "destination" | "storage";
+  type: "origin" | "destination" | "storage" | "transport";
   provinceValue: string;
   cityValue: string;
   onProvinceChange: (value: string) => void;
