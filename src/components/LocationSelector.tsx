@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useLocationSelect } from "@/hooks/useLocationSelect";
 import ProvinceSelector from "@/components/location/ProvinceSelector";
@@ -6,10 +5,6 @@ import CitySelector from "@/components/location/CitySelector";
 import StorageCheckbox from "@/components/location/StorageCheckbox";
 import StorageAlert from "@/components/location/StorageAlert";
 import { LocationSelectorProps } from "@/types/location";
-
-interface ExtendedLocationSelectorProps extends LocationSelectorProps {
-  serviceType?: "storage" | "transport" | "both";
-}
 
 const LocationSelector = ({
   type,
@@ -21,7 +16,7 @@ const LocationSelector = ({
   useAsStorage,
   onUseAsStorageChange,
   serviceType,
-}: ExtendedLocationSelectorProps) => {
+}: LocationSelectorProps) => {
   const {
     cities,
     provinces,

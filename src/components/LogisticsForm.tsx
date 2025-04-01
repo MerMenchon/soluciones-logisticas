@@ -29,7 +29,24 @@ const LogisticsForm = () => {
     additionalInfo,
     setAdditionalInfo,
     productDescription,
-    setProductDescription
+    setProductDescription,
+    // Location states and handlers
+    storageProvince,
+    storageCity,
+    setStorageProvince,
+    setStorageCity,
+    originProvince,
+    originCity,
+    setOriginProvince,
+    setOriginCity,
+    useOriginAsStorage,
+    handleUseOriginAsStorageChange,
+    destinationProvince,
+    destinationCity,
+    setDestinationProvince,
+    setDestinationCity,
+    useDestinationAsStorage,
+    handleUseDestinationAsStorageChange
   } = useFormContext();
 
   return (
@@ -39,8 +56,44 @@ const LogisticsForm = () => {
         onSelectService={setSelectedService}
       />
 
-      {selectedService && (
-        <LocationSelector serviceType={selectedService} />
+      {selectedService === "storage" && (
+        <LocationSelector 
+          type="storage"
+          provinceValue={storageProvince}
+          cityValue={storageCity}
+          onProvinceChange={setStorageProvince}
+          onCityChange={setStorageCity}
+          label="Almacenamiento"
+          serviceType={selectedService}
+        />
+      )}
+
+      {(selectedService === "transport" || selectedService === "both") && (
+        <>
+          <LocationSelector 
+            type="origin"
+            provinceValue={originProvince}
+            cityValue={originCity}
+            onProvinceChange={setOriginProvince}
+            onCityChange={setOriginCity}
+            label="Origen"
+            useAsStorage={useOriginAsStorage}
+            onUseAsStorageChange={handleUseOriginAsStorageChange}
+            serviceType={selectedService}
+          />
+
+          <LocationSelector 
+            type="destination"
+            provinceValue={destinationProvince}
+            cityValue={destinationCity}
+            onProvinceChange={setDestinationProvince}
+            onCityChange={setDestinationCity}
+            label="Destino"
+            useAsStorage={useDestinationAsStorage}
+            onUseAsStorageChange={handleUseDestinationAsStorageChange}
+            serviceType={selectedService}
+          />
+        </>
       )}
 
       {selectedService && (
