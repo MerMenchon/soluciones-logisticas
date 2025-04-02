@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Package } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { fetchShippingTimes } from "@/data/locations";
+import { fetchShippingTimes, fetchPresentations } from "@/data/locations";
 
 interface ProductDetailsProps {
   productType: string;
   onProductTypeChange: (type: string) => void;
   description: string;
   onDescriptionChange: (description: string) => void;
+  presentation: string;
+  onPresentationChange: (presentation: string) => void;
   weight: string;
   onWeightChange: (weight: string) => void;
   volume: string;
@@ -24,6 +26,8 @@ const ProductDetails = ({
   onProductTypeChange,
   description,
   onDescriptionChange,
+  presentation,
+  onPresentationChange,
   weight,
   onWeightChange,
   volume,
@@ -34,8 +38,10 @@ const ProductDetails = ({
   onShippingTimeChange,
 }: ProductDetailsProps) => {
   const [productOptions, setProductOptions] = useState<string[]>([]);
+  const [presentationOptions, setPresentationOptions] = useState<string[]>([]);
   const [shippingTimeOptions, setShippingTimeOptions] = useState<string[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
+  const [isLoadingPresentations, setIsLoadingPresentations] = useState(true);
   const [isLoadingShippingTimes, setIsLoadingShippingTimes] = useState(true);
   const { toast } = useToast();
 
@@ -106,6 +112,23 @@ const ProductDetails = ({
         setIsLoadingProducts(false);
       }
     };
+
+    const fetchAvailablePresentations = async () => {
+      setIsLoadingPresentations(true);
+      try {
+        const presentations = await fetchPresentations();
+        setPresentationOptions(presentations);
+      } catch (error) {
+        console.error("Error fetching presentations:", error);
+        toast({
+          title: "Error",
+          description: "No se pudieron cargar los tipos de presentación. Usando opciones predeterminadas.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoadingPresentations(false);
+      }
+    };
     
     const fetchAvailableShippingTimes = async () => {
       setIsLoadingShippingTimes(true);
@@ -125,6 +148,7 @@ const ProductDetails = ({
     };
 
     fetchProductTypes();
+    fetchAvailablePresentations();
     fetchAvailableShippingTimes();
   }, [toast]);
 
@@ -195,6 +219,28 @@ const ProductDetails = ({
           <p className="text-xs text-muted-foreground mt-1">
             Máximo 100 caracteres
           </p>
+        </div>
+
+        <div>
+          <label htmlFor="presentation" className="block text-sm font-medium text-agri-secondary mb-1">
+            Presentación
+          </label>
+          <select
+            id="presentation"
+            value={presentation}
+            onChange={(e) => onPresentationChange(e.target.value)}
+            className="w-full h-10 px-3 py-2 text-sm border border-input rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            disabled={isLoadingPresentations}
+          >
+            <option value="" disabled>
+              {isLoadingPresentations ? "Cargando tipos de presentación..." : "Seleccione un tipo de presentación"}
+            </option>
+            {presentationOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>

@@ -31,6 +31,7 @@ interface FormContextType {
   // Product details
   productType: string;
   description: string;
+  presentation: string;
   weight: string;
   volume: string;
   cargoValue: string;
@@ -52,6 +53,7 @@ interface FormContextType {
   handleUseDestinationAsStorageChange: (checked: boolean) => void;
   setProductType: (type: string) => void;
   setDescription: (description: string) => void;
+  setPresentation: (presentation: string) => void;
   setWeight: (weight: string) => void;
   setVolume: (volume: string) => void;
   setCargoValue: (value: string) => void;
@@ -96,6 +98,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Product details
   const [productType, setProductType] = useState("");
   const [description, setDescription] = useState("");
+  const [presentation, setPresentation] = useState("");
   const [weight, setWeight] = useState("");
   const [volume, setVolume] = useState("");
   const [cargoValue, setCargoValue] = useState("");
@@ -121,6 +124,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     setProductType("");
     setDescription("");
+    setPresentation("");
     setWeight("");
     setVolume("");
     setCargoValue("");
@@ -272,6 +276,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       "destino ciudad": destinationCity || null,
       "Tipo Producto": productType || null,
       "Descripción": description || null,
+      "Presentación": presentation || null,
       "Tiempo de Envío": shippingTime || null,
       "Peso (kg)": weight ? parseFloat(weight) : null,
       "Volumen": volume ? parseFloat(volume) : null,
@@ -475,6 +480,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         useDestinationAsStorage,
         productType,
         description,
+        presentation,
         weight,
         volume,
         cargoValue,
@@ -492,6 +498,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         handleUseDestinationAsStorageChange,
         setProductType,
         setDescription,
+        setPresentation,
         setWeight,
         setVolume,
         setCargoValue,

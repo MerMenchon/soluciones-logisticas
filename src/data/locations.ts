@@ -1,4 +1,3 @@
-
 // This file handles fetching location and shipping time data from Google Sheets
 
 export interface Location {
@@ -10,6 +9,7 @@ export interface Location {
 // Cache for locations once fetched
 let cachedLocations: Location[] = [];
 let cachedShippingTimes: string[] = [];
+let cachedPresentations: string[] = [];
 
 // Google Sheets ID and endpoints
 const SHEET_ID = "1VYDCQfaz3-7IrhPUGpAO4UBLMDR1mEyl6UCHU1hznwQ";
@@ -133,6 +133,61 @@ export const fetchShippingTimes = async (): Promise<string[]> => {
     ];
     
     return cachedShippingTimes;
+  }
+};
+
+export const fetchPresentations = async (): Promise<string[]> => {
+  if (cachedPresentations.length > 0) {
+    return cachedPresentations;
+  }
+  
+  try {
+    const sheetName = "PRESENTACION";
+    const sheetUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+    
+    const response = await fetch(sheetUrl);
+    
+    if (!response.ok) {
+      throw new Error("Error al cargar las presentaciones");
+    }
+    
+    const csvText = await response.text();
+    const rows = csvText.split('\n');
+    
+    // Find column index for presentations
+    const headers = rows[0].split(',').map(header => header.trim().replace(/"/g, '').toUpperCase());
+    const presentationColIndex = headers.findIndex(h => h === 'PRESENTACION');
+    
+    if (presentationColIndex === -1) {
+      throw new Error("No se encontró la columna 'PRESENTACION'");
+    }
+    
+    // Extract presentations
+    const presentations = rows
+      .slice(1) // Skip header row
+      .map(row => {
+        const columns = row.split(',');
+        return columns[presentationColIndex]?.replace(/"/g, '').trim();
+      })
+      .filter(presentation => presentation && presentation.length > 0) // Filter out empty values
+      .filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates
+    
+    cachedPresentations = presentations;
+    return presentations;
+  } catch (error) {
+    console.error("Error fetching presentations:", error);
+    
+    // Fallback to hardcoded presentations
+    cachedPresentations = [
+      "Bolsa",
+      "Caja",
+      "Palet",
+      "Contenedor",
+      "Granel",
+      "Otro"
+    ];
+    
+    return cachedPresentations;
   }
 };
 
