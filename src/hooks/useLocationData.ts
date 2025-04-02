@@ -1,9 +1,10 @@
 
-import { fetchCitiesForProvince, fetchProvinces } from "@/data/locations";
 import { useQuery } from "@tanstack/react-query";
-import { fetchQuantityUnits, fetchCategories } from "@/data/products";
+import { fetchProvinces } from "@/data/provinces";
+import { fetchCitiesForProvince } from "@/data/cities";
+import { fetchQuantityUnits } from "@/data/products";
 
-// Hook for provinces
+// React Query hook for provinces
 export const useProvinces = () => {
   return useQuery({
     queryKey: ["provinces"],
@@ -11,27 +12,31 @@ export const useProvinces = () => {
   });
 };
 
-// Hook to fetch cities based on a province
-export const useCities = (province: string) => {
+// React Query hook for cities based on selected province
+export const useCities = (provinceValue: string) => {
+  const { data: provinces } = useProvinces();
+  
   return useQuery({
-    queryKey: ["cities", province],
-    queryFn: () => fetchCitiesForProvince(province),
-    enabled: !!province, // Only run the query if province is not empty
+    queryKey: ["cities", provinceValue],
+    queryFn: async () => {
+      if (!provinceValue) return [];
+      
+      // Find the selected province to get its cities
+      const selectedProvince = provinces?.find(
+        (province) => province.value === provinceValue
+      );
+      
+      const cities = await fetchCitiesForProvince(provinceValue);
+      return cities;
+    },
+    enabled: !!provinces && !!provinceValue,
   });
 };
 
-// Hook for fetching quantity units
+// React Query hook for quantity units
 export const useQuantityUnits = () => {
   return useQuery({
     queryKey: ["quantityUnits"],
     queryFn: fetchQuantityUnits,
-  });
-};
-
-// Hook for fetching categories
-export const useCategories = () => {
-  return useQuery({
-    queryKey: ["categories"],
-    queryFn: fetchCategories,
   });
 };

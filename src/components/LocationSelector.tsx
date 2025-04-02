@@ -16,7 +16,6 @@ const LocationSelector = ({
   label,
   useAsStorage,
   onUseAsStorageChange,
-  selectedService,
 }: LocationSelectorProps) => {
   const {
     cities,
