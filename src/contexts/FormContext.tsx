@@ -32,6 +32,7 @@ interface FormContextType {
   productType: string;
   description: string;
   presentation: string;
+  clarification: string;  // Added this property
   weight: string;
   volume: string;
   cargoValue: string;
@@ -54,6 +55,7 @@ interface FormContextType {
   setProductType: (type: string) => void;
   setDescription: (description: string) => void;
   setPresentation: (presentation: string) => void;
+  setClarification: (clarification: string) => void;  // Added this function
   setWeight: (weight: string) => void;
   setVolume: (volume: string) => void;
   setCargoValue: (value: string) => void;
@@ -99,6 +101,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [productType, setProductType] = useState("");
   const [description, setDescription] = useState("");
   const [presentation, setPresentation] = useState("");
+  const [clarification, setClarification] = useState("");  // Added this state
   const [weight, setWeight] = useState("");
   const [volume, setVolume] = useState("");
   const [cargoValue, setCargoValue] = useState("");
@@ -125,6 +128,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setProductType("");
     setDescription("");
     setPresentation("");
+    setClarification("");  // Added this reset
     setWeight("");
     setVolume("");
     setCargoValue("");
@@ -277,6 +281,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       "Tipo Producto": productType || null,
       "Descripción": description || null,
       "Presentación": presentation || null,
+      "Aclaración": clarification || null,  // Added this field to the form data
       "Tiempo de Envío": shippingTime || null,
       "Peso (kg)": weight ? parseFloat(weight) : null,
       "Volumen": volume ? parseFloat(volume) : null,
@@ -481,6 +486,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         productType,
         description,
         presentation,
+        clarification,  // Added this value to the context
         weight,
         volume,
         cargoValue,
@@ -499,6 +505,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setProductType,
         setDescription,
         setPresentation,
+        setClarification,  // Added this function to the context
         setWeight,
         setVolume,
         setCargoValue,
