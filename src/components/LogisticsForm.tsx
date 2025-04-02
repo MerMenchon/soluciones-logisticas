@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import ServiceSelector from "@/components/ServiceSelector";
@@ -76,13 +77,13 @@ const LogisticsForm = () => {
         onSelectService={useFormContext().setSelectedService} 
       />
 
-      {/* Date Selector - Now showing calendar directly */}
-      <div className="form-section">
+      {/* Date Selector - Now showing calendar directly with optimized size */}
+      <div className="form-section" style={{ maxWidth: "320px", margin: "0 auto 2rem" }}>
         <h2 className="form-title">
           <Calendar className="w-5 h-5" />
           <span>Fecha de inicio de la solicitud</span>
         </h2>
-        <div className="space-y-4">
+        <div>
           <div className="bg-white border rounded-md shadow-sm p-3">
             <CalendarComponent
               mode="single"
