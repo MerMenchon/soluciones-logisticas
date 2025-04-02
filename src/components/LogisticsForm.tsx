@@ -8,8 +8,8 @@ import ContactDetails from "@/components/ContactDetails";
 import { RotateCcw, Send, Warehouse, Truck } from "lucide-react";
 import { useFormContext } from "@/contexts/FormContext";
 
-// Define the allowed service types
-type ServiceType = "storage" | "transport" | "both" | "";
+// Define the ServiceType to match the one in ServiceSelector
+type ServiceType = "storage" | "transport" | "both";
 
 const LogisticsForm = () => {
   const {

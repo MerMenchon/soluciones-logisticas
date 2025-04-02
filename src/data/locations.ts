@@ -13,6 +13,12 @@ export interface City {
   label: string;
 }
 
+// Define location type for backward compatibility
+export interface Location {
+  ciudad: string;
+  hasStorage: boolean;
+}
+
 // Mock API call to fetch provinces and cities
 export const fetchProvinces = async (): Promise<Province[]> => {
   // In a real app, this would be an API call
@@ -58,19 +64,61 @@ export const fetchProvinces = async (): Promise<Province[]> => {
   ];
 };
 
-// Fetch quantity units
-export const fetchQuantityUnits = async (): Promise<{ value: string; label: string }[]> => {
+// Legacy functions for compatibility with existing code
+export const getProvincias = async (): Promise<string[]> => {
+  const provinces = await fetchProvinces();
+  return provinces.map(p => p.label);
+};
+
+export const getCiudades = async (provincia: string): Promise<Location[]> => {
+  const provinces = await fetchProvinces();
+  const selectedProvince = provinces.find(p => p.label === provincia);
+  
+  if (!selectedProvince) return [];
+  
+  // Convert to the expected Location format
+  return selectedProvince.cities.map(city => ({
+    ciudad: city.label,
+    hasStorage: Math.random() > 0.5 // Random for demo purposes
+  }));
+};
+
+// Check if storage is available in a location
+export const isStorageAvailable = async (provincia: string, ciudad: string): Promise<boolean> => {
+  const cities = await getCiudades(provincia);
+  const selectedCity = cities.find(c => c.ciudad === ciudad);
+  return selectedCity?.hasStorage || false;
+};
+
+// Fetch presentations
+export const fetchPresentations = async (): Promise<string[]> => {
   // In a real app, this would be an API call
   await new Promise((resolve) => setTimeout(resolve, 300));
   
   return [
-    { value: "kg", label: "Kilogramos (Kg)" },
-    { value: "ton", label: "Toneladas (Ton)" },
-    { value: "lt", label: "Litros (Lt)" },
-    { value: "m3", label: "Metros cúbicos (m³)" },
-    { value: "unidades", label: "Unidades" },
-    { value: "pallets", label: "Pallets" },
-    { value: "bultos", label: "Bultos" },
+    "Bolsas",
+    "Cajas",
+    "A granel",
+    "Envases",
+    "Tambores",
+    "Paquetes",
+    "Otro"
+  ];
+};
+
+// Fetch quantity units
+export const fetchQuantityUnits = async (): Promise<string[]> => {
+  // In a real app, this would be an API call
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  
+  return [
+    "Kilogramos (Kg)",
+    "Toneladas (Ton)",
+    "Litros (Lt)",
+    "Metros cúbicos (m³)",
+    "Unidades",
+    "Pallets",
+    "Bultos"
   ];
 };
 
@@ -109,3 +157,4 @@ export const useQuantityUnits = () => {
     queryFn: fetchQuantityUnits,
   });
 };
+
