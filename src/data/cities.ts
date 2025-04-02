@@ -29,7 +29,7 @@ export const fetchCitiesForProvince = async (provinceValue: string): Promise<Cit
       header => header.trim().replace(/"/g, '').toUpperCase() === 'CIUDAD'
     );
     const storageColumnIndex = headers.findIndex(
-      header => header.trim().replace(/"/g, '').toUpperCase() === 'ALMACENAMIENTO'
+      header => header.trim().replace(/"/g, '').toUpperCase() === 'DEPOSITO'
     );
     
     if (provinceColumnIndex === -1 || cityColumnIndex === -1) {
@@ -51,7 +51,7 @@ export const fetchCitiesForProvince = async (provinceValue: string): Promise<Cit
         const columns = row.split(',');
         const rowProvince = columns[provinceColumnIndex]?.replace(/"/g, '').trim();
         const cityName = columns[cityColumnIndex]?.replace(/"/g, '').trim();
-        const hasStorage = columns[storageColumnIndex]?.replace(/"/g, '').trim().toLowerCase() === 'si';
+        const hasStorage = columns[storageColumnIndex]?.replace(/"/g, '').trim().toUpperCase() === 'SI';
         
         // Only include cities for the selected province
         if (rowProvince.toLowerCase() === provinceLabel.toLowerCase() && cityName) {

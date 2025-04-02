@@ -29,6 +29,11 @@ const CitySelector = ({
 }: CitySelectorProps) => {
   const { selectedService } = useFormContext();
   
+  // Filter cities based on storage availability if this is a storage selector
+  const filteredCities = type === "storage" 
+    ? cities.filter(city => city.hasStorage)
+    : cities;
+  
   // Determine if we should show storage availability based on selected service type
   const shouldShowStorageInfo = 
     selectedService === "both" && (type === "origin" || type === "destination");
@@ -53,12 +58,14 @@ const CitySelector = ({
           } />
         </SelectTrigger>
         <SelectContent>
-          {cities.length === 0 && !isLoading && (
+          {filteredCities.length === 0 && !isLoading && (
             <div className="px-2 py-4 text-center text-sm text-muted-foreground">
-              No hay ciudades disponibles para esta provincia
+              {type === "storage" 
+                ? "No hay ciudades con almacenamiento disponible en esta provincia" 
+                : "No hay ciudades disponibles para esta provincia"}
             </div>
           )}
-          {cities.map((city) => (
+          {filteredCities.map((city) => (
             <SelectItem key={city.ciudad} value={city.ciudad} className="flex justify-between">
               <div className="flex items-center justify-between w-full">
                 <span>{city.ciudad}</span>
