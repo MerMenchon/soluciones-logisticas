@@ -21,6 +21,7 @@ const LocationSelector = ({
     cities,
     provinces,
     hasStorage,
+    hasInitialCheck,
     isLoadingProvinces,
     isLoadingCities,
     handleCityChange
@@ -63,7 +64,7 @@ const LocationSelector = ({
         />
       )}
 
-      {type === "storage" && !hasStorage && cityValue && (
+      {type === "storage" && !hasStorage && cityValue && hasInitialCheck && (
         <StorageAlert show={true} />
       )}
     </div>

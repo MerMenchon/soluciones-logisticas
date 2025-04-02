@@ -20,6 +20,7 @@ export const useLocationSelect = ({
   const [hasStorage, setHasStorage] = useState(false);
   const [isLoadingProvinces, setIsLoadingProvinces] = useState(true);
   const [isLoadingCities, setIsLoadingCities] = useState(false);
+  const [hasInitialCheck, setHasInitialCheck] = useState(false);
   const { toast } = useToast();
 
   // Fetch provinces on component mount
@@ -92,12 +93,18 @@ export const useLocationSelect = ({
         try {
           const storageAvailable = await isStorageAvailable(provinceValue, cityValue);
           setHasStorage(storageAvailable);
+          setHasInitialCheck(true);
         } catch (error) {
           console.error("Error checking storage availability:", error);
           setHasStorage(false);
+          setHasInitialCheck(true);
         }
       } else {
         setHasStorage(false);
+        // Reset the initial check flag when there's no city selected
+        if (cityValue === '') {
+          setHasInitialCheck(false);
+        }
       }
     };
 
@@ -113,6 +120,7 @@ export const useLocationSelect = ({
     cities,
     provinces,
     hasStorage,
+    hasInitialCheck,
     isLoadingProvinces,
     isLoadingCities,
     handleCityChange
