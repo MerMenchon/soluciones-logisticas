@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Package, Calendar } from "lucide-react";
@@ -12,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface ProductDetailsProps {
   productType: string;
@@ -300,25 +300,32 @@ const ProductDetails = ({
               />
             </div>
             
-            <div className="w-2/3 flex items-center">
+            <div className="w-2/3">
               {isLoadingQuantityUnits ? (
                 <div className="text-sm text-muted-foreground py-2">Cargando...</div>
               ) : (
-                <Select 
-                  value={quantityUnit}
-                  onValueChange={onQuantityUnitChange}
-                >
-                  <SelectTrigger className="w-full h-full">
-                    <SelectValue placeholder="Seleccione unidad" />
-                  </SelectTrigger>
-                  <SelectContent>
+                <div className="overflow-x-auto">
+                  <ToggleGroup 
+                    type="single" 
+                    value={quantityUnit}
+                    onValueChange={(value) => {
+                      if (value) onQuantityUnitChange(value);
+                    }}
+                    className="flex flex-wrap gap-1"
+                  >
                     {quantityUnitOptions.map((unit) => (
-                      <SelectItem key={unit} value={unit}>
+                      <ToggleGroupItem 
+                        key={unit} 
+                        value={unit} 
+                        aria-label={unit}
+                        variant="bordered"
+                        className="rounded-md text-sm py-2 border border-agri-light"
+                      >
                         {unit}
-                      </SelectItem>
+                      </ToggleGroupItem>
                     ))}
-                  </SelectContent>
-                </Select>
+                  </ToggleGroup>
+                </div>
               )}
             </div>
           </div>
