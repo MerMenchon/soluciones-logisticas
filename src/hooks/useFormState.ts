@@ -63,31 +63,7 @@ export const useFormState = (): FormState => {
     shippingTime,
     productDescription,
     email,
-    additionalInfo,
-    
-    // These are needed for TypeScript, but will be provided by useFormActions
-    setFormSubmitted: () => {},
-    setIsSubmitting: () => {},
-    setSelectedService: () => {},
-    setDistanceValue: () => {},
-    setContactValue: () => {},
-    setDateTimeValue: () => {},
-    setShowConfirmation: () => {},
-    setStorageProvince: () => {},
-    setStorageCity: () => {},
-    setOriginProvince: () => {},
-    setOriginCity: () => {},
-    setUseOriginAsStorage: () => {},
-    setDestinationProvince: () => {},
-    setDestinationCity: () => {},
-    setUseDestinationAsStorage: () => {},
-    setProductType: () => {},
-    setWeight: () => {},
-    setVolume: () => {},
-    setCargoValue: () => {},
-    setShippingTime: () => {},
-    setProductDescription: () => {},
-    setEmail: () => {},
-    setAdditionalInfo: () => {},
+    additionalInfo
   };
 };
+
