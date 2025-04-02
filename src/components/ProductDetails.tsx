@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Package, CalendarIcon } from "lucide-react";
+import { Package } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { fetchPresentations, fetchQuantityUnits, useQuantityUnits } from "@/data/locations";
 import { format } from "date-fns";
@@ -221,37 +221,6 @@ const ProductDetails = ({
         <span>Detalles del Producto</span>
       </h2>
       <div className="space-y-6">
-        <div>
-          <label htmlFor="shippingDate" className="block text-sm font-medium text-agri-secondary mb-1">
-            Fecha de inicio de la solicitud
-          </label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                id="shippingDate"
-                variant="outline"
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !selectedDate && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {selectedDate ? format(selectedDate, "PPP") : <span>Seleccione una fecha</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={handleDateSelect}
-                disabled={disabledDays}
-                initialFocus
-                className={cn("p-3 pointer-events-auto")}
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-
         <div>
           <label htmlFor="productType" className="block text-sm font-medium text-agri-secondary mb-1">
             Tipo de producto *
