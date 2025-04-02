@@ -3,16 +3,16 @@ import React from "react";
 import { Warehouse, Truck, PackageCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type ServiceType = "storage" | "transport" | "both";
+export type ServiceType = "storage" | "transport" | "both" | "";
 
 interface ServiceSelectorProps {
-  selectedService: ServiceType | null;
-  onSelectService: (service: ServiceType) => void;
+  selectedService: ServiceType;
+  onServiceChange: (service: ServiceType) => void;
 }
 
 const ServiceSelector = ({
   selectedService,
-  onSelectService,
+  onServiceChange,
 }: ServiceSelectorProps) => {
   return (
     <div className="form-section">
@@ -20,7 +20,7 @@ const ServiceSelector = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div
           className={cn("service-card", selectedService === "storage" && "active")}
-          onClick={() => onSelectService("storage")}
+          onClick={() => onServiceChange("storage")}
         >
           <Warehouse className="service-icon" />
           <span className="font-medium">Almacenamiento</span>
@@ -31,7 +31,7 @@ const ServiceSelector = ({
 
         <div
           className={cn("service-card", selectedService === "transport" && "active")}
-          onClick={() => onSelectService("transport")}
+          onClick={() => onServiceChange("transport")}
         >
           <Truck className="service-icon" />
           <span className="font-medium">Transporte</span>
@@ -42,7 +42,7 @@ const ServiceSelector = ({
 
         <div
           className={cn("service-card", selectedService === "both" && "active")}
-          onClick={() => onSelectService("both")}
+          onClick={() => onServiceChange("both")}
         >
           <PackageCheck className="service-icon" />
           <span className="font-medium">Almacenamiento y Transporte</span>

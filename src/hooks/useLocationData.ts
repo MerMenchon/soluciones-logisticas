@@ -1,4 +1,5 @@
-import { fetchCities, fetchProvinces } from "@/data/locations";
+
+import { fetchCitiesForProvince, fetchProvinces } from "@/data/locations";
 import { useQuery } from "@tanstack/react-query";
 import { fetchQuantityUnits, fetchCategories } from "@/data/products";
 
@@ -14,7 +15,7 @@ export const useProvinces = () => {
 export const useCities = (province: string) => {
   return useQuery({
     queryKey: ["cities", province],
-    queryFn: () => fetchCities(province),
+    queryFn: () => fetchCitiesForProvince(province),
     enabled: !!province, // Only run the query if province is not empty
   });
 };

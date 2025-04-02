@@ -8,6 +8,7 @@ export interface LocationSelectorProps {
   label: string;
   useAsStorage?: boolean;
   onUseAsStorageChange?: (value: boolean) => void;
+  selectedService?: "storage" | "transport" | "both" | "";
 }
 
 export interface UseLocationSelectHookParams {

@@ -73,24 +73,42 @@ const LogisticsForm = () => {
       {selectedService && (
         <>
           <LocationSelector 
+            type="storage"
+            provinceValue={storageProvince}
+            cityValue={storageCity}
+            onProvinceChange={setStorageProvince}
+            onCityChange={setStorageCity}
+            label="Almacenamiento"
             selectedService={selectedService}
-            storageProvince={storageProvince}
-            storageCity={storageCity}
-            originProvince={originProvince}
-            originCity={originCity}
-            destinationProvince={destinationProvince}
-            destinationCity={destinationCity}
-            useOriginAsStorage={useOriginAsStorage}
-            useDestinationAsStorage={useDestinationAsStorage}
-            onStorageProvinceChange={setStorageProvince}
-            onStorageCityChange={setStorageCity}
-            onOriginProvinceChange={setOriginProvince}
-            onOriginCityChange={setOriginCity}
-            onDestinationProvinceChange={setDestinationProvince}
-            onDestinationCityChange={setDestinationCity}
-            onUseOriginAsStorageChange={handleUseOriginAsStorageChange}
-            onUseDestinationAsStorageChange={handleUseDestinationAsStorageChange}
           />
+
+          {(selectedService === "transport" || selectedService === "both") && (
+            <>
+              <LocationSelector 
+                type="origin"
+                provinceValue={originProvince}
+                cityValue={originCity}
+                onProvinceChange={setOriginProvince}
+                onCityChange={setOriginCity}
+                label="Origen"
+                useAsStorage={useOriginAsStorage}
+                onUseAsStorageChange={handleUseOriginAsStorageChange}
+                selectedService={selectedService}
+              />
+
+              <LocationSelector 
+                type="destination"
+                provinceValue={destinationProvince}
+                cityValue={destinationCity}
+                onProvinceChange={setDestinationProvince}
+                onCityChange={setDestinationCity}
+                label="Destino"
+                useAsStorage={useDestinationAsStorage}
+                onUseAsStorageChange={handleUseDestinationAsStorageChange}
+                selectedService={selectedService}
+              />
+            </>
+          )}
 
           <ProductDetails 
             productType={productType}
