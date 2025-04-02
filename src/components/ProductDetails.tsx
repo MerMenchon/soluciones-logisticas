@@ -1,17 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Input } from "@/components/ui/input";
-import { Package, Warehouse } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { fetchPresentations } from "@/data/products";
-import { useQuantityUnits, useCategories } from "@/hooks/useLocationData";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+
+import React from "react";
+import { Package } from "lucide-react";
+import ProductTypeSelector from "./product/ProductTypeSelector";
+import CategorySelector from "./product/CategorySelector";
+import PresentationSelector from "./product/PresentationSelector";
+import QuantityInput from "./product/QuantityInput";
+import ValueInput from "./product/ValueInput";
+import DescriptionInput from "./product/DescriptionInput";
 
 interface ProductDetailsProps {
   productType: string;
@@ -54,167 +49,6 @@ const ProductDetails = ({
   category,
   onCategoryChange,
 }: ProductDetailsProps) => {
-  const [productOptions, setProductOptions] = useState<string[]>([]);
-  const [presentationOptions, setPresentationOptions] = useState<string[]>([]);
-  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
-  const [isLoadingPresentations, setIsLoadingPresentations] = useState(true);
-  const { toast } = useToast();
-  
-  // Use the React Query hook for quantity units
-  const { data: quantityUnitOptions = [], isLoading: isLoadingQuantityUnits } = useQuantityUnits();
-  
-  // Use the React Query hook for categories
-  const { data: categoryOptions = [], isLoading: isLoadingCategories } = useCategories();
-
-  useEffect(() => {
-    const fetchProductTypes = async () => {
-      setIsLoadingProducts(true);
-      try {
-        // Google Sheets needs to be published to the web as CSV
-        // Using the shared sheet with the correct sheet name
-        const sheetId = "1VYDCQfaz3-7IrhPUGpAO4UBLMDR1mEyl6UCHU1hznwQ";
-        const sheetName = "PRODUCTOS"; // Specific sheet name
-        const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
-        
-        const response = await fetch(sheetUrl);
-        
-        if (!response.ok) {
-          throw new Error("Error al cargar los tipos de productos");
-        }
-        
-        const csvText = await response.text();
-        
-        // Parse CSV to extract product types
-        const rows = csvText.split('\n');
-        
-        // Find the column index for "PRODUCTOS"
-        const headers = rows[0].split(',');
-        const productColumnIndex = headers.findIndex(
-          header => header.trim().replace(/"/g, '').toUpperCase() === 'PRODUCTOS'
-        );
-        
-        if (productColumnIndex === -1) {
-          throw new Error("No se encontró la columna 'PRODUCTOS' en la hoja");
-        }
-        
-        // Extract product types
-        const products = rows
-          .slice(1) // Skip header row
-          .map(row => {
-            const columns = row.split(',');
-            return columns[productColumnIndex]?.replace(/"/g, '').trim();
-          })
-          .filter(product => product && product.length > 0) // Filter out empty values
-          .filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates
-        
-        setProductOptions(products);
-      } catch (error) {
-        console.error("Error fetching product types:", error);
-        toast({
-          title: "Error",
-          description: "No se pudieron cargar los tipos de productos. Usando opciones predeterminadas.",
-          variant: "destructive",
-        });
-        
-        // Fallback to default options if fetch fails
-        setProductOptions([
-          "Alimentos",
-          "Alimentos refrigerados",
-          "Bebidas",
-          "Textiles",
-          "Electrónica",
-          "Maquinaria",
-          "Químicos",
-          "Materiales de construcción",
-          "Productos farmacéuticos",
-          "Otros"
-        ]);
-      } finally {
-        setIsLoadingProducts(false);
-      }
-    };
-
-    const fetchAvailablePresentations = async () => {
-      setIsLoadingPresentations(true);
-      try {
-        const presentations = await fetchPresentations();
-        setPresentationOptions(presentations);
-      } catch (error) {
-        console.error("Error fetching presentations:", error);
-        toast({
-          title: "Error",
-          description: "No se pudieron cargar los tipos de presentación. Usando opciones predeterminadas.",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoadingPresentations(false);
-      }
-    };
-
-    fetchProductTypes();
-    fetchAvailablePresentations();
-  }, [toast]);
-
-  // Set default values for category and quantityUnit when options are loaded and no value is selected
-  useEffect(() => {
-    // Set default category if options are available and no category is selected yet
-    if (categoryOptions.length > 0 && (!category || category === "")) {
-      onCategoryChange(categoryOptions[0]);
-    }
-  }, [categoryOptions, category, onCategoryChange]);
-
-  useEffect(() => {
-    // Set default quantity unit if options are available and no unit is selected yet
-    if (quantityUnitOptions.length > 0 && (!quantityUnit || quantityUnit === "")) {
-      onQuantityUnitChange(quantityUnitOptions[0]);
-    }
-  }, [quantityUnitOptions, quantityUnit, onQuantityUnitChange]);
-
-  // Handle numeric input validation
-  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    
-    // Allow decimals and empty values (for UX)
-    if (newValue === '' || /^\d*\.?\d*$/.test(newValue)) {
-      // Check if value is greater than 0
-      if (newValue === '' || parseFloat(newValue) > 0) {
-        onValueChange(newValue);
-      }
-    }
-  };
-
-  // Handle description input with 100 character limit
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDescription = e.target.value;
-    if (newDescription.length <= 100) {
-      onDescriptionChange(newDescription);
-    }
-  };
-
-  // Handle clarification input with 50 character limit
-  const handleClarificationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newClarification = e.target.value;
-    if (newClarification.length <= 50) {
-      onClarificationChange(newClarification);
-    }
-  };
-
-  // Handle quantity input validation
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newQuantity = e.target.value;
-    
-    // Allow decimals and empty values (for UX)
-    if (newQuantity === '' || /^\d*\.?\d*$/.test(newQuantity)) {
-      // Check if value is greater than 0
-      if (newQuantity === '' || parseFloat(newQuantity) > 0) {
-        onQuantityChange(newQuantity);
-      }
-    }
-  };
-
-  // Check if the selected presentation is "Otro"
-  const showClarificationInput = presentation === "Otro";
-  
   // Check if the product type is "Otro" to determine if description is required
   const isDescriptionRequired = productType === "Otro";
 
@@ -225,191 +59,40 @@ const ProductDetails = ({
         <span>Detalles del Producto</span>
       </h2>
       <div className="space-y-6">
-        <div>
-          <label htmlFor="productType" className="block text-sm font-medium text-agri-secondary mb-1">
-            Tipo de producto *
-          </label>
-          <Select 
-            value={productType} 
-            onValueChange={onProductTypeChange}
-            disabled={isLoadingProducts}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder={
-                isLoadingProducts 
-                  ? "Cargando tipos de producto..." 
-                  : "Seleccione un tipo de producto"
-              } />
-            </SelectTrigger>
-            <SelectContent>
-              {productOptions.map((option) => (
-                <SelectItem key={option} value={option}>
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <ProductTypeSelector 
+          productType={productType} 
+          onProductTypeChange={onProductTypeChange} 
+        />
 
-        <div>
-          <label htmlFor="category" className="block text-sm font-medium text-agri-secondary mb-1">
-            Categoría
-          </label>
-          {isLoadingCategories ? (
-            <div className="text-sm text-muted-foreground py-2">Cargando categorías...</div>
-          ) : (
-            <ToggleGroup 
-              type="single" 
-              value={category}
-              onValueChange={(value) => {
-                if (value) onCategoryChange(value);
-              }}
-              className="flex flex-wrap gap-2"
-            >
-              {categoryOptions.map((categoryOption) => (
-                <ToggleGroupItem 
-                  key={categoryOption} 
-                  value={categoryOption} 
-                  aria-label={categoryOption}
-                  variant="bordered"
-                  className="rounded-md text-sm px-3 py-1.5 border border-agri-light"
-                >
-                  {categoryOption}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-          )}
-        </div>
+        <CategorySelector
+          category={category}
+          onCategoryChange={onCategoryChange}
+        />
 
-        <div>
-          <label htmlFor="presentation" className="block text-sm font-medium text-agri-secondary mb-1">
-            Presentación
-          </label>
-          <Select 
-            value={presentation} 
-            onValueChange={onPresentationChange}
-            disabled={isLoadingPresentations}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder={
-                isLoadingPresentations 
-                  ? "Cargando tipos de presentación..." 
-                  : "Seleccione un tipo de presentación"
-              } />
-            </SelectTrigger>
-            <SelectContent>
-              {presentationOptions.map((option) => (
-                <SelectItem key={option} value={option}>
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <PresentationSelector
+          presentation={presentation}
+          onPresentationChange={onPresentationChange}
+          clarification={clarification}
+          onClarificationChange={onClarificationChange}
+        />
 
-        {showClarificationInput && (
-          <div>
-            <label htmlFor="clarification" className="block text-sm font-medium text-agri-secondary mb-1">
-              Aclaración
-            </label>
-            <Input
-              id="clarification"
-              type="text"
-              placeholder="Especifique detalles de la presentación"
-              value={clarification}
-              onChange={handleClarificationChange}
-              maxLength={50}
-              className="w-full"
-            />
-          </div>
-        )}
-
-        <div>
-          <label htmlFor="quantity" className="block text-sm font-medium text-agri-secondary mb-1">
-            Cantidad *
-          </label>
-          <div className="flex items-center gap-1">
-            <Input
-              id="quantity"
-              placeholder="0.00"
-              value={quantity}
-              onChange={handleQuantityChange}
-              className="w-32"
-              required
-            />
-            
-            {isLoadingQuantityUnits ? (
-              <div className="text-sm text-muted-foreground py-2 ml-2">Cargando...</div>
-            ) : (
-              <ToggleGroup 
-                type="single" 
-                value={quantityUnit}
-                onValueChange={(value) => {
-                  if (value) onQuantityUnitChange(value);
-                }}
-                className="flex flex-wrap gap-1 ml-2"
-              >
-                {quantityUnitOptions.map((unit) => (
-                  <ToggleGroupItem 
-                    key={unit} 
-                    value={unit} 
-                    aria-label={unit}
-                    variant="bordered"
-                    className="rounded-md text-xs px-2 py-1 border border-agri-light"
-                  >
-                    {unit}
-                  </ToggleGroupItem>
-                ))}
-              </ToggleGroup>
-            )}
-          </div>
-        </div>
+        <QuantityInput
+          quantity={quantity}
+          onQuantityChange={onQuantityChange}
+          quantityUnit={quantityUnit}
+          onQuantityUnitChange={onQuantityUnitChange}
+        />
         
-        <div>
-          <label htmlFor="value" className="block text-sm font-medium text-agri-secondary mb-1">
-            Valor de la carga (USD) *
-          </label>
-          <div className="flex items-stretch gap-2">
-            <div className="w-1/3">
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
-                  $
-                </span>
-                <Input
-                  id="value"
-                  placeholder="0.00"
-                  value={value}
-                  onChange={handleValueChange}
-                  className="w-full pl-7"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        <ValueInput
+          value={value}
+          onValueChange={onValueChange}
+        />
 
-        <div>
-          <label htmlFor="description" className="block text-sm font-medium text-agri-secondary mb-1">
-            Descripción del producto {isDescriptionRequired && <span className="text-red-500">*</span>}
-          </label>
-          <Input
-            id="description"
-            type="text"
-            placeholder={isDescriptionRequired 
-              ? "Describa detalladamente su producto (obligatorio)" 
-              : "Describa brevemente su producto"}
-            value={description}
-            onChange={handleDescriptionChange}
-            maxLength={100}
-            className={`w-full ${isDescriptionRequired && !description ? 'border-red-500' : ''}`}
-            required={isDescriptionRequired}
-          />
-          {isDescriptionRequired && !description && (
-            <p className="text-sm text-red-500 mt-1">
-              La descripción del producto es obligatoria
-            </p>
-          )}
-        </div>
+        <DescriptionInput
+          description={description}
+          onDescriptionChange={onDescriptionChange}
+          isRequired={isDescriptionRequired}
+        />
       </div>
     </div>
   );
