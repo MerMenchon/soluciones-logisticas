@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Package, CalendarIcon } from "lucide-react";
@@ -261,9 +260,6 @@ const ProductDetails = ({
             maxLength={100}
             className="w-full"
           />
-          <p className="text-xs text-muted-foreground mt-1">
-            Máximo 100 caracteres
-          </p>
         </div>
 
         <div>
@@ -306,9 +302,6 @@ const ProductDetails = ({
               maxLength={50}
               className="w-full"
             />
-            <p className="text-xs text-muted-foreground mt-1">
-              Máximo 50 caracteres
-            </p>
           </div>
         )}
 
@@ -357,9 +350,6 @@ const ProductDetails = ({
                 className="w-full h-full"
                 required
               />
-              <p className="text-xs text-muted-foreground mt-1">
-                {"Valor numérico > 0"}
-              </p>
             </div>
             
             <div className="w-2/3 flex items-center">
@@ -408,9 +398,6 @@ const ProductDetails = ({
               required
             />
           </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            Ingrese el valor en dólares estadounidenses (USD), debe ser mayor a 0
-          </p>
         </div>
       </div>
     </div>
