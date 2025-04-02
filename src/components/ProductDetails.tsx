@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Package, CalendarIcon } from "lucide-react";
@@ -27,10 +28,6 @@ interface ProductDetailsProps {
   onDescriptionChange: (description: string) => void;
   presentation: string;
   onPresentationChange: (presentation: string) => void;
-  weight: string;
-  onWeightChange: (weight: string) => void;
-  volume: string;
-  onVolumeChange: (volume: string) => void;
   value: string;
   onValueChange: (value: string) => void;
   shippingTime: string;
@@ -46,10 +43,6 @@ const ProductDetails = ({
   onDescriptionChange,
   presentation,
   onPresentationChange,
-  weight,
-  onWeightChange,
-  volume,
-  onVolumeChange,
   value,
   onValueChange,
   shippingTime,
@@ -323,46 +316,6 @@ const ProductDetails = ({
               />
             </PopoverContent>
           </Popover>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label htmlFor="weight" className="block text-sm font-medium text-agri-secondary mb-1">
-              Peso (kg)
-            </label>
-            <Input
-              id="weight"
-              type="number"
-              placeholder="0.00"
-              min="0"
-              step="0.01"
-              value={weight}
-              onChange={(e) => onWeightChange(e.target.value)}
-              className="w-full"
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              Ingrese el peso en kilogramos
-            </p>
-          </div>
-          
-          <div>
-            <label htmlFor="volume" className="block text-sm font-medium text-agri-secondary mb-1">
-              Volumen (m³)
-            </label>
-            <Input
-              id="volume"
-              type="number"
-              placeholder="0.00"
-              min="0"
-              step="0.01"
-              value={volume}
-              onChange={(e) => onVolumeChange(e.target.value)}
-              className="w-full"
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              Ingrese el volumen en metros cúbicos
-            </p>
-          </div>
         </div>
         
         <div>

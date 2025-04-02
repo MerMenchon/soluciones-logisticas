@@ -32,9 +32,7 @@ interface FormContextType {
   productType: string;
   description: string;
   presentation: string;
-  clarification: string;  // Added this property
-  weight: string;
-  volume: string;
+  clarification: string;
   cargoValue: string;
   shippingTime: string;
   
@@ -55,9 +53,7 @@ interface FormContextType {
   setProductType: (type: string) => void;
   setDescription: (description: string) => void;
   setPresentation: (presentation: string) => void;
-  setClarification: (clarification: string) => void;  // Added this function
-  setWeight: (weight: string) => void;
-  setVolume: (volume: string) => void;
+  setClarification: (clarification: string) => void;
   setCargoValue: (value: string) => void;
   setShippingTime: (time: string) => void;
   setEmail: (email: string) => void;
@@ -101,9 +97,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [productType, setProductType] = useState("");
   const [description, setDescription] = useState("");
   const [presentation, setPresentation] = useState("");
-  const [clarification, setClarification] = useState("");  // Added this state
-  const [weight, setWeight] = useState("");
-  const [volume, setVolume] = useState("");
+  const [clarification, setClarification] = useState("");
   const [cargoValue, setCargoValue] = useState("");
   const [shippingTime, setShippingTime] = useState("");
   
@@ -128,9 +122,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setProductType("");
     setDescription("");
     setPresentation("");
-    setClarification("");  // Added this reset
-    setWeight("");
-    setVolume("");
+    setClarification("");
     setCargoValue("");
     setShippingTime("");
     
@@ -246,10 +238,6 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return "Debe seleccionar tipo de producto";
     }
 
-    if (!weight && !volume) {
-      return "Debe ingresar peso o volumen";
-    }
-
     if (!cargoValue || parseFloat(cargoValue) <= 0) {
       return "Debe ingresar un valor de carga válido (mayor a cero USD)";
     }
@@ -281,10 +269,8 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       "Tipo Producto": productType || null,
       "Descripción": description || null,
       "Presentación": presentation || null,
-      "Aclaración": clarification || null,  // Added this field to the form data
+      "Aclaración": clarification || null,
       "Tiempo de Envío": shippingTime || null,
-      "Peso (kg)": weight ? parseFloat(weight) : null,
-      "Volumen": volume ? parseFloat(volume) : null,
       "Valor": cargoValue ? parseFloat(cargoValue) : null,
       "Email": email,
       "Información Adicional": additionalInfo || null,
@@ -396,75 +382,6 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const validationError = validateForm();
-    if (validationError) {
-      toast({
-        title: "Error",
-        description: validationError,
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setIsSubmitting(true);
-    
-    try {
-      const responseData = await submitFormData();
-      
-      if (responseData) {
-        // Handle array response format
-        if (Array.isArray(responseData) && responseData.length > 0) {
-          const firstItem = responseData[0];
-          
-          if (firstItem.DISTANCIA !== undefined) {
-            setDistanceValue(firstItem.DISTANCIA.toString());
-          }
-          
-          if (firstItem.CONTACTO !== undefined) {
-            setContactValue(firstItem.CONTACTO);
-          }
-          
-          if (firstItem["FECHA Y HORA"] !== undefined) {
-            setDateTimeValue(firstItem["FECHA Y HORA"]);
-          }
-          
-          setShowConfirmation(true);
-        } 
-        // Handle the previous response format for backward compatibility
-        else if (responseData.distancia !== undefined) {
-          setDistanceValue(responseData.distancia.toString());
-          
-          if (responseData.contacto !== undefined) {
-            setContactValue(responseData.contacto);
-          }
-          
-          if (responseData["fecha y hora"] !== undefined) {
-            setDateTimeValue(responseData["fecha y hora"]);
-          }
-          
-          setShowConfirmation(true);
-        } else {
-          // If the response doesn't contain any data, proceed with normal flow
-          setFormSubmitted(true);
-        }
-      } else {
-        // If the response doesn't contain any data, proceed with normal flow
-        setFormSubmitted(true);
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "No se pudo enviar el formulario. Intente nuevamente.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   return (
     <FormContext.Provider
       value={{
@@ -486,9 +403,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         productType,
         description,
         presentation,
-        clarification,  // Added this value to the context
-        weight,
-        volume,
+        clarification,
         cargoValue,
         shippingTime,
         email,
@@ -505,9 +420,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setProductType,
         setDescription,
         setPresentation,
-        setClarification,  // Added this function to the context
-        setWeight,
-        setVolume,
+        setClarification,
         setCargoValue,
         setShippingTime,
         setEmail,

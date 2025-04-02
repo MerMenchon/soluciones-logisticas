@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import ServiceSelector from "@/components/ServiceSelector";
@@ -20,8 +19,6 @@ const LogisticsForm = () => {
     destinationCity,
     useDestinationAsStorage,
     productType,
-    weight,
-    volume,
     cargoValue,
     shippingTime,
     email,
@@ -36,8 +33,6 @@ const LogisticsForm = () => {
     handleUseOriginAsStorageChange,
     handleUseDestinationAsStorageChange,
     setProductType,
-    setWeight,
-    setVolume,
     setCargoValue,
     setShippingTime,
     setEmail,
@@ -129,10 +124,6 @@ const LogisticsForm = () => {
           <ProductDetails 
             productType={productType}
             onProductTypeChange={setProductType}
-            weight={weight}
-            onWeightChange={setWeight}
-            volume={volume}
-            onVolumeChange={setVolume}
             value={cargoValue}
             onValueChange={setCargoValue}
             shippingTime={shippingTime}
