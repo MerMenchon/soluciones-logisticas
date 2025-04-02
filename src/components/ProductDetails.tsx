@@ -288,44 +288,40 @@ const ProductDetails = ({
           <label htmlFor="quantity" className="block text-sm font-medium text-agri-secondary mb-1">
             Cantidad *
           </label>
-          <div className="flex items-center gap-2">
-            <div className="w-1/3">
-              <Input
-                id="quantity"
-                placeholder="0.00"
-                value={quantity}
-                onChange={handleQuantityChange}
-                className="w-full"
-                required
-              />
-            </div>
+          <div className="flex items-center gap-1">
+            <Input
+              id="quantity"
+              placeholder="0.00"
+              value={quantity}
+              onChange={handleQuantityChange}
+              className="w-32"
+              required
+            />
             
-            <div className="w-2/3">
-              {isLoadingQuantityUnits ? (
-                <div className="text-sm text-muted-foreground py-2">Cargando...</div>
-              ) : (
-                <ToggleGroup 
-                  type="single" 
-                  value={quantityUnit}
-                  onValueChange={(value) => {
-                    if (value) onQuantityUnitChange(value);
-                  }}
-                  className="flex gap-1"
-                >
-                  {quantityUnitOptions.map((unit) => (
-                    <ToggleGroupItem 
-                      key={unit} 
-                      value={unit} 
-                      aria-label={unit}
-                      variant="bordered"
-                      className="rounded-md text-xs px-2 py-1 border border-agri-light"
-                    >
-                      {unit}
-                    </ToggleGroupItem>
-                  ))}
-                </ToggleGroup>
-              )}
-            </div>
+            {isLoadingQuantityUnits ? (
+              <div className="text-sm text-muted-foreground py-2 ml-2">Cargando...</div>
+            ) : (
+              <ToggleGroup 
+                type="single" 
+                value={quantityUnit}
+                onValueChange={(value) => {
+                  if (value) onQuantityUnitChange(value);
+                }}
+                className="flex flex-wrap gap-1 ml-2"
+              >
+                {quantityUnitOptions.map((unit) => (
+                  <ToggleGroupItem 
+                    key={unit} 
+                    value={unit} 
+                    aria-label={unit}
+                    variant="bordered"
+                    className="rounded-md text-xs px-2 py-1 border border-agri-light"
+                  >
+                    {unit}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
+            )}
           </div>
         </div>
         
