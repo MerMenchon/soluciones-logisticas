@@ -88,6 +88,9 @@ interface FormContextType {
   // Form submission
   handleSubmit: (e: React.FormEvent) => Promise<void>;
   resetForm: () => void;
+  
+  // Form validation
+  validateForm: () => string | null;
 }
 
 // Create the context
@@ -231,6 +234,10 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (!cargoValue || parseFloat(cargoValue) <= 0) {
       return "Debe ingresar un valor de carga válido (mayor a cero)";
+    }
+
+    if (!shippingTime) {
+      return "Debe seleccionar una fecha de inicio";
     }
 
     return null;
@@ -381,6 +388,9 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
         resetForm,
         confirmRequest,
         cancelRequest,
+        
+        // Form validation
+        validateForm,
       }}
     >
       {children}

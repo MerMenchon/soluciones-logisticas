@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import ServiceSelector from "@/components/ServiceSelector";
 import LocationSelector from "@/components/LocationSelector";
@@ -57,7 +56,32 @@ const LogisticsForm = () => {
     setAdditionalInfo,
     category,
     setCategory,
+    validateForm,
   } = useFormContext();
+
+  // Nuevo estado para controlar si el formulario es válido
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  // Efecto para validar el formulario cada vez que cambian los valores relevantes
+  useEffect(() => {
+    const isValid = validateForm() === null;
+    setIsFormValid(isValid);
+  }, [
+    selectedService,
+    storageProvince,
+    storageCity,
+    originProvince,
+    originCity,
+    destinationProvince,
+    destinationCity,
+    productType,
+    description,
+    quantity,
+    quantityUnit,
+    cargoValue,
+    shippingTime,
+    validateForm
+  ]);
 
   // For date picker
   const selectedDate = shippingTime ? new Date(shippingTime) : undefined;
@@ -222,7 +246,7 @@ const LogisticsForm = () => {
             <Button
               type="submit"
               className="reference-form-button"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !isFormValid}
             >
               {isSubmitting ? (
                 <>
