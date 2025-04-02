@@ -69,7 +69,7 @@ const CitySelector = ({
             <SelectItem key={city.ciudad} value={city.ciudad} className="flex justify-between">
               <div className="flex items-center justify-between w-full">
                 <span>{city.ciudad}</span>
-                {(type === "storage" || shouldShowStorageInfo) && city.hasStorage && (
+                {(type !== "storage" && shouldShowStorageInfo) && city.hasStorage && (
                   <Badge variant="outline" className="ml-2 bg-green-50 text-green-600 border-green-200">
                     Almacenamiento
                   </Badge>
