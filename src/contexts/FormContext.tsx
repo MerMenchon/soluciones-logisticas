@@ -30,6 +30,7 @@ interface FormContextType {
   
   // Product details
   productType: string;
+  description: string;
   weight: string;
   volume: string;
   cargoValue: string;
@@ -50,6 +51,7 @@ interface FormContextType {
   handleUseOriginAsStorageChange: (checked: boolean) => void;
   handleUseDestinationAsStorageChange: (checked: boolean) => void;
   setProductType: (type: string) => void;
+  setDescription: (description: string) => void;
   setWeight: (weight: string) => void;
   setVolume: (volume: string) => void;
   setCargoValue: (value: string) => void;
@@ -93,6 +95,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   
   // Product details
   const [productType, setProductType] = useState("");
+  const [description, setDescription] = useState("");
   const [weight, setWeight] = useState("");
   const [volume, setVolume] = useState("");
   const [cargoValue, setCargoValue] = useState("");
@@ -117,6 +120,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setUseDestinationAsStorage(false);
     
     setProductType("");
+    setDescription("");
     setWeight("");
     setVolume("");
     setCargoValue("");
@@ -267,6 +271,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       "destino provincia": destinationProvince || null,
       "destino ciudad": destinationCity || null,
       "Tipo Producto": productType || null,
+      "Descripción": description || null,
       "Tiempo de Envío": shippingTime || null,
       "Peso (kg)": weight ? parseFloat(weight) : null,
       "Volumen": volume ? parseFloat(volume) : null,
@@ -469,6 +474,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         destinationCity,
         useDestinationAsStorage,
         productType,
+        description,
         weight,
         volume,
         cargoValue,
@@ -485,6 +491,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         handleUseOriginAsStorageChange,
         handleUseDestinationAsStorageChange,
         setProductType,
+        setDescription,
         setWeight,
         setVolume,
         setCargoValue,

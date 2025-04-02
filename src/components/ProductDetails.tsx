@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Package } from "lucide-react";
@@ -8,6 +7,8 @@ import { fetchShippingTimes } from "@/data/locations";
 interface ProductDetailsProps {
   productType: string;
   onProductTypeChange: (type: string) => void;
+  description: string;
+  onDescriptionChange: (description: string) => void;
   weight: string;
   onWeightChange: (weight: string) => void;
   volume: string;
@@ -21,6 +22,8 @@ interface ProductDetailsProps {
 const ProductDetails = ({
   productType,
   onProductTypeChange,
+  description,
+  onDescriptionChange,
   weight,
   onWeightChange,
   volume,
@@ -138,6 +141,14 @@ const ProductDetails = ({
     }
   };
 
+  // Handle description input with 100 character limit
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDescription = e.target.value;
+    if (newDescription.length <= 100) {
+      onDescriptionChange(newDescription);
+    }
+  };
+
   return (
     <div className="form-section">
       <h2 className="form-title">
@@ -167,7 +178,25 @@ const ProductDetails = ({
             ))}
           </select>
         </div>
-        
+
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium text-agri-secondary mb-1">
+            Descripción del producto
+          </label>
+          <Input
+            id="description"
+            type="text"
+            placeholder="Describa brevemente su producto"
+            value={description}
+            onChange={handleDescriptionChange}
+            maxLength={100}
+            className="w-full"
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            Máximo 100 caracteres
+          </p>
+        </div>
+
         <div>
           <label htmlFor="shippingTime" className="block text-sm font-medium text-agri-secondary mb-1">
             Tiempo de envío estimado

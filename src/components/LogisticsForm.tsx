@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import ServiceSelector from "@/components/ServiceSelector";
@@ -43,7 +42,9 @@ const LogisticsForm = () => {
     setEmail,
     setAdditionalInfo,
     resetForm,
-    handleSubmit
+    handleSubmit,
+    description,
+    setDescription,
   } = useFormContext();
 
   return (
@@ -131,6 +132,8 @@ const LogisticsForm = () => {
             onValueChange={setCargoValue}
             shippingTime={shippingTime}
             onShippingTimeChange={setShippingTime}
+            description={description}
+            onDescriptionChange={setDescription}
           />
           
           <ContactDetails
