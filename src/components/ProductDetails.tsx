@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Package, Calendar } from "lucide-react";
@@ -227,21 +228,6 @@ const ProductDetails = ({
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-agri-secondary mb-1">
-            Descripción del producto
-          </label>
-          <Input
-            id="description"
-            type="text"
-            placeholder="Describa brevemente su producto"
-            value={description}
-            onChange={handleDescriptionChange}
-            maxLength={100}
-            className="w-full"
-          />
-        </div>
-
-        <div>
           <label htmlFor="presentation" className="block text-sm font-medium text-agri-secondary mb-1">
             Presentación
           </label>
@@ -347,9 +333,25 @@ const ProductDetails = ({
             </div>
           </div>
         </div>
+
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium text-agri-secondary mb-1">
+            Descripción del producto
+          </label>
+          <Input
+            id="description"
+            type="text"
+            placeholder="Describa brevemente su producto"
+            value={description}
+            onChange={handleDescriptionChange}
+            maxLength={100}
+            className="w-full"
+          />
+        </div>
       </div>
     </div>
   );
 };
 
 export default ProductDetails;
+
