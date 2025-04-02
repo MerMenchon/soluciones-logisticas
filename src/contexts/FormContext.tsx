@@ -235,7 +235,7 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Add validation for description when product type is "Otro"
     if (productType === "Otro" && !description.trim()) {
-      return "Debe ingresar una descripción del producto";
+      return "La descripción del producto es obligatoria";
     }
 
     if (!quantity || parseFloat(quantity) <= 0) {

@@ -406,7 +406,7 @@ const ProductDetails = ({
           />
           {isDescriptionRequired && !description && (
             <p className="text-sm text-red-500 mt-1">
-              La descripción es obligatoria cuando el tipo de producto es "Otro"
+              La descripción del producto es obligatoria
             </p>
           )}
         </div>
