@@ -10,6 +10,7 @@ import { useFormContext } from "@/contexts/FormContext";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 
 // Define the ServiceType to match the one in ServiceSelector
 type ServiceType = "storage" | "transport" | "both";
@@ -54,6 +55,8 @@ const LogisticsForm = () => {
     setQuantity,
     quantityUnit,
     setQuantityUnit,
+    setEmail,
+    setAdditionalInfo,
   } = useFormContext();
 
   // For date picker
@@ -93,7 +96,7 @@ const LogisticsForm = () => {
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
+              <CalendarComponent
                 mode="single"
                 selected={selectedDate}
                 onSelect={handleDateSelect}
