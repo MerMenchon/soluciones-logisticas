@@ -20,6 +20,9 @@ const ProvinceSelector = ({
   isLoading,
   onChange,
 }: ProvinceSelectorProps) => {
+  // Create a Set to ensure uniqueness, then convert back to array
+  const uniqueProvinces = [...new Set(provinces)];
+  
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
@@ -34,7 +37,7 @@ const ProvinceSelector = ({
           <SelectValue placeholder={isLoading ? "Cargando provincias..." : "Seleccione provincia"} />
         </SelectTrigger>
         <SelectContent>
-          {provinces.map((provincia) => (
+          {uniqueProvinces.map((provincia) => (
             <SelectItem key={provincia} value={provincia}>
               {provincia}
             </SelectItem>

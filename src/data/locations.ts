@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 
 // Define types for locations
@@ -37,23 +36,24 @@ export const fetchProvinces = async (): Promise<Province[]> => {
     // Parse CSV to extract provinces
     const rows = csvText.split('\n');
     
-    // Skip header row and map to Province objects
+    // Skip header row and extract unique province names
     // Assuming the CSV structure has province names in the first column
-    const provinces = rows
-      .slice(1) // Skip header row
-      .map(row => {
-        const columns = row.split(',');
-        const provinceName = columns[0]?.replace(/"/g, '').trim();
-        
-        if (!provinceName) return null;
-        
-        return {
-          value: provinceName.toLowerCase().replace(/\s+/g, '-'),
-          label: provinceName,
-          cities: [] // Cities will be fetched separately
-        };
-      })
-      .filter(Boolean) as Province[];
+    const provinceSet = new Set<string>();
+    
+    rows.slice(1).forEach(row => {
+      const columns = row.split(',');
+      const provinceName = columns[0]?.replace(/"/g, '').trim();
+      if (provinceName) {
+        provinceSet.add(provinceName);
+      }
+    });
+    
+    // Convert the set to an array of Province objects
+    const provinces = Array.from(provinceSet).map(provinceName => ({
+      value: provinceName.toLowerCase().replace(/\s+/g, '-'),
+      label: provinceName,
+      cities: [] // Cities will be fetched separately
+    }));
     
     return provinces;
   } catch (error) {
@@ -158,7 +158,7 @@ export const fetchCitiesForProvince = async (provinceValue: string): Promise<Cit
 // Legacy functions for compatibility with existing code
 export const getProvincias = async (): Promise<string[]> => {
   const provinces = await fetchProvinces();
-  return provinces.map(p => p.label);
+  return [...new Set(provinces.map(p => p.label))]; // Ensure unique values
 };
 
 export const getCiudades = async (provincia: string): Promise<Location[]> => {
