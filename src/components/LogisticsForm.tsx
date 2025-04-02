@@ -6,8 +6,6 @@ import ProductDetails from "@/components/ProductDetails";
 import ContactDetails from "@/components/ContactDetails";
 import { RotateCcw, Send, Warehouse, Truck, Calendar } from "lucide-react";
 import { useFormContext } from "@/contexts/FormContext";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 
@@ -78,38 +76,29 @@ const LogisticsForm = () => {
         onSelectService={useFormContext().setSelectedService} 
       />
 
-      {/* Date Selector */}
+      {/* Date Selector - Now showing calendar directly */}
       <div className="form-section">
         <h2 className="form-title">
           <Calendar className="w-5 h-5" />
           <span>Fecha de inicio de la solicitud</span>
         </h2>
         <div className="space-y-4">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                id="shippingDate"
-                variant="outline"
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !selectedDate && "text-muted-foreground"
-                )}
-              >
-                <Calendar className="mr-2 h-4 w-4" />
-                {selectedDate ? format(selectedDate, "PPP") : <span>Seleccione una fecha</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <CalendarComponent
-                mode="single"
-                selected={selectedDate}
-                onSelect={handleDateSelect}
-                disabled={disabledDays}
-                initialFocus
-                className={cn("p-3 pointer-events-auto")}
-              />
-            </PopoverContent>
-          </Popover>
+          <div className="bg-white border rounded-md shadow-sm p-3">
+            <CalendarComponent
+              mode="single"
+              selected={selectedDate}
+              onSelect={handleDateSelect}
+              disabled={disabledDays}
+              initialFocus
+              className="mx-auto"
+            />
+            <div className="pt-2 text-center text-sm text-muted-foreground">
+              {selectedDate ? 
+                <p>Fecha seleccionada: {format(selectedDate, "PPP")}</p> : 
+                <p>Seleccione una fecha para iniciar</p>
+              }
+            </div>
+          </div>
         </div>
       </div>
 
