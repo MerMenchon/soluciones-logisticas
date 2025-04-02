@@ -1,4 +1,3 @@
-
 // Fetch presentations from Google Sheets
 export const fetchPresentations = async (): Promise<string[]> => {
   try {
@@ -106,6 +105,65 @@ export const fetchQuantityUnits = async (): Promise<string[]> => {
       "Unidades",
       "Pallets",
       "Bultos"
+    ];
+  }
+};
+
+// Fetch categories from Google Sheets
+export const fetchCategories = async (): Promise<string[]> => {
+  try {
+    // Google Sheets needs to be published to the web as CSV
+    const sheetId = "1VYDCQfaz3-7IrhPUGpAO4UBLMDR1mEyl6UCHU1hznwQ";
+    const sheetName = "CATEGORIA"; // Using the CATEGORIA sheet
+    const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+    
+    const response = await fetch(sheetUrl);
+    
+    if (!response.ok) {
+      throw new Error("Error al cargar las categorías");
+    }
+    
+    const csvText = await response.text();
+    
+    // Parse CSV to extract categories
+    const rows = csvText.split('\n');
+    
+    // Check if rows exist
+    if (rows.length === 0) {
+      throw new Error("No se encontraron datos en la hoja");
+    }
+    
+    // Find the column index that contains "CATEGORIA" header
+    const headers = rows[0].split(',');
+    const categoryColumnIndex = headers.findIndex(
+      header => header.trim().replace(/"/g, '').toUpperCase() === 'CATEGORIA'
+    );
+    
+    // If column is not found, fallback to first column
+    const columnIndex = categoryColumnIndex !== -1 ? categoryColumnIndex : 0;
+    
+    // Extract all data from the category column
+    const categories = rows
+      .slice(1) // Skip header row
+      .map(row => {
+        const columns = row.split(',');
+        return columnIndex < columns.length ? columns[columnIndex]?.replace(/"/g, '').trim() : null;
+      })
+      .filter(category => category && category.length > 0) // Filter out empty values
+      .filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates
+    
+    return categories;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    // Fallback to default options if fetch fails
+    return [
+      "Alimentos",
+      "Bebidas",
+      "Electrónica",
+      "Farmacéutica",
+      "Textil",
+      "Química",
+      "Otro"
     ];
   }
 };

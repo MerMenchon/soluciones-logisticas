@@ -1,4 +1,3 @@
-
 import React, {
   createContext,
   useState,
@@ -71,6 +70,7 @@ interface FormContextType {
   shippingTime: string;
   quantity: string;
   quantityUnit: string;
+  category: string;
 
   // Contact setters
   setEmail: (email: string) => void;
@@ -85,6 +85,7 @@ interface FormContextType {
   setShippingTime: (time: string) => void;
   setQuantity: (quantity: string) => void;
   setQuantityUnit: (unit: string) => void;
+  setCategory: (category: string) => void;
 
   // Form submission
   handleSubmit: (e: React.FormEvent) => Promise<void>;
@@ -133,6 +134,7 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
   const [shippingTime, setShippingTime] = useState("");
   const [quantity, setQuantity] = useState("");
   const [quantityUnit, setQuantityUnit] = useState("");
+  const [category, setCategory] = useState("");
 
   // Handlers for boolean changes
   const handleUseOriginAsStorageChange = (checked: boolean) => {
@@ -187,6 +189,7 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
     setShippingTime("");
     setQuantity("");
     setQuantityUnit("");
+    setCategory("");
   };
 
   // Function to validate the form
@@ -305,6 +308,7 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
     setIsSubmitting(false);
   };
 
+  // Add category to getFormData function
   const getFormData = () => {
     return {
       "Servicio": selectedService,
@@ -319,6 +323,7 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
       
       // Product details
       "Tipo de Producto": productType,
+      "Categoría": category || null,
       "Descripción": description || null,
       "Presentación": presentation || null,
       "Aclaración": clarification || null,
@@ -356,6 +361,7 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
         shippingTime,
         quantity,
         quantityUnit,
+        category,
 
         // Setters
         setSelectedService: handleServiceChange,
@@ -380,6 +386,7 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
         setShippingTime,
         setQuantity,
         setQuantityUnit,
+        setCategory,
 
         // Form submission
         handleSubmit,
