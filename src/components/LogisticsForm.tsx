@@ -200,8 +200,6 @@ const LogisticsForm = () => {
           />
           
           <ContactDetails
-            email={email}
-            onEmailChange={setEmail}
             additionalInfo={additionalInfo}
             onAdditionalInfoChange={setAdditionalInfo}
           />
