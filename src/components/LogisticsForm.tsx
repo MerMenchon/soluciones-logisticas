@@ -1,6 +1,6 @@
 
 import React from "react";
-import ServiceSelector from "./ServiceSelector";
+import ServiceSelector, { ServiceType } from "./ServiceSelector";
 import LocationSelector from "./LocationSelector";
 import ProductDetails from "./ProductDetails";
 import ContactDetails from "./ContactDetails";
@@ -66,7 +66,7 @@ const LogisticsForm = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-12">
       <ServiceSelector 
-        selectedService={selectedService} 
+        selectedService={selectedService as ServiceType} 
         onServiceChange={setSelectedService} 
       />
       
