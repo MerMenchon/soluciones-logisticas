@@ -357,7 +357,7 @@ const ProductDetails = ({
                 required
               />
               <p className="text-xs text-muted-foreground mt-1">
-                Valor numérico > 0
+                {"Valor numérico > 0"}
               </p>
             </div>
             
