@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Package, CalendarIcon } from "lucide-react";
@@ -13,6 +12,13 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ProductDetailsProps {
   productType: string;
@@ -202,23 +208,26 @@ const ProductDetails = ({
           <label htmlFor="productType" className="block text-sm font-medium text-agri-secondary mb-1">
             Tipo de producto *
           </label>
-          <select
-            id="productType"
-            value={productType}
-            onChange={(e) => onProductTypeChange(e.target.value)}
-            className="w-full h-10 px-3 py-2 text-sm border border-input rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            required
+          <Select 
+            value={productType} 
+            onValueChange={onProductTypeChange}
             disabled={isLoadingProducts}
           >
-            <option value="" disabled>
-              {isLoadingProducts ? "Cargando tipos de producto..." : "Seleccione un tipo de producto"}
-            </option>
-            {productOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder={
+                isLoadingProducts 
+                  ? "Cargando tipos de producto..." 
+                  : "Seleccione un tipo de producto"
+              } />
+            </SelectTrigger>
+            <SelectContent>
+              {productOptions.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div>
@@ -243,22 +252,26 @@ const ProductDetails = ({
           <label htmlFor="presentation" className="block text-sm font-medium text-agri-secondary mb-1">
             Presentación
           </label>
-          <select
-            id="presentation"
-            value={presentation}
-            onChange={(e) => onPresentationChange(e.target.value)}
-            className="w-full h-10 px-3 py-2 text-sm border border-input rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          <Select 
+            value={presentation} 
+            onValueChange={onPresentationChange}
             disabled={isLoadingPresentations}
           >
-            <option value="" disabled>
-              {isLoadingPresentations ? "Cargando tipos de presentación..." : "Seleccione un tipo de presentación"}
-            </option>
-            {presentationOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder={
+                isLoadingPresentations 
+                  ? "Cargando tipos de presentación..." 
+                  : "Seleccione un tipo de presentación"
+              } />
+            </SelectTrigger>
+            <SelectContent>
+              {presentationOptions.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {showClarificationInput && (
