@@ -5,7 +5,7 @@ import ServiceSelector from "@/components/ServiceSelector";
 import LocationSelector from "@/components/LocationSelector";
 import ProductDetails from "@/components/ProductDetails";
 import ContactDetails from "@/components/ContactDetails";
-import { RotateCcw, Send, Warehouse, Truck, Calendar, MapPin, Navigation } from "lucide-react";
+import { RotateCcw, Send, Warehouse, Truck, Calendar, MapPin } from "lucide-react";
 import { useFormContext } from "@/contexts/FormContext";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -203,7 +203,7 @@ const LogisticsForm = () => {
                 
                 <div className="space-y-6">
                   <h3 className="font-medium text-base flex items-center">
-                    <Navigation className="w-4 h-4 mr-2" />
+                    <MapPin className="w-4 h-4 mr-2" />
                     Destino
                   </h3>
                   <LocationSelector
