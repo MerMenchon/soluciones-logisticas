@@ -346,8 +346,8 @@ const ProductDetails = ({
           <label htmlFor="quantity" className="block text-sm font-medium text-agri-secondary mb-1">
             Cantidad *
           </label>
-          <div className="flex gap-4 items-start">
-            <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <div className="w-1/3">
               <Input
                 id="quantity"
                 placeholder="0.00"
@@ -357,13 +357,13 @@ const ProductDetails = ({
                 required
               />
               <p className="text-xs text-muted-foreground mt-1">
-                Ingrese un valor numérico mayor a 0
+                Valor numérico > 0
               </p>
             </div>
             
-            <div className="flex-1">
+            <div className="w-2/3">
               {isLoadingQuantityUnits ? (
-                <div className="text-sm text-muted-foreground py-2">Cargando unidades...</div>
+                <div className="text-sm text-muted-foreground py-2">Cargando...</div>
               ) : (
                 <ToggleGroup 
                   type="single" 
@@ -371,14 +371,15 @@ const ProductDetails = ({
                   onValueChange={(value) => {
                     if (value) onQuantityUnitChange(value);
                   }}
-                  className="flex flex-wrap gap-2"
+                  className="flex justify-start"
                 >
-                  {quantityUnitOptions.map((unit) => (
+                  {quantityUnitOptions.slice(0, 3).map((unit) => (
                     <ToggleGroupItem 
                       key={unit} 
                       value={unit} 
                       aria-label={unit}
-                      className="px-4 py-2 rounded-md text-sm"
+                      variant="bordered"
+                      className="rounded-md text-sm border border-agri-light"
                     >
                       {unit}
                     </ToggleGroupItem>
