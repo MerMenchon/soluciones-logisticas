@@ -5,7 +5,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 interface ProvinceSelectorProps {
   id: string;
-  label: string;
   value: string;
   provinces: string[];
   isLoading: boolean;
@@ -14,18 +13,15 @@ interface ProvinceSelectorProps {
 
 const ProvinceSelector = ({
   id,
-  label,
   value,
   provinces,
   isLoading,
   onChange,
 }: ProvinceSelectorProps) => {
-  // Note: The uniqueProvinces Set is no longer needed here as we're already ensuring uniqueness in locations.ts
-  
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <Label htmlFor={id}>{label} - Provincia</Label>
+        <Label htmlFor={id}>Provincia</Label>
       </div>
       <Select 
         value={value} 

@@ -56,7 +56,6 @@ const LocationSelector = ({
     <div className="grid gap-4">
       <ProvinceSelector
         id={`${type}-provincia`}
-        label={label}
         value={provinceValue}
         provinces={provinces}
         isLoading={isLoadingProvinces}
@@ -65,7 +64,6 @@ const LocationSelector = ({
 
       <CitySelector
         id={`${type}-ciudad`}
-        label={label}
         value={cityValue}
         cities={cities}
         provinceValue={provinceValue}

@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 
 interface CitySelectorProps {
   id: string;
-  label: string;
   value: string;
   cities: Location[];
   provinceValue: string;
@@ -19,7 +18,6 @@ interface CitySelectorProps {
 
 const CitySelector = ({
   id,
-  label,
   value,
   cities,
   provinceValue,
@@ -41,7 +39,7 @@ const CitySelector = ({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <Label htmlFor={id}>{label} - Ciudad</Label>
+        <Label htmlFor={id}>Ciudad</Label>
       </div>
       <Select 
         value={value} 

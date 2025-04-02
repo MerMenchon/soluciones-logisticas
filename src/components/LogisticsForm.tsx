@@ -5,7 +5,7 @@ import ServiceSelector from "@/components/ServiceSelector";
 import LocationSelector from "@/components/LocationSelector";
 import ProductDetails from "@/components/ProductDetails";
 import ContactDetails from "@/components/ContactDetails";
-import { RotateCcw, Send, Warehouse, Truck, Calendar } from "lucide-react";
+import { RotateCcw, Send, Warehouse, Truck, Calendar, MapPin, Navigation } from "lucide-react";
 import { useFormContext } from "@/contexts/FormContext";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -178,39 +178,51 @@ const LogisticsForm = () => {
               </h2>
               
               <div className="reference-form-cols-2">
-                <LocationSelector
-                  type="origin"
-                  provinceValue={originProvince}
-                  cityValue={originCity}
-                  onProvinceChange={setOriginProvince}
-                  onCityChange={setOriginCity}
-                  label="Origen"
-                  useAsStorage={useOriginAsStorage}
-                  onUseAsStorageChange={
-                    selectedService === "both" 
-                      ? handleUseOriginAsStorageChange 
-                      : undefined
-                  }
-                  estimatedTime={useOriginAsStorage ? estimatedStorageTime : undefined}
-                  onEstimatedTimeChange={useOriginAsStorage ? setEstimatedStorageTime : undefined}
-                />
+                <div className="space-y-6">
+                  <h3 className="font-medium text-base flex items-center">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Origen
+                  </h3>
+                  <LocationSelector
+                    type="origin"
+                    provinceValue={originProvince}
+                    cityValue={originCity}
+                    onProvinceChange={setOriginProvince}
+                    onCityChange={setOriginCity}
+                    label="Origen"
+                    useAsStorage={useOriginAsStorage}
+                    onUseAsStorageChange={
+                      selectedService === "both" 
+                        ? handleUseOriginAsStorageChange 
+                        : undefined
+                    }
+                    estimatedTime={useOriginAsStorage ? estimatedStorageTime : undefined}
+                    onEstimatedTimeChange={useOriginAsStorage ? setEstimatedStorageTime : undefined}
+                  />
+                </div>
                 
-                <LocationSelector
-                  type="destination"
-                  provinceValue={destinationProvince}
-                  cityValue={destinationCity}
-                  onProvinceChange={setDestinationProvince}
-                  onCityChange={setDestinationCity}
-                  label="Destino"
-                  useAsStorage={useDestinationAsStorage}
-                  onUseAsStorageChange={
-                    selectedService === "both"
-                      ? handleUseDestinationAsStorageChange
-                      : undefined
-                  }
-                  estimatedTime={useDestinationAsStorage ? estimatedStorageTime : undefined}
-                  onEstimatedTimeChange={useDestinationAsStorage ? setEstimatedStorageTime : undefined}
-                />
+                <div className="space-y-6">
+                  <h3 className="font-medium text-base flex items-center">
+                    <Navigation className="w-4 h-4 mr-2" />
+                    Destino
+                  </h3>
+                  <LocationSelector
+                    type="destination"
+                    provinceValue={destinationProvince}
+                    cityValue={destinationCity}
+                    onProvinceChange={setDestinationProvince}
+                    onCityChange={setDestinationCity}
+                    label="Destino"
+                    useAsStorage={useDestinationAsStorage}
+                    onUseAsStorageChange={
+                      selectedService === "both"
+                        ? handleUseDestinationAsStorageChange
+                        : undefined
+                    }
+                    estimatedTime={useDestinationAsStorage ? estimatedStorageTime : undefined}
+                    onEstimatedTimeChange={useDestinationAsStorage ? setEstimatedStorageTime : undefined}
+                  />
+                </div>
               </div>
             </div>
           )}
