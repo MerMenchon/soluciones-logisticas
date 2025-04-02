@@ -1,10 +1,11 @@
+
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { FormState } from "../types";
 import { validateForm, getFormData } from "../validation";
 
-// Webhook configuration - you can replace this with your actual webhook URL
-const WEBHOOK_URL = "https://webhook.site/your-unique-url"; // Replace with actual webhook
+// Webhook configuration with the specified URL
+const WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/recepcionFormulario";
 
 interface SubmissionState {
   isSubmitting: boolean;
@@ -40,9 +41,11 @@ export const useFormSubmission = (formState: FormState) => {
     return validateForm(formState);
   };
 
-  // New function to send data to webhook
+  // Function to send data to webhook
   const sendToWebhook = async (formData: any) => {
     try {
+      console.log("Sending data to webhook:", JSON.stringify(formData, null, 2));
+      
       const response = await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: {
@@ -52,7 +55,7 @@ export const useFormSubmission = (formState: FormState) => {
       });
 
       if (!response.ok) {
-        throw new Error('Webhook response was not ok');
+        throw new Error(`Webhook response was not ok: ${response.status}`);
       }
 
       return await response.json();
@@ -79,43 +82,46 @@ export const useFormSubmission = (formState: FormState) => {
     updateSubmissionState({ isSubmitting: true });
 
     try {
-      // Prepare full form data
+      // Prepare full form data with proper structure
       const formData = {
         service: {
           type: formState.selectedService,
         },
         locations: {
           storage: {
-            province: formState.storageProvince,
-            city: formState.storageCity,
+            province: formState.selectedService === "storage" || formState.selectedService === "both" ? formState.storageProvince : null,
+            city: formState.selectedService === "storage" || formState.selectedService === "both" ? formState.storageCity : null,
+            estimatedStorageTime: formState.selectedService === "storage" || formState.selectedService === "both" 
+              ? (formState.estimatedStorageTime ? parseInt(formState.estimatedStorageTime) : null) 
+              : null
           },
           transport: {
             origin: {
-              province: formState.originProvince,
-              city: formState.originCity,
+              province: formState.selectedService === "transport" || formState.selectedService === "both" ? formState.originProvince : null,
+              city: formState.selectedService === "transport" || formState.selectedService === "both" ? formState.originCity : null,
             },
             destination: {
-              province: formState.destinationProvince,
-              city: formState.destinationCity,
+              province: formState.selectedService === "transport" || formState.selectedService === "both" ? formState.destinationProvince : null,
+              city: formState.selectedService === "transport" || formState.selectedService === "both" ? formState.destinationCity : null,
             },
           },
         },
         product: {
           type: formState.productType,
-          category: formState.category,
-          description: formState.description,
+          category: formState.category || null,
+          description: formState.description || null,
           presentation: formState.presentation,
-          clarification: formState.clarification,
+          clarification: formState.clarification || null,
           quantity: {
-            value: formState.quantity,
-            unit: formState.quantityUnit,
+            value: formState.quantity ? parseFloat(formState.quantity) : null,
+            unit: formState.quantityUnit || null,
           },
-          value: formState.cargoValue,
+          value: formState.cargoValue ? parseFloat(formState.cargoValue) : null,
         },
         shipping: {
-          time: formState.shippingTime,
+          time: formState.shippingTime || null,
         },
-        additionalInfo: formState.additionalInfo,
+        additionalInfo: formState.additionalInfo || null,
       };
 
       // Send to webhook
@@ -133,6 +139,7 @@ export const useFormSubmission = (formState: FormState) => {
       });
     } catch (error) {
       // Handle webhook submission error
+      console.error("Webhook submission error:", error);
       toast({
         title: "Error",
         description: "No se pudo enviar la consulta. Por favor, inténtelo de nuevo.",
