@@ -59,7 +59,6 @@ interface FormContextType {
   cancelRequest: () => void;
 
   // Contact details
-  email: string;
   additionalInfo: string;
 
   // Product details
@@ -74,7 +73,6 @@ interface FormContextType {
   category: string;
 
   // Contact setters
-  setEmail: (email: string) => void;
   setAdditionalInfo: (info: string) => void;
 
   // Product details setters
@@ -123,7 +121,6 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [distanceValue, setDistanceValue] = useState<string | null>(null);
-  const [email, setEmail] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
 
   // Product details
@@ -180,7 +177,6 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
     setFormSubmitted(false);
     setShowConfirmation(false);
     setDistanceValue(null);
-    setEmail("");
     setAdditionalInfo("");
     setProductType("");
     setDescription("");
@@ -236,10 +232,6 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (!cargoValue || parseFloat(cargoValue) <= 0) {
       return "Debe ingresar un valor de carga válido (mayor a cero)";
-    }
-
-    if (!email) {
-      return "Debe ingresar un email";
     }
 
     return null;
@@ -318,7 +310,6 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
       "Ciudad de Origen": originCity || null,
       "Provincia de Destino": destinationProvince || null,
       "Ciudad de Destino": destinationCity || null,
-      "Email": email,
       "Información Adicional": additionalInfo || null,
       
       // Product details
@@ -351,7 +342,6 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
         formSubmitted,
         showConfirmation,
         distanceValue,
-        email,
         additionalInfo,
         productType,
         description,
@@ -376,7 +366,6 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
         setIsSubmitting,
         setShowConfirmation,
         setDistanceValue,
-        setEmail,
         setAdditionalInfo,
         setProductType,
         setDescription,
