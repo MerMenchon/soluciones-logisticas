@@ -78,7 +78,7 @@ const LocationSelector = ({
               value={estimatedTime || ''}
               onChange={handleEstimatedTimeChange}
               placeholder="Ingrese tiempo estimado"
-              className="flex-1"
+              className="w-32"
             />
             <span className="text-sm text-muted-foreground whitespace-nowrap">días</span>
           </div>
