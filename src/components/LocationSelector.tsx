@@ -6,6 +6,8 @@ import CitySelector from "@/components/location/CitySelector";
 import StorageCheckbox from "@/components/location/StorageCheckbox";
 import StorageAlert from "@/components/location/StorageAlert";
 import { LocationSelectorProps } from "@/types/location";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const LocationSelector = ({
   type,
@@ -16,6 +18,8 @@ const LocationSelector = ({
   label,
   useAsStorage,
   onUseAsStorageChange,
+  estimatedTime,
+  onEstimatedTimeChange,
 }: LocationSelectorProps) => {
   const {
     cities,
@@ -31,6 +35,15 @@ const LocationSelector = ({
     cityValue,
     onCityChange,
   });
+
+  // Handle natural numbers only in estimated time input
+  const handleEstimatedTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow empty string or natural numbers (positive integers)
+    if (value === '' || (/^\d+$/.test(value) && parseInt(value) > 0)) {
+      onEstimatedTimeChange?.(value);
+    }
+  };
 
   return (
     <div className="grid gap-4">
@@ -53,6 +66,24 @@ const LocationSelector = ({
         type={type}
         onChange={handleCityChange}
       />
+
+      {(type === "storage" || (useAsStorage && cityValue)) && (
+        <div className="grid gap-2">
+          <Label htmlFor={`${type}-estimated-time`}>Tiempo estimado</Label>
+          <div className="flex items-center gap-2">
+            <Input
+              id={`${type}-estimated-time`}
+              type="text"
+              inputMode="numeric"
+              value={estimatedTime || ''}
+              onChange={handleEstimatedTimeChange}
+              placeholder="Ingrese tiempo estimado"
+              className="flex-1"
+            />
+            <span className="text-sm text-muted-foreground whitespace-nowrap">días</span>
+          </div>
+        </div>
+      )}
 
       {type !== "storage" && (
         <StorageCheckbox

@@ -1,3 +1,4 @@
+
 import React, {
   createContext,
   useState,
@@ -33,6 +34,7 @@ interface FormContextType {
   destinationProvince: string;
   destinationCity: string;
   useDestinationAsStorage: boolean;
+  estimatedStorageTime: string;
 
   // Location setters
   setStorageProvince: (province: string) => void;
@@ -43,6 +45,7 @@ interface FormContextType {
   setDestinationCity: (city: string) => void;
   handleUseOriginAsStorageChange: (checked: boolean) => void;
   handleUseDestinationAsStorageChange: (checked: boolean) => void;
+  setEstimatedStorageTime: (time: string) => void;
 
   // UI state
   isSubmitting: boolean;
@@ -124,6 +127,7 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [distanceValue, setDistanceValue] = useState<string | null>(null);
   const [additionalInfo, setAdditionalInfo] = useState("");
+  const [estimatedStorageTime, setEstimatedStorageTime] = useState("");
 
   // Product details
   const [productType, setProductType] = useState("");
@@ -169,6 +173,7 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
     setDestinationCity("");
     setUseOriginAsStorage(false);
     setUseDestinationAsStorage(false);
+    setEstimatedStorageTime("");
   };
 
   // Reset form
@@ -189,6 +194,7 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
     setQuantity("");
     setQuantityUnit("");
     setCategory("");
+    setEstimatedStorageTime("");
   };
 
   // Function to validate the form
@@ -201,6 +207,10 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
       if (!storageProvince || !storageCity) {
         return "Debe seleccionar provincia y ciudad de almacenamiento";
       }
+      
+      if (!estimatedStorageTime) {
+        return "Debe ingresar un tiempo estimado de almacenamiento";
+      }
     }
 
     if (selectedService === "transport") {
@@ -212,6 +222,10 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
     if (selectedService === "both") {
       if (!originProvince || !originCity || !destinationProvince || !destinationCity) {
         return "Debe seleccionar origen y destino";
+      }
+      
+      if (!estimatedStorageTime) {
+        return "Debe ingresar un tiempo estimado de almacenamiento";
       }
     }
     
@@ -312,6 +326,7 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
       "Servicio": selectedService,
       "Provincia de Almacenamiento": storageProvince || null,
       "Ciudad de Almacenamiento": storageCity || null,
+      "Tiempo Estimado de Almacenamiento (días)": estimatedStorageTime ? parseInt(estimatedStorageTime) : null,
       "Provincia de Origen": originProvince || null,
       "Ciudad de Origen": originCity || null,
       "Provincia de Destino": destinationProvince || null,
@@ -358,6 +373,7 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
         quantity,
         quantityUnit,
         category,
+        estimatedStorageTime,
 
         // Setters
         setSelectedService: handleServiceChange,
@@ -382,6 +398,7 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
         setQuantity,
         setQuantityUnit,
         setCategory,
+        setEstimatedStorageTime,
 
         // Form submission
         handleSubmit,

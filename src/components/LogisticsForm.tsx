@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import ServiceSelector from "@/components/ServiceSelector";
@@ -57,6 +58,8 @@ const LogisticsForm = () => {
     category,
     setCategory,
     validateForm,
+    estimatedStorageTime,
+    setEstimatedStorageTime,
   } = useFormContext();
 
   // Nuevo estado para controlar si el formulario es válido
@@ -80,6 +83,7 @@ const LogisticsForm = () => {
     quantityUnit,
     cargoValue,
     shippingTime,
+    estimatedStorageTime,
     validateForm
   ]);
 
@@ -159,6 +163,8 @@ const LogisticsForm = () => {
                   onProvinceChange={setStorageProvince}
                   onCityChange={setStorageCity}
                   label="Almacenamiento"
+                  estimatedTime={estimatedStorageTime}
+                  onEstimatedTimeChange={setEstimatedStorageTime}
                 />
               )}
             </div>
@@ -185,6 +191,8 @@ const LogisticsForm = () => {
                       ? handleUseOriginAsStorageChange 
                       : undefined
                   }
+                  estimatedTime={useOriginAsStorage ? estimatedStorageTime : undefined}
+                  onEstimatedTimeChange={useOriginAsStorage ? setEstimatedStorageTime : undefined}
                 />
                 
                 <LocationSelector
@@ -200,6 +208,8 @@ const LogisticsForm = () => {
                       ? handleUseDestinationAsStorageChange
                       : undefined
                   }
+                  estimatedTime={useDestinationAsStorage ? estimatedStorageTime : undefined}
+                  onEstimatedTimeChange={useDestinationAsStorage ? setEstimatedStorageTime : undefined}
                 />
               </div>
             </div>

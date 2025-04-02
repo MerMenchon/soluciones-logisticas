@@ -8,6 +8,8 @@ export interface LocationSelectorProps {
   label: string;
   useAsStorage?: boolean;
   onUseAsStorageChange?: (value: boolean) => void;
+  estimatedTime?: string;
+  onEstimatedTimeChange?: (value: string) => void;
 }
 
 export interface UseLocationSelectHookParams {
