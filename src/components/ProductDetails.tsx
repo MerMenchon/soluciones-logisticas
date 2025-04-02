@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Package, CalendarIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { fetchPresentations, fetchQuantityUnits } from "@/data/locations";
+import { fetchPresentations, fetchQuantityUnits, useQuantityUnits } from "@/data/locations";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -19,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface ProductDetailsProps {
   productType: string;
@@ -59,11 +61,12 @@ const ProductDetails = ({
 }: ProductDetailsProps) => {
   const [productOptions, setProductOptions] = useState<string[]>([]);
   const [presentationOptions, setPresentationOptions] = useState<string[]>([]);
-  const [quantityUnitOptions, setQuantityUnitOptions] = useState<string[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [isLoadingPresentations, setIsLoadingPresentations] = useState(true);
-  const [isLoadingQuantityUnits, setIsLoadingQuantityUnits] = useState(true);
   const { toast } = useToast();
+  
+  // Use the React Query hook for quantity units
+  const { data: quantityUnitOptions = [], isLoading: isLoadingQuantityUnits } = useQuantityUnits();
 
   useEffect(() => {
     const fetchProductTypes = async () => {
@@ -150,26 +153,8 @@ const ProductDetails = ({
       }
     };
 
-    const fetchAvailableQuantityUnits = async () => {
-      setIsLoadingQuantityUnits(true);
-      try {
-        const units = await fetchQuantityUnits();
-        setQuantityUnitOptions(units);
-      } catch (error) {
-        console.error("Error fetching quantity units:", error);
-        toast({
-          title: "Error",
-          description: "No se pudieron cargar las unidades de cantidad. Usando opciones predeterminadas.",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoadingQuantityUnits(false);
-      }
-    };
-
     fetchProductTypes();
     fetchAvailablePresentations();
-    fetchAvailableQuantityUnits();
   }, [toast]);
 
   // Handle numeric input validation
@@ -362,7 +347,7 @@ const ProductDetails = ({
           <label htmlFor="quantity" className="block text-sm font-medium text-agri-secondary mb-1">
             Cantidad *
           </label>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <div>
               <Input
                 id="quantity"
@@ -373,32 +358,40 @@ const ProductDetails = ({
                 required
               />
             </div>
-            <div>
-              <Select 
-                value={quantityUnit} 
-                onValueChange={onQuantityUnitChange}
-                disabled={isLoadingQuantityUnits}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={
-                    isLoadingQuantityUnits 
-                      ? "Cargando unidades..." 
-                      : "Seleccione una unidad"
-                  } />
-                </SelectTrigger>
-                <SelectContent>
-                  {quantityUnitOptions.map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {option}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
             Ingrese un valor numérico mayor a 0
           </p>
+        </div>
+
+        <div>
+          <label htmlFor="quantityUnit" className="block text-sm font-medium text-agri-secondary mb-1">
+            Unidad de medida *
+          </label>
+          
+          {isLoadingQuantityUnits ? (
+            <div className="text-sm text-muted-foreground py-2">Cargando unidades de medida...</div>
+          ) : (
+            <ToggleGroup 
+              type="single" 
+              value={quantityUnit}
+              onValueChange={(value) => {
+                if (value) onQuantityUnitChange(value);
+              }}
+              className="flex flex-wrap gap-2"
+            >
+              {quantityUnitOptions.map((unit) => (
+                <ToggleGroupItem 
+                  key={unit} 
+                  value={unit} 
+                  aria-label={unit}
+                  className="px-4 py-2 rounded-md text-sm"
+                >
+                  {unit}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          )}
         </div>
         
         <div>
