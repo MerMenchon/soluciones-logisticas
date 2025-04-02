@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Package, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { fetchPresentations } from "@/data/products";
-import { useQuantityUnits } from "@/hooks/useLocationData";
+import { useQuantityUnits, useCategories } from "@/hooks/useLocationData";
 import {
   Select,
   SelectContent,
@@ -31,6 +31,8 @@ interface ProductDetailsProps {
   onQuantityChange: (quantity: string) => void;
   quantityUnit: string;
   onQuantityUnitChange: (unit: string) => void;
+  category: string;
+  onCategoryChange: (category: string) => void;
 }
 
 const ProductDetails = ({
@@ -50,6 +52,8 @@ const ProductDetails = ({
   onQuantityChange,
   quantityUnit,
   onQuantityUnitChange,
+  category,
+  onCategoryChange,
 }: ProductDetailsProps) => {
   const [productOptions, setProductOptions] = useState<string[]>([]);
   const [presentationOptions, setPresentationOptions] = useState<string[]>([]);
@@ -59,6 +63,9 @@ const ProductDetails = ({
   
   // Use the React Query hook for quantity units
   const { data: quantityUnitOptions = [], isLoading: isLoadingQuantityUnits } = useQuantityUnits();
+  
+  // Use the React Query hook for categories
+  const { data: categoryOptions = [], isLoading: isLoadingCategories } = useCategories();
 
   useEffect(() => {
     const fetchProductTypes = async () => {
@@ -228,6 +235,36 @@ const ProductDetails = ({
               ))}
             </SelectContent>
           </Select>
+        </div>
+
+        <div>
+          <label htmlFor="category" className="block text-sm font-medium text-agri-secondary mb-1">
+            Categoría
+          </label>
+          {isLoadingCategories ? (
+            <div className="text-sm text-muted-foreground py-2">Cargando categorías...</div>
+          ) : (
+            <ToggleGroup 
+              type="single" 
+              value={category}
+              onValueChange={(value) => {
+                if (value) onCategoryChange(value);
+              }}
+              className="flex flex-wrap gap-2"
+            >
+              {categoryOptions.map((categoryOption) => (
+                <ToggleGroupItem 
+                  key={categoryOption} 
+                  value={categoryOption} 
+                  aria-label={categoryOption}
+                  variant="bordered"
+                  className="rounded-md text-sm px-3 py-1.5 border border-agri-light"
+                >
+                  {categoryOption}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          )}
         </div>
 
         <div>

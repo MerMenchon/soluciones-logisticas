@@ -2,7 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchProvinces } from "@/data/provinces";
 import { fetchCitiesForProvince } from "@/data/cities";
-import { fetchQuantityUnits } from "@/data/products";
+import { fetchQuantityUnits, fetchCategories } from "@/data/products";
 
 // React Query hook for provinces
 export const useProvinces = () => {
@@ -38,5 +38,13 @@ export const useQuantityUnits = () => {
   return useQuery({
     queryKey: ["quantityUnits"],
     queryFn: fetchQuantityUnits,
+  });
+};
+
+// React Query hook for categories
+export const useCategories = () => {
+  return useQuery({
+    queryKey: ["categories"],
+    queryFn: fetchCategories,
   });
 };

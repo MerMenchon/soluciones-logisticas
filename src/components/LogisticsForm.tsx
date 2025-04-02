@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import ServiceSelector from "@/components/ServiceSelector";
@@ -56,6 +57,8 @@ const LogisticsForm = () => {
     setQuantityUnit,
     setEmail,
     setAdditionalInfo,
+    category,
+    setCategory,
   } = useFormContext();
 
   // For date picker
@@ -197,6 +200,8 @@ const LogisticsForm = () => {
             onQuantityChange={setQuantity}
             quantityUnit={quantityUnit}
             onQuantityUnitChange={setQuantityUnit}
+            category={category}
+            onCategoryChange={setCategory}
           />
           
           <ContactDetails
