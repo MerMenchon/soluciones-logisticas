@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Package, Calendar } from "lucide-react";
+import { Package, Warehouse } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { fetchPresentations } from "@/data/products";
 import { useQuantityUnits, useCategories } from "@/hooks/useLocationData";
@@ -205,9 +205,9 @@ const ProductDetails = ({
   const isDescriptionRequired = productType === "Otro";
 
   return (
-    <div className="form-section">
-      <h2 className="form-title">
-        <Package className="w-5 h-5" />
+    <div className="reference-form-section">
+      <h2 className="reference-form-subtitle">
+        <Package className="w-5 h-5 inline-block mr-2" />
         <span>Detalles del Producto</span>
       </h2>
       <div className="space-y-6">
