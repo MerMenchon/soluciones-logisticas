@@ -1,4 +1,3 @@
-
 import { FormState } from "./types";
 
 export const validateForm = (formState: FormState): string | null => {
@@ -16,7 +15,8 @@ export const validateForm = (formState: FormState): string | null => {
     quantity,
     quantityUnit,
     cargoValue,
-    shippingTime
+    shippingTime,
+    presentation
   } = formState;
 
   if (!selectedService) {
@@ -56,6 +56,10 @@ export const validateForm = (formState: FormState): string | null => {
   // Add validation for description when product type is "Otro"
   if (productType === "Otro" && !description.trim()) {
     return "La descripción del producto es obligatoria";
+  }
+
+  if (!presentation.trim()) {
+    return "La presentación del producto es obligatoria";
   }
 
   if (!quantity || parseFloat(quantity) <= 0) {
