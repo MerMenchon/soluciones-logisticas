@@ -48,6 +48,8 @@ const LogisticsForm = () => {
     setDescription,
     presentation,
     setPresentation,
+    clarification,
+    setClarification,
   } = useFormContext();
 
   return (
@@ -139,6 +141,8 @@ const LogisticsForm = () => {
             onDescriptionChange={setDescription}
             presentation={presentation}
             onPresentationChange={setPresentation}
+            clarification={clarification}
+            onClarificationChange={setClarification}
           />
           
           <ContactDetails

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Package } from "lucide-react";
@@ -19,6 +20,8 @@ interface ProductDetailsProps {
   onValueChange: (value: string) => void;
   shippingTime: string;
   onShippingTimeChange: (time: string) => void;
+  clarification?: string;
+  onClarificationChange?: (clarification: string) => void;
 }
 
 const ProductDetails = ({
@@ -36,6 +39,8 @@ const ProductDetails = ({
   onValueChange,
   shippingTime,
   onShippingTimeChange,
+  clarification = "",
+  onClarificationChange = () => {},
 }: ProductDetailsProps) => {
   const [productOptions, setProductOptions] = useState<string[]>([]);
   const [presentationOptions, setPresentationOptions] = useState<string[]>([]);
@@ -173,6 +178,17 @@ const ProductDetails = ({
     }
   };
 
+  // Handle clarification input with 50 character limit
+  const handleClarificationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newClarification = e.target.value;
+    if (newClarification.length <= 50) {
+      onClarificationChange(newClarification);
+    }
+  };
+
+  // Check if the selected presentation is "Otro"
+  const showClarificationInput = presentation === "Otro";
+
   return (
     <div className="form-section">
       <h2 className="form-title">
@@ -242,6 +258,26 @@ const ProductDetails = ({
             ))}
           </select>
         </div>
+
+        {showClarificationInput && (
+          <div>
+            <label htmlFor="clarification" className="block text-sm font-medium text-agri-secondary mb-1">
+              Aclaración
+            </label>
+            <Input
+              id="clarification"
+              type="text"
+              placeholder="Especifique detalles de la presentación"
+              value={clarification}
+              onChange={handleClarificationChange}
+              maxLength={50}
+              className="w-full"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Máximo 50 caracteres
+            </p>
+          </div>
+        )}
 
         <div>
           <label htmlFor="shippingTime" className="block text-sm font-medium text-agri-secondary mb-1">
