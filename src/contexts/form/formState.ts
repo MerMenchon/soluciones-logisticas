@@ -1,7 +1,5 @@
-
 import { useState } from "react";
 import { FormState, ServiceType } from "./types";
-import { fetchDistance } from "@/utils/maps";
 import { useToast } from "@/hooks/use-toast";
 import { validateForm, getFormData } from "./validation";
 
@@ -164,30 +162,12 @@ export const useFormState = () => {
       return;
     }
 
-    if (formState.selectedService === "transport" || formState.selectedService === "both") {
-      updateFormState({ isSubmitting: true });
-      try {
-        const distance = await fetchDistance(
-          `${formState.originCity}, ${formState.originProvince}, Argentina`,
-          `${formState.destinationCity}, ${formState.destinationProvince}, Argentina`
-        );
-        updateFormState({ distanceValue: distance, showConfirmation: true });
-      } catch (error) {
-        console.error("Error fetching distance:", error);
-        toast({
-          title: "Error",
-          description: "No se pudo calcular la distancia entre los puntos.",
-          variant: "destructive",
-        });
-        updateFormState({ isSubmitting: false });
-      }
-    } else {
-      confirmRequest();
-    }
+    // Proceed directly to sending the form without distance calculation
+    submitForm();
   };
 
-  const confirmRequest = async () => {
-    updateFormState({ isSubmitting: true, showConfirmation: false });
+  const submitForm = async () => {
+    updateFormState({ isSubmitting: true });
 
     // Simulate form submission
     await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -205,8 +185,13 @@ export const useFormState = () => {
     updateFormState({ formSubmitted: true, isSubmitting: false });
   };
 
+  // These functions are no longer needed but kept for API compatibility
+  const confirmRequest = async () => {
+    submitForm();
+  };
+
   const cancelRequest = () => {
-    updateFormState({ showConfirmation: false, distanceValue: null, isSubmitting: false });
+    updateFormState({ isSubmitting: false });
   };
 
   return {

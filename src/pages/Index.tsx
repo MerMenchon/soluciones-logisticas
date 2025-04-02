@@ -1,18 +1,14 @@
+
 import React from "react";
 import { FormProvider } from "@/contexts/form";
 import LogisticsForm from "@/components/LogisticsForm";
 import SuccessMessage from "@/components/SuccessMessage";
-import ConfirmationDialog from "@/components/ConfirmationDialog";
 import { useFormContext } from "@/contexts/form";
 
 const FormContent = () => {
   const { 
     formSubmitted, 
-    resetForm, 
-    showConfirmation, 
-    distanceValue, 
-    confirmRequest,
-    cancelRequest
+    resetForm
   } = useFormContext();
 
   if (formSubmitted) {
@@ -32,14 +28,6 @@ const FormContent = () => {
         </header>
 
         <LogisticsForm />
-
-        {showConfirmation && distanceValue && (
-          <ConfirmationDialog 
-            distanceValue={distanceValue} 
-            onConfirm={confirmRequest}
-            onCancel={cancelRequest}
-          />
-        )}
       </div>
     </div>
   );

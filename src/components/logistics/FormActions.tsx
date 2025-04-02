@@ -31,7 +31,7 @@ const FormActions = ({ onReset, isSubmitting, isFormValid }: FormActionsProps) =
         {isSubmitting ? (
           <>
             <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
-            Enviando...
+            Procesando...
           </>
         ) : (
           <>
