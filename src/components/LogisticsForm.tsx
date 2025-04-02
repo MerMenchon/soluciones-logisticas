@@ -5,8 +5,11 @@ import ServiceSelector from "@/components/ServiceSelector";
 import LocationSelector from "@/components/LocationSelector";
 import ProductDetails from "@/components/ProductDetails";
 import ContactDetails from "@/components/ContactDetails";
-import { RotateCcw, Send, Warehouse, Truck } from "lucide-react";
+import { RotateCcw, Send, Warehouse, Truck, Calendar } from "lucide-react";
 import { useFormContext } from "@/contexts/FormContext";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 // Define the ServiceType to match the one in ServiceSelector
 type ServiceType = "storage" | "transport" | "both";
@@ -39,8 +42,6 @@ const LogisticsForm = () => {
     setProductType,
     setCargoValue,
     setShippingTime,
-    setEmail,
-    setAdditionalInfo,
     resetForm,
     handleSubmit,
     description,
@@ -55,8 +56,56 @@ const LogisticsForm = () => {
     setQuantityUnit,
   } = useFormContext();
 
+  // For date picker
+  const selectedDate = shippingTime ? new Date(shippingTime) : undefined;
+  const today = new Date();
+  
+  // Disable past dates
+  const disabledDays = { before: today };
+  
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      setShippingTime(date.toISOString());
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
+      {/* Date Selector at the beginning */}
+      <div className="form-section">
+        <h2 className="form-title">
+          <Calendar className="w-5 h-5" />
+          <span>Fecha de inicio de la solicitud</span>
+        </h2>
+        <div className="space-y-4">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                id="shippingDate"
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !selectedDate && "text-muted-foreground"
+                )}
+              >
+                <Calendar className="mr-2 h-4 w-4" />
+                {selectedDate ? format(selectedDate, "PPP") : <span>Seleccione una fecha</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={handleDateSelect}
+                disabled={disabledDays}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+      </div>
+
       <ServiceSelector 
         selectedService={selectedService as ServiceType} 
         onSelectService={useFormContext().setSelectedService} 
