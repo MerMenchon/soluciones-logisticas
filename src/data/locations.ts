@@ -1,281 +1,111 @@
-// This file handles fetching location and shipping time data from Google Sheets
 
-export interface Location {
-  provincia: string;
-  ciudad: string;
-  hasStorage: boolean;
+import { useQuery } from "@tanstack/react-query";
+
+// Define types for locations
+export interface Province {
+  value: string;
+  label: string;
+  cities: City[];
 }
 
-// Cache for locations once fetched
-let cachedLocations: Location[] = [];
-let cachedShippingTimes: string[] = [];
-let cachedPresentations: string[] = [];
-let cachedQuantityUnits: string[] = [];
+export interface City {
+  value: string;
+  label: string;
+}
 
-// Google Sheets ID and endpoints
-const SHEET_ID = "1VYDCQfaz3-7IrhPUGpAO4UBLMDR1mEyl6UCHU1hznwQ";
-
-export const fetchLocationsFromSheet = async (): Promise<Location[]> => {
-  if (cachedLocations.length > 0) {
-    return cachedLocations;
-  }
+// Mock API call to fetch provinces and cities
+export const fetchProvinces = async (): Promise<Province[]> => {
+  // In a real app, this would be an API call
+  await new Promise((resolve) => setTimeout(resolve, 500));
   
-  try {
-    const sheetName = "LOCALIDADES";
-    const sheetUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
-    
-    const response = await fetch(sheetUrl);
-    
-    if (!response.ok) {
-      throw new Error("Error al cargar las localidades");
-    }
-    
-    const csvText = await response.text();
-    const rows = csvText.split('\n');
-    
-    // Find column indexes
-    const headers = rows[0].split(',').map(header => header.trim().replace(/"/g, '').toUpperCase());
-    const provinciaColIndex = headers.findIndex(h => h === 'PROVINCIA');
-    const ciudadColIndex = headers.findIndex(h => h === 'CIUDAD');
-    const depositoColIndex = headers.findIndex(h => h === 'DEPOSITO');
-    
-    if (provinciaColIndex === -1 || ciudadColIndex === -1 || depositoColIndex === -1) {
-      throw new Error("No se encontraron las columnas necesarias en la hoja de localidades");
-    }
-    
-    // Parse locations
-    const locations: Location[] = [];
-    
-    for (let i = 1; i < rows.length; i++) {
-      const columns = rows[i].split(',').map(col => col.trim().replace(/"/g, ''));
-      
-      if (columns.length > Math.max(provinciaColIndex, ciudadColIndex, depositoColIndex)) {
-        const provincia = columns[provinciaColIndex];
-        const ciudad = columns[ciudadColIndex];
-        const hasStorage = columns[depositoColIndex].toUpperCase() === 'SI';
-        
-        if (provincia && ciudad) {
-          locations.push({
-            provincia,
-            ciudad,
-            hasStorage
-          });
-        }
-      }
-    }
-    
-    cachedLocations = locations;
-    return locations;
-  } catch (error) {
-    console.error("Error fetching locations:", error);
-    
-    // Fallback to hardcoded locations
-    cachedLocations = [
-      { provincia: "Buenos Aires", ciudad: "La Plata", hasStorage: true },
-      { provincia: "Buenos Aires", ciudad: "Mar del Plata", hasStorage: true },
-      { provincia: "Córdoba", ciudad: "Córdoba Capital", hasStorage: true },
-      { provincia: "Santa Fe", ciudad: "Rosario", hasStorage: true },
-      { provincia: "Mendoza", ciudad: "Mendoza Capital", hasStorage: true }
-    ];
-    
-    return cachedLocations;
-  }
+  return [
+    {
+      value: "buenos-aires",
+      label: "Buenos Aires",
+      cities: [
+        { value: "la-plata", label: "La Plata" },
+        { value: "mar-del-plata", label: "Mar del Plata" },
+        { value: "quilmes", label: "Quilmes" },
+      ],
+    },
+    {
+      value: "cordoba",
+      label: "Córdoba",
+      cities: [
+        { value: "cordoba-capital", label: "Córdoba Capital" },
+        { value: "rio-cuarto", label: "Río Cuarto" },
+        { value: "villa-maria", label: "Villa María" },
+      ],
+    },
+    {
+      value: "santa-fe",
+      label: "Santa Fe",
+      cities: [
+        { value: "rosario", label: "Rosario" },
+        { value: "santa-fe-capital", label: "Santa Fe Capital" },
+        { value: "venado-tuerto", label: "Venado Tuerto" },
+      ],
+    },
+    {
+      value: "mendoza",
+      label: "Mendoza",
+      cities: [
+        { value: "mendoza-capital", label: "Mendoza Capital" },
+        { value: "san-rafael", label: "San Rafael" },
+        { value: "godoy-cruz", label: "Godoy Cruz" },
+      ],
+    },
+  ];
 };
 
-export const fetchShippingTimes = async (): Promise<string[]> => {
-  if (cachedShippingTimes.length > 0) {
-    return cachedShippingTimes;
-  }
+// Fetch quantity units
+export const fetchQuantityUnits = async (): Promise<{ value: string; label: string }[]> => {
+  // In a real app, this would be an API call
+  await new Promise((resolve) => setTimeout(resolve, 300));
   
-  try {
-    const sheetName = "TIEMPO DE ENVIO";
-    const sheetUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
-    
-    const response = await fetch(sheetUrl);
-    
-    if (!response.ok) {
-      throw new Error("Error al cargar los tiempos de envío");
-    }
-    
-    const csvText = await response.text();
-    const rows = csvText.split('\n');
-    
-    // Find column index for shipping times
-    const headers = rows[0].split(',').map(header => header.trim().replace(/"/g, '').toUpperCase());
-    const timeColIndex = headers.findIndex(h => h === 'TIEMPO DE ENVIO');
-    
-    if (timeColIndex === -1) {
-      throw new Error("No se encontró la columna 'TIEMPO DE ENVIO'");
-    }
-    
-    // Extract shipping times
-    const shippingTimes = rows
-      .slice(1) // Skip header row
-      .map(row => {
-        const columns = row.split(',');
-        return columns[timeColIndex]?.replace(/"/g, '').trim();
-      })
-      .filter(time => time && time.length > 0) // Filter out empty values
-      .filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates
-    
-    cachedShippingTimes = shippingTimes;
-    return shippingTimes;
-  } catch (error) {
-    console.error("Error fetching shipping times:", error);
-    
-    // Fallback to hardcoded shipping times
-    cachedShippingTimes = [
-      "Menos de 24 horas",
-      "24-48 horas",
-      "2-3 días",
-      "3-5 días",
-      "1 semana",
-      "Más de 1 semana"
-    ];
-    
-    return cachedShippingTimes;
-  }
+  return [
+    { value: "kg", label: "Kilogramos (Kg)" },
+    { value: "ton", label: "Toneladas (Ton)" },
+    { value: "lt", label: "Litros (Lt)" },
+    { value: "m3", label: "Metros cúbicos (m³)" },
+    { value: "unidades", label: "Unidades" },
+    { value: "pallets", label: "Pallets" },
+    { value: "bultos", label: "Bultos" },
+  ];
 };
 
-export const fetchPresentations = async (): Promise<string[]> => {
-  if (cachedPresentations.length > 0) {
-    return cachedPresentations;
-  }
-  
-  try {
-    const sheetName = "PRESENTACION";
-    const sheetUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
-    
-    const response = await fetch(sheetUrl);
-    
-    if (!response.ok) {
-      throw new Error("Error al cargar las presentaciones");
-    }
-    
-    const csvText = await response.text();
-    const rows = csvText.split('\n');
-    
-    // Find column index for presentations
-    const headers = rows[0].split(',').map(header => header.trim().replace(/"/g, '').toUpperCase());
-    const presentationColIndex = headers.findIndex(h => h === 'PRESENTACION');
-    
-    if (presentationColIndex === -1) {
-      throw new Error("No se encontró la columna 'PRESENTACION'");
-    }
-    
-    // Extract presentations
-    const presentations = rows
-      .slice(1) // Skip header row
-      .map(row => {
-        const columns = row.split(',');
-        return columns[presentationColIndex]?.replace(/"/g, '').trim();
-      })
-      .filter(presentation => presentation && presentation.length > 0) // Filter out empty values
-      .filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates
-    
-    cachedPresentations = presentations;
-    return presentations;
-  } catch (error) {
-    console.error("Error fetching presentations:", error);
-    
-    // Fallback to hardcoded presentations
-    cachedPresentations = [
-      "Bolsa",
-      "Caja",
-      "Palet",
-      "Contenedor",
-      "Granel",
-      "Otro"
-    ];
-    
-    return cachedPresentations;
-  }
-};
-
-export const fetchQuantityUnits = async (): Promise<string[]> => {
-  if (cachedQuantityUnits.length > 0) {
-    return cachedQuantityUnits;
-  }
-  
-  try {
-    const sheetName = "CANTIDAD";
-    const sheetUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
-    
-    const response = await fetch(sheetUrl);
-    
-    if (!response.ok) {
-      throw new Error("Error al cargar las unidades de cantidad");
-    }
-    
-    const csvText = await response.text();
-    const rows = csvText.split('\n');
-    
-    // Find column index for quantity units
-    const headers = rows[0].split(',').map(header => header.trim().replace(/"/g, '').toUpperCase());
-    const quantityUnitColIndex = headers.findIndex(h => h === 'CANTIDAD');
-    
-    if (quantityUnitColIndex === -1) {
-      throw new Error("No se encontró la columna 'CANTIDAD'");
-    }
-    
-    // Extract quantity units
-    const quantityUnits = rows
-      .slice(1) // Skip header row
-      .map(row => {
-        const columns = row.split(',');
-        return columns[quantityUnitColIndex]?.replace(/"/g, '').trim();
-      })
-      .filter(unit => unit && unit.length > 0) // Filter out empty values
-      .filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates
-    
-    cachedQuantityUnits = quantityUnits;
-    return quantityUnits;
-  } catch (error) {
-    console.error("Error fetching quantity units:", error);
-    
-    // Fallback to hardcoded quantity units
-    cachedQuantityUnits = [
-      "Kg",
-      "Ton",
-      "Litros",
-      "Cajas",
-      "Pallets",
-      "Unidades",
-      "Otro"
-    ];
-    
-    return quantityUnits;
-  }
-};
-
-// Helper functions to work with the fetched data
-export const getProvincias = async (): Promise<string[]> => {
-  const locations = await fetchLocationsFromSheet();
-  const provincias = new Set<string>();
-  
-  locations.forEach((location) => {
-    provincias.add(location.provincia);
+// React Query hook for provinces
+export const useProvinces = () => {
+  return useQuery({
+    queryKey: ["provinces"],
+    queryFn: fetchProvinces,
   });
+};
+
+// React Query hook for cities based on selected province
+export const useCities = (provinceValue: string) => {
+  const { data: provinces } = useProvinces();
   
-  return Array.from(provincias).sort();
+  return useQuery({
+    queryKey: ["cities", provinceValue],
+    queryFn: async () => {
+      if (!provinceValue) return [];
+      
+      // Find the selected province to get its cities
+      const selectedProvince = provinces?.find(
+        (province) => province.value === provinceValue
+      );
+      
+      return selectedProvince?.cities || [];
+    },
+    enabled: !!provinces && !!provinceValue,
+  });
 };
 
-export const getCiudades = async (provincia: string): Promise<Location[]> => {
-  const locations = await fetchLocationsFromSheet();
-  return locations
-    .filter((location) => location.provincia === provincia)
-    .sort((a, b) => a.ciudad.localeCompare(b.ciudad));
-};
-
-export const getStorageCities = async (): Promise<Location[]> => {
-  const locations = await fetchLocationsFromSheet();
-  return locations.filter((location) => location.hasStorage);
-};
-
-export const isStorageAvailable = async (provincia: string, ciudad: string): Promise<boolean> => {
-  const locations = await fetchLocationsFromSheet();
-  const location = locations.find(
-    (loc) => loc.provincia === provincia && loc.ciudad === ciudad
-  );
-  return location ? location.hasStorage : false;
+// React Query hook for quantity units
+export const useQuantityUnits = () => {
+  return useQuery({
+    queryKey: ["quantityUnits"],
+    queryFn: fetchQuantityUnits,
+  });
 };

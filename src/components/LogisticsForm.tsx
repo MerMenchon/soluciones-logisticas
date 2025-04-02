@@ -8,6 +8,9 @@ import ContactDetails from "@/components/ContactDetails";
 import { RotateCcw, Send, Warehouse, Truck } from "lucide-react";
 import { useFormContext } from "@/contexts/FormContext";
 
+// Define the allowed service types
+type ServiceType = "storage" | "transport" | "both" | "";
+
 const LogisticsForm = () => {
   const {
     selectedService,
@@ -55,7 +58,7 @@ const LogisticsForm = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       <ServiceSelector 
-        selectedService={selectedService} 
+        selectedService={selectedService as ServiceType} 
         onSelectService={useFormContext().setSelectedService} 
       />
 

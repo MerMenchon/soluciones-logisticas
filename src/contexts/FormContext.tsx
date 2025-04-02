@@ -9,6 +9,9 @@ import React, {
 import { fetchDistance } from "@/utils/maps";
 import { useToast } from "@/hooks/use-toast";
 
+// Define service type
+type ServiceType = "storage" | "transport" | "both" | "";
+
 // Define types for province and city options
 interface ProvinceCityOption {
   value: string;
@@ -18,8 +21,8 @@ interface ProvinceCityOption {
 // Form Context type
 interface FormContextType {
   // Service selection
-  selectedService: string;
-  setSelectedService: (service: string) => void;
+  selectedService: ServiceType;
+  setSelectedService: (service: ServiceType) => void;
 
   // Location details
   storageProvince: string;
@@ -104,7 +107,7 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
 
   // Form state
-  const [selectedService, setSelectedService] = useState("");
+  const [selectedService, setSelectedService] = useState<ServiceType>("");
   const [storageProvince, setStorageProvince] = useState("");
   const [storageCity, setStorageCity] = useState("");
   const [originProvince, setOriginProvince] = useState("");
@@ -149,7 +152,7 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Handle service change
   const handleServiceChange = (service: string) => {
-    setSelectedService(service);
+    setSelectedService(service as ServiceType);
     resetLocations();
   };
 
