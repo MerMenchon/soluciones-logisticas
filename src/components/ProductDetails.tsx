@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Package, Warehouse } from "lucide-react";
@@ -155,6 +154,21 @@ const ProductDetails = ({
     fetchProductTypes();
     fetchAvailablePresentations();
   }, [toast]);
+
+  // Set default values for category and quantityUnit when options are loaded and no value is selected
+  useEffect(() => {
+    // Set default category if options are available and no category is selected yet
+    if (categoryOptions.length > 0 && (!category || category === "")) {
+      onCategoryChange(categoryOptions[0]);
+    }
+  }, [categoryOptions, category, onCategoryChange]);
+
+  useEffect(() => {
+    // Set default quantity unit if options are available and no unit is selected yet
+    if (quantityUnitOptions.length > 0 && (!quantityUnit || quantityUnit === "")) {
+      onQuantityUnitChange(quantityUnitOptions[0]);
+    }
+  }, [quantityUnitOptions, quantityUnit, onQuantityUnitChange]);
 
   // Handle numeric input validation
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
