@@ -35,22 +35,17 @@ export const fetchQuantityUnits = async (): Promise<string[]> => {
     // Parse CSV to extract quantity units
     const rows = csvText.split('\n');
     
-    // Find the column index for "CANTIDAD"
-    const headers = rows[0].split(',');
-    const quantityColumnIndex = headers.findIndex(
-      header => header.trim().replace(/"/g, '').toUpperCase() === 'CANTIDAD'
-    );
-    
-    if (quantityColumnIndex === -1) {
-      throw new Error("No se encontró la columna 'CANTIDAD' en la hoja");
+    // Check if rows exist
+    if (rows.length === 0) {
+      throw new Error("No se encontraron datos en la hoja");
     }
     
-    // Extract quantity units
+    // Extract all data from the first column (assuming the first column contains the quantity units)
     const units = rows
       .slice(1) // Skip header row
       .map(row => {
         const columns = row.split(',');
-        return columns[quantityColumnIndex]?.replace(/"/g, '').trim();
+        return columns[0]?.replace(/"/g, '').trim();
       })
       .filter(unit => unit && unit.length > 0) // Filter out empty values
       .filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates

@@ -1,17 +1,10 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Package } from "lucide-react";
+import { Package, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { fetchPresentations, fetchQuantityUnits, useQuantityUnits } from "@/data/locations";
-import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { fetchPresentations } from "@/data/products";
+import { useQuantityUnits } from "@/hooks/useLocationData";
 import {
   Select,
   SelectContent,
@@ -19,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface ProductDetailsProps {
   productType: string;
@@ -200,19 +192,6 @@ const ProductDetails = ({
 
   // Check if the selected presentation is "Otro"
   const showClarificationInput = presentation === "Otro";
-  
-  // For date picker
-  const selectedDate = shippingTime ? new Date(shippingTime) : undefined;
-  const today = new Date();
-  
-  // Disable past dates
-  const disabledDays = { before: today };
-  
-  const handleDateSelect = (date: Date | undefined) => {
-    if (date) {
-      onShippingTimeChange(date.toISOString());
-    }
-  };
 
   return (
     <div className="form-section">
@@ -325,26 +304,21 @@ const ProductDetails = ({
               {isLoadingQuantityUnits ? (
                 <div className="text-sm text-muted-foreground py-2">Cargando...</div>
               ) : (
-                <ToggleGroup 
-                  type="single" 
+                <Select 
                   value={quantityUnit}
-                  onValueChange={(value) => {
-                    if (value) onQuantityUnitChange(value);
-                  }}
-                  className="flex justify-start h-10"
+                  onValueChange={onQuantityUnitChange}
                 >
-                  {quantityUnitOptions.slice(0, 3).map((unit) => (
-                    <ToggleGroupItem 
-                      key={unit} 
-                      value={unit} 
-                      aria-label={unit}
-                      variant="bordered"
-                      className="rounded-md text-sm border border-agri-light h-full"
-                    >
-                      {unit}
-                    </ToggleGroupItem>
-                  ))}
-                </ToggleGroup>
+                  <SelectTrigger className="w-full h-full">
+                    <SelectValue placeholder="Seleccione unidad" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {quantityUnitOptions.map((unit) => (
+                      <SelectItem key={unit} value={unit}>
+                        {unit}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               )}
             </div>
           </div>
