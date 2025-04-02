@@ -77,7 +77,7 @@ const LocationSelector = ({
               inputMode="numeric"
               value={estimatedTime || ''}
               onChange={handleEstimatedTimeChange}
-              placeholder="Ingrese tiempo estimado"
+              placeholder="30"
               className="w-32"
             />
             <span className="text-sm text-muted-foreground whitespace-nowrap">días</span>
