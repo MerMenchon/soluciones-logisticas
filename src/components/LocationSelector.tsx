@@ -36,6 +36,13 @@ const LocationSelector = ({
     onCityChange,
   });
 
+  // Set default value for estimatedTime if it's empty
+  React.useEffect(() => {
+    if ((type === "storage" || useAsStorage) && cityValue && !estimatedTime && onEstimatedTimeChange) {
+      onEstimatedTimeChange("30");
+    }
+  }, [type, useAsStorage, cityValue, estimatedTime, onEstimatedTimeChange]);
+
   // Handle natural numbers only in estimated time input
   const handleEstimatedTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
