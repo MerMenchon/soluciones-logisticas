@@ -382,6 +382,44 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  // This is the missing handleSubmit function that we need to implement
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const validationError = validateForm();
+    if (validationError) {
+      toast({
+        title: "Error",
+        description: validationError,
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      const responseData = await submitFormData();
+      
+      // Extract needed values from the response
+      if (responseData) {
+        setDistanceValue(responseData.distance || "N/A");
+        setContactValue(responseData.contacto || "N/A");
+        setDateTimeValue(responseData["fecha y hora"] || new Date().toISOString());
+        setShowConfirmation(true);
+      }
+    } catch (error) {
+      console.error("Error al enviar el formulario:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo procesar la solicitud. Intente nuevamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <FormContext.Provider
       value={{
