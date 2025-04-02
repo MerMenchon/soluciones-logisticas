@@ -75,12 +75,21 @@ export const fetchQuantityUnits = async (): Promise<string[]> => {
       throw new Error("No se encontraron datos en la hoja");
     }
     
-    // Extract all data from the first column (assuming the first column contains the quantity units)
+    // Find the column index that contains "CANTIDAD" header
+    const headers = rows[0].split(',');
+    const quantityColumnIndex = headers.findIndex(
+      header => header.trim().replace(/"/g, '').toUpperCase() === 'CANTIDAD'
+    );
+    
+    // If column is not found, fallback to first column
+    const columnIndex = quantityColumnIndex !== -1 ? quantityColumnIndex : 0;
+    
+    // Extract all data from the quantity column
     const units = rows
       .slice(1) // Skip header row
       .map(row => {
         const columns = row.split(',');
-        return columns[0]?.replace(/"/g, '').trim();
+        return columnIndex < columns.length ? columns[columnIndex]?.replace(/"/g, '').trim() : null;
       })
       .filter(unit => unit && unit.length > 0) // Filter out empty values
       .filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates
