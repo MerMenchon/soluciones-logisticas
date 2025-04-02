@@ -20,8 +20,7 @@ const ProvinceSelector = ({
   isLoading,
   onChange,
 }: ProvinceSelectorProps) => {
-  // Create a Set to ensure uniqueness, then convert back to array
-  const uniqueProvinces = [...new Set(provinces)];
+  // Note: The uniqueProvinces Set is no longer needed here as we're already ensuring uniqueness in locations.ts
   
   return (
     <div className="space-y-2">
@@ -37,7 +36,7 @@ const ProvinceSelector = ({
           <SelectValue placeholder={isLoading ? "Cargando provincias..." : "Seleccione provincia"} />
         </SelectTrigger>
         <SelectContent>
-          {uniqueProvinces.map((provincia) => (
+          {provinces.map((provincia) => (
             <SelectItem key={provincia} value={provincia}>
               {provincia}
             </SelectItem>

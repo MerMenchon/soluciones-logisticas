@@ -18,11 +18,11 @@ export interface Location {
   hasStorage: boolean;
 }
 
-// Fetch provinces from Google Sheets
+// Fetch provinces from Google Sheets - now from "localidades" sheet
 export const fetchProvinces = async (): Promise<Province[]> => {
   try {
     const sheetId = "1VYDCQfaz3-7IrhPUGpAO4UBLMDR1mEyl6UCHU1hznwQ";
-    const sheetName = "PROVINCIAS"; // Sheet name for provinces
+    const sheetName = "LOCALIDADES"; // Changed from "PROVINCIAS" to "LOCALIDADES"
     const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
     
     const response = await fetch(sheetUrl);
@@ -36,15 +36,26 @@ export const fetchProvinces = async (): Promise<Province[]> => {
     // Parse CSV to extract provinces
     const rows = csvText.split('\n');
     
-    // Skip header row and extract unique province names
-    // Assuming the CSV structure has province names in the first column
+    // Find the column index for "PROVINCIA"
+    const headers = rows[0].split(',');
+    const provinceColumnIndex = headers.findIndex(
+      header => header.trim().replace(/"/g, '').toUpperCase() === 'PROVINCIA'
+    );
+    
+    if (provinceColumnIndex === -1) {
+      throw new Error("No se encontró la columna 'PROVINCIA' en la hoja");
+    }
+    
+    // Extract unique province names from the specified column
     const provinceSet = new Set<string>();
     
     rows.slice(1).forEach(row => {
       const columns = row.split(',');
-      const provinceName = columns[0]?.replace(/"/g, '').trim();
-      if (provinceName) {
-        provinceSet.add(provinceName);
+      if (columns.length > provinceColumnIndex) {
+        const provinceName = columns[provinceColumnIndex]?.replace(/"/g, '').trim();
+        if (provinceName) {
+          provinceSet.add(provinceName);
+        }
       }
     });
     
