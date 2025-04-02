@@ -48,6 +48,8 @@ const LogisticsForm = () => {
     setClarification,
     quantity,
     setQuantity,
+    quantityUnit,
+    setQuantityUnit,
   } = useFormContext();
 
   return (
@@ -139,6 +141,8 @@ const LogisticsForm = () => {
             onClarificationChange={setClarification}
             quantity={quantity}
             onQuantityChange={setQuantity}
+            quantityUnit={quantityUnit}
+            onQuantityUnitChange={setQuantityUnit}
           />
           
           <ContactDetails

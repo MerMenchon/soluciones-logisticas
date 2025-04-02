@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Package, CalendarIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { fetchPresentations } from "@/data/locations";
+import { fetchPresentations, fetchQuantityUnits } from "@/data/locations";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -36,6 +35,8 @@ interface ProductDetailsProps {
   onClarificationChange?: (clarification: string) => void;
   quantity: string;
   onQuantityChange: (quantity: string) => void;
+  quantityUnit: string;
+  onQuantityUnitChange: (unit: string) => void;
 }
 
 const ProductDetails = ({
@@ -53,11 +54,15 @@ const ProductDetails = ({
   onClarificationChange = () => {},
   quantity,
   onQuantityChange,
+  quantityUnit,
+  onQuantityUnitChange,
 }: ProductDetailsProps) => {
   const [productOptions, setProductOptions] = useState<string[]>([]);
   const [presentationOptions, setPresentationOptions] = useState<string[]>([]);
+  const [quantityUnitOptions, setQuantityUnitOptions] = useState<string[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [isLoadingPresentations, setIsLoadingPresentations] = useState(true);
+  const [isLoadingQuantityUnits, setIsLoadingQuantityUnits] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -145,8 +150,26 @@ const ProductDetails = ({
       }
     };
 
+    const fetchAvailableQuantityUnits = async () => {
+      setIsLoadingQuantityUnits(true);
+      try {
+        const units = await fetchQuantityUnits();
+        setQuantityUnitOptions(units);
+      } catch (error) {
+        console.error("Error fetching quantity units:", error);
+        toast({
+          title: "Error",
+          description: "No se pudieron cargar las unidades de cantidad. Usando opciones predeterminadas.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoadingQuantityUnits(false);
+      }
+    };
+
     fetchProductTypes();
     fetchAvailablePresentations();
+    fetchAvailableQuantityUnits();
   }, [toast]);
 
   // Handle numeric input validation
@@ -339,14 +362,40 @@ const ProductDetails = ({
           <label htmlFor="quantity" className="block text-sm font-medium text-agri-secondary mb-1">
             Cantidad *
           </label>
-          <Input
-            id="quantity"
-            placeholder="0.00"
-            value={quantity}
-            onChange={handleQuantityChange}
-            className="w-full"
-            required
-          />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Input
+                id="quantity"
+                placeholder="0.00"
+                value={quantity}
+                onChange={handleQuantityChange}
+                className="w-full"
+                required
+              />
+            </div>
+            <div>
+              <Select 
+                value={quantityUnit} 
+                onValueChange={onQuantityUnitChange}
+                disabled={isLoadingQuantityUnits}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder={
+                    isLoadingQuantityUnits 
+                      ? "Cargando unidades..." 
+                      : "Seleccione una unidad"
+                  } />
+                </SelectTrigger>
+                <SelectContent>
+                  {quantityUnitOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
           <p className="text-xs text-muted-foreground mt-1">
             Ingrese un valor numérico mayor a 0
           </p>
