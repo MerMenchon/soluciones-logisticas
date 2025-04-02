@@ -1,9 +1,9 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Package } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { fetchShippingTimes } from "@/data/locations";
-import { Textarea } from "@/components/ui/textarea";
 
 interface ProductDetailsProps {
   productType: string;
@@ -16,8 +16,6 @@ interface ProductDetailsProps {
   onValueChange: (value: string) => void;
   shippingTime: string;
   onShippingTimeChange: (time: string) => void;
-  description?: string;
-  onDescriptionChange?: (description: string) => void;
 }
 
 const ProductDetails = ({
@@ -31,8 +29,6 @@ const ProductDetails = ({
   onValueChange,
   shippingTime,
   onShippingTimeChange,
-  description = "",
-  onDescriptionChange = () => {},
 }: ProductDetailsProps) => {
   const [productOptions, setProductOptions] = useState<string[]>([]);
   const [shippingTimeOptions, setShippingTimeOptions] = useState<string[]>([]);
@@ -142,9 +138,6 @@ const ProductDetails = ({
     }
   };
 
-  // Check if the selected product type is "Otros" to show description field
-  const isOtherProductType = productType === "Otros";
-
   return (
     <div className="form-section">
       <h2 className="form-title">
@@ -174,25 +167,6 @@ const ProductDetails = ({
             ))}
           </select>
         </div>
-        
-        {isOtherProductType && (
-          <div>
-            <label htmlFor="productDescription" className="block text-sm font-medium text-agri-secondary mb-1">
-              Descripción
-            </label>
-            <Textarea
-              id="productDescription"
-              placeholder="Describa el tipo de producto (máximo 100 caracteres)"
-              value={description}
-              onChange={(e) => onDescriptionChange(e.target.value)}
-              className="resize-none"
-              maxLength={100}
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              {description.length}/100 caracteres
-            </p>
-          </div>
-        )}
         
         <div>
           <label htmlFor="shippingTime" className="block text-sm font-medium text-agri-secondary mb-1">

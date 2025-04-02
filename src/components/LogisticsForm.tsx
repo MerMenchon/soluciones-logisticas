@@ -1,151 +1,176 @@
 
 import React from "react";
-import { useFormContext } from "@/contexts/FormContext";
-import { Truck, PackageCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ServiceSelector from "@/components/ServiceSelector";
 import LocationSelector from "@/components/LocationSelector";
 import ProductDetails from "@/components/ProductDetails";
 import ContactDetails from "@/components/ContactDetails";
+import { RotateCcw, Send, Warehouse, Truck } from "lucide-react";
+import { useFormContext } from "@/contexts/FormContext";
 
 const LogisticsForm = () => {
   const {
-    handleSubmit,
-    isSubmitting,
     selectedService,
-    setSelectedService,
-    productType,
-    setProductType,
-    weight,
-    setWeight,
-    volume,
-    setVolume,
-    cargoValue,
-    setCargoValue,
-    shippingTime,
-    setShippingTime,
-    email,
-    setEmail,
-    additionalInfo,
-    setAdditionalInfo,
-    productDescription,
-    setProductDescription,
-    // Location states and handlers
     storageProvince,
     storageCity,
-    setStorageProvince,
-    setStorageCity,
     originProvince,
     originCity,
-    setOriginProvince,
-    setOriginCity,
     useOriginAsStorage,
-    handleUseOriginAsStorageChange,
     destinationProvince,
     destinationCity,
+    useDestinationAsStorage,
+    productType,
+    weight,
+    volume,
+    cargoValue,
+    shippingTime,
+    email,
+    additionalInfo,
+    isSubmitting,
+    setStorageProvince,
+    setStorageCity,
+    setOriginProvince,
+    setOriginCity,
     setDestinationProvince,
     setDestinationCity,
-    useDestinationAsStorage,
-    handleUseDestinationAsStorageChange
+    handleUseOriginAsStorageChange,
+    handleUseDestinationAsStorageChange,
+    setProductType,
+    setWeight,
+    setVolume,
+    setCargoValue,
+    setShippingTime,
+    setEmail,
+    setAdditionalInfo,
+    resetForm,
+    handleSubmit
   } = useFormContext();
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      <ServiceSelector
-        selectedService={selectedService}
-        onSelectService={setSelectedService}
+      <ServiceSelector 
+        selectedService={selectedService} 
+        onSelectService={useFormContext().setSelectedService} 
       />
 
-      {selectedService === "storage" && (
-        <LocationSelector 
-          type="storage"
-          provinceValue={storageProvince}
-          cityValue={storageCity}
-          onProvinceChange={setStorageProvince}
-          onCityChange={setStorageCity}
-          label="Almacenamiento"
-          serviceType={selectedService}
-        />
-      )}
-
-      {(selectedService === "transport" || selectedService === "both") && (
+      {selectedService && (
         <>
-          <LocationSelector 
-            type="origin"
-            provinceValue={originProvince}
-            cityValue={originCity}
-            onProvinceChange={setOriginProvince}
-            onCityChange={setOriginCity}
-            label="Origen"
-            useAsStorage={useOriginAsStorage}
-            onUseAsStorageChange={handleUseOriginAsStorageChange}
-            serviceType={selectedService}
+          {(selectedService === "storage" || selectedService === "both") && (
+            <div className="form-section">
+              <h2 className="form-title">
+                <Warehouse className="w-5 h-5" />
+                <span>Ubicación de Almacenamiento</span>
+              </h2>
+              
+              {selectedService === "both" ? (
+                <div className="text-muted-foreground text-sm mb-4">
+                  Seleccione la ubicación usando las opciones en Origen o Destino
+                </div>
+              ) : (
+                <LocationSelector
+                  type="storage"
+                  provinceValue={storageProvince}
+                  cityValue={storageCity}
+                  onProvinceChange={setStorageProvince}
+                  onCityChange={setStorageCity}
+                  label="Almacenamiento"
+                />
+              )}
+            </div>
+          )}
+
+          {(selectedService === "transport" || selectedService === "both") && (
+            <div className="form-section">
+              <h2 className="form-title">
+                <Truck className="w-5 h-5" />
+                <span>Ruta de Transporte</span>
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <LocationSelector
+                  type="origin"
+                  provinceValue={originProvince}
+                  cityValue={originCity}
+                  onProvinceChange={setOriginProvince}
+                  onCityChange={setOriginCity}
+                  label="Origen"
+                  useAsStorage={useOriginAsStorage}
+                  onUseAsStorageChange={
+                    selectedService === "both" 
+                      ? handleUseOriginAsStorageChange 
+                      : undefined
+                  }
+                />
+                
+                <LocationSelector
+                  type="destination"
+                  provinceValue={destinationProvince}
+                  cityValue={destinationCity}
+                  onProvinceChange={setDestinationProvince}
+                  onCityChange={setDestinationCity}
+                  label="Destino"
+                  useAsStorage={useDestinationAsStorage}
+                  onUseAsStorageChange={
+                    selectedService === "both"
+                      ? handleUseDestinationAsStorageChange
+                      : undefined
+                  }
+                />
+              </div>
+            </div>
+          )}
+
+          <ProductDetails 
+            productType={productType}
+            onProductTypeChange={setProductType}
+            weight={weight}
+            onWeightChange={setWeight}
+            volume={volume}
+            onVolumeChange={setVolume}
+            value={cargoValue}
+            onValueChange={setCargoValue}
+            shippingTime={shippingTime}
+            onShippingTimeChange={setShippingTime}
+          />
+          
+          <ContactDetails
+            email={email}
+            onEmailChange={setEmail}
+            additionalInfo={additionalInfo}
+            onAdditionalInfoChange={setAdditionalInfo}
           />
 
-          <LocationSelector 
-            type="destination"
-            provinceValue={destinationProvince}
-            cityValue={destinationCity}
-            onProvinceChange={setDestinationProvince}
-            onCityChange={setDestinationCity}
-            label="Destino"
-            useAsStorage={useDestinationAsStorage}
-            onUseAsStorageChange={handleUseDestinationAsStorageChange}
-            serviceType={selectedService}
-          />
+          <div className="flex flex-col sm:flex-row gap-4 justify-end mt-8">
+            <Button
+              type="button"
+              variant="outline"
+              className="border-agri-primary text-agri-primary hover:bg-agri-light"
+              onClick={resetForm}
+              disabled={isSubmitting}
+            >
+              <RotateCcw className="w-4 h-4 mr-2" />
+              Restablecer
+            </Button>
+            
+            <Button
+              type="submit"
+              className="bg-agri-primary hover:bg-agri-dark text-white"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
+                  Enviando...
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4 mr-2" />
+                  Enviar consulta
+                </>
+              )}
+            </Button>
+          </div>
         </>
-      )}
-
-      {selectedService && (
-        <ProductDetails
-          productType={productType}
-          onProductTypeChange={setProductType}
-          weight={weight}
-          onWeightChange={setWeight}
-          volume={volume}
-          onVolumeChange={setVolume}
-          value={cargoValue}
-          onValueChange={setCargoValue}
-          shippingTime={shippingTime}
-          onShippingTimeChange={setShippingTime}
-          description={productDescription}
-          onDescriptionChange={setProductDescription}
-        />
-      )}
-
-      {selectedService && (
-        <ContactDetails
-          email={email}
-          onEmailChange={setEmail}
-          additionalInfo={additionalInfo}
-          onAdditionalInfoChange={setAdditionalInfo}
-        />
-      )}
-
-      {selectedService && (
-        <div className="flex justify-center pt-6">
-          <Button
-            type="submit"
-            className="bg-agri-green hover:bg-agri-green/90 text-white flex items-center gap-2 px-6 py-5 text-lg rounded-lg"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
-              "Enviando..."
-            ) : (
-              <>
-                <span>Enviar solicitud</span>
-                {selectedService === "transport" && <Truck className="w-5 h-5" />}
-                {selectedService === "storage" && <PackageCheck className="w-5 h-5" />}
-                {selectedService === "both" && (
-                  <>
-                    <Truck className="w-5 h-5" />
-                    <PackageCheck className="w-5 h-5" />
-                  </>
-                )}
-              </>
-            )}
-          </Button>
-        </div>
       )}
     </form>
   );
