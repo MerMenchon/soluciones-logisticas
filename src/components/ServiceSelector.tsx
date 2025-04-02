@@ -26,7 +26,7 @@ const ServiceSelector = ({
           onClick={() => onSelectService("storage")}
         >
           <Warehouse className="text-agri-primary w-10 h-10 mb-2" />
-          <span className="font-medium">Almacenamiento</span>
+          <span className="font-medium">Storage</span>
           <p className="text-sm text-gray-500 mt-2 text-center">
             Servicio de almacenamiento de mercadería
           </p>
@@ -40,7 +40,7 @@ const ServiceSelector = ({
           onClick={() => onSelectService("transport")}
         >
           <Truck className="text-agri-primary w-10 h-10 mb-2" />
-          <span className="font-medium">Transporte</span>
+          <span className="font-medium">Transport</span>
           <p className="text-sm text-gray-500 mt-2 text-center">
             Servicio de transporte de mercadería
           </p>
@@ -54,7 +54,7 @@ const ServiceSelector = ({
           onClick={() => onSelectService("both")}
         >
           <PackageCheck className="text-agri-primary w-10 h-10 mb-2" />
-          <span className="font-medium">Almacenamiento y Transporte</span>
+          <span className="font-medium">Transport and Storage</span>
           <p className="text-sm text-gray-500 mt-2 text-center">
             Servicios combinados para su mercadería
           </p>
