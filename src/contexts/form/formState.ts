@@ -1,12 +1,15 @@
-import { useState } from "react";
-import { FormState, ServiceType } from "./types";
-import { useToast } from "@/hooks/use-toast";
-import { validateForm, getFormData } from "./validation";
+
+import { useState, useEffect } from "react";
+import { FormState } from "./types";
+import { 
+  useFormService,
+  useFormLocation,
+  useFormProduct,
+  useFormSubmission
+} from "./hooks";
 
 export const useFormState = () => {
-  const { toast } = useToast();
-
-  // Form state
+  // Create a state object to hold the combined state
   const [formState, setFormState] = useState<FormState>({
     // Service state
     selectedService: "",
@@ -43,186 +46,137 @@ export const useFormState = () => {
     category: "",
   });
 
-  // Update functions
-  const updateFormState = (updates: Partial<FormState>) => {
-    setFormState(prev => ({ ...prev, ...updates }));
+  // Use individual hooks for state management
+  const serviceState = useFormService(formState.selectedService);
+  const locationState = useFormLocation({
+    storageProvince: formState.storageProvince,
+    storageCity: formState.storageCity,
+    originProvince: formState.originProvince,
+    originCity: formState.originCity,
+    useOriginAsStorage: formState.useOriginAsStorage,
+    destinationProvince: formState.destinationProvince,
+    destinationCity: formState.destinationCity,
+    useDestinationAsStorage: formState.useDestinationAsStorage,
+    estimatedStorageTime: formState.estimatedStorageTime,
+  });
+  const productState = useFormProduct({
+    productType: formState.productType,
+    description: formState.description,
+    presentation: formState.presentation,
+    clarification: formState.clarification,
+    cargoValue: formState.cargoValue,
+    shippingTime: formState.shippingTime,
+    quantity: formState.quantity,
+    quantityUnit: formState.quantityUnit,
+    category: formState.category,
+    additionalInfo: formState.additionalInfo,
+  });
+  
+  // Update the formState whenever any child state changes
+  useEffect(() => {
+    setFormState(prev => ({
+      ...prev,
+      // Service state
+      selectedService: serviceState.selectedService,
+      
+      // Location state
+      storageProvince: locationState.storageProvince,
+      storageCity: locationState.storageCity,
+      originProvince: locationState.originProvince,
+      originCity: locationState.originCity,
+      useOriginAsStorage: locationState.useOriginAsStorage,
+      destinationProvince: locationState.destinationProvince,
+      destinationCity: locationState.destinationCity,
+      useDestinationAsStorage: locationState.useDestinationAsStorage,
+      estimatedStorageTime: locationState.estimatedStorageTime,
+
+      // Product & Contact state
+      additionalInfo: productState.additionalInfo,
+      productType: productState.productType,
+      description: productState.description,
+      presentation: productState.presentation,
+      clarification: productState.clarification,
+      cargoValue: productState.cargoValue,
+      shippingTime: productState.shippingTime,
+      quantity: productState.quantity,
+      quantityUnit: productState.quantityUnit,
+      category: productState.category,
+    }));
+  }, [
+    serviceState,
+    locationState,
+    productState,
+  ]);
+
+  // Now use the submission hook with our current state
+  const submissionState = useFormSubmission(formState);
+
+  // Update UI state from submission state
+  useEffect(() => {
+    setFormState(prev => ({
+      ...prev,
+      isSubmitting: submissionState.isSubmitting,
+      formSubmitted: submissionState.formSubmitted,
+      showConfirmation: submissionState.showConfirmation,
+      distanceValue: submissionState.distanceValue,
+    }));
+  }, [submissionState]);
+
+  // Custom setSelectedService that also resets locations
+  const setSelectedService = (service: string) => {
+    serviceState.setSelectedService(service as any);
+    locationState.resetLocations();
   };
 
-  // Handlers for individual fields
-  const setSelectedService = (service: ServiceType) => {
-    updateFormState({ selectedService: service });
-    resetLocations();
-  };
-
-  const resetLocations = () => {
-    updateFormState({
-      storageProvince: "",
-      storageCity: "",
-      originProvince: "",
-      originCity: "",
-      destinationProvince: "",
-      destinationCity: "",
-      useOriginAsStorage: false,
-      useDestinationAsStorage: false,
-      estimatedStorageTime: ""
-    });
-  };
-
-  // Location handlers
-  const setStorageProvince = (province: string) => updateFormState({ storageProvince: province });
-  const setStorageCity = (city: string) => updateFormState({ storageCity: city });
-  const setOriginProvince = (province: string) => updateFormState({ originProvince: province });
-  const setOriginCity = (city: string) => updateFormState({ originCity: city });
-  const setDestinationProvince = (province: string) => updateFormState({ destinationProvince: province });
-  const setDestinationCity = (city: string) => updateFormState({ destinationCity: city });
-  const setEstimatedStorageTime = (time: string) => updateFormState({ estimatedStorageTime: time });
-
-  // Boolean handlers
-  const handleUseOriginAsStorageChange = (checked: boolean) => {
-    updateFormState({ 
-      useOriginAsStorage: checked,
-      storageProvince: checked ? formState.originProvince : formState.storageProvince,
-      storageCity: checked ? formState.originCity : formState.storageCity
-    });
-  };
-
-  const handleUseDestinationAsStorageChange = (checked: boolean) => {
-    updateFormState({ 
-      useDestinationAsStorage: checked,
-      storageProvince: checked ? formState.destinationProvince : formState.storageProvince,
-      storageCity: checked ? formState.destinationCity : formState.storageCity
-    });
-  };
-
-  // Contact handlers
-  const setAdditionalInfo = (info: string) => updateFormState({ additionalInfo: info });
-
-  // Product handlers
-  const setProductType = (type: string) => updateFormState({ productType: type });
-  const setDescription = (description: string) => updateFormState({ description });
-  const setPresentation = (presentation: string) => updateFormState({ presentation });
-  const setClarification = (clarification: string) => updateFormState({ clarification });
-  const setCargoValue = (value: string) => updateFormState({ cargoValue: value });
-  const setShippingTime = (time: string) => updateFormState({ shippingTime: time });
-  const setQuantity = (quantity: string) => updateFormState({ quantity });
-  const setQuantityUnit = (unit: string) => updateFormState({ quantityUnit: unit });
-  const setCategory = (category: string) => updateFormState({ category });
-
-  // UI state handlers
-  const setIsSubmitting = (isSubmitting: boolean) => updateFormState({ isSubmitting });
-  const setShowConfirmation = (showConfirmation: boolean) => updateFormState({ showConfirmation });
-  const setDistanceValue = (distanceValue: string | null) => updateFormState({ distanceValue });
-
-  // Form reset
+  // Form reset function
   const resetForm = () => {
-    setFormState({
+    serviceState.setSelectedService("");
+    locationState.resetLocations();
+    productState.resetProductDetails();
+    submissionState.setIsSubmitting(false);
+    setFormState(prev => ({
+      ...prev,
       selectedService: "",
-      storageProvince: "",
-      storageCity: "",
-      originProvince: "",
-      originCity: "",
-      useOriginAsStorage: false,
-      destinationProvince: "",
-      destinationCity: "",
-      useDestinationAsStorage: false,
-      estimatedStorageTime: "",
-      isSubmitting: false,
       formSubmitted: false,
       showConfirmation: false,
       distanceValue: null,
-      additionalInfo: "",
-      productType: "",
-      description: "",
-      presentation: "",
-      clarification: "",
-      cargoValue: "",
-      shippingTime: "",
-      quantity: "",
-      quantityUnit: "",
-      category: "",
-    });
-  };
-
-  // Form validation wrapper
-  const validateFormWrapper = () => {
-    return validateForm(formState);
-  };
-
-  // Form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const validationError = validateFormWrapper();
-    if (validationError) {
-      toast({
-        title: "Error",
-        description: validationError,
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Proceed directly to sending the form without distance calculation
-    submitForm();
-  };
-
-  const submitForm = async () => {
-    updateFormState({ isSubmitting: true });
-
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    // Here you would typically send the form data to your server
-    const formData = getFormData(formState);
-    console.log("Form data submitted:", formData);
-
-    // Show success message
-    toast({
-      title: "Éxito",
-      description: "Su consulta ha sido enviada correctamente!",
-    });
-
-    updateFormState({ formSubmitted: true, isSubmitting: false });
-  };
-
-  // These functions are no longer needed but kept for API compatibility
-  const confirmRequest = async () => {
-    submitForm();
-  };
-
-  const cancelRequest = () => {
-    updateFormState({ isSubmitting: false });
+    }));
   };
 
   return {
+    // Combine all state properties
     ...formState,
+    ...submissionState,
+    
+    // Service methods
     setSelectedService,
-    setStorageProvince,
-    setStorageCity,
-    setOriginProvince,
-    setOriginCity,
-    setDestinationProvince,
-    setDestinationCity,
-    handleUseOriginAsStorageChange,
-    handleUseDestinationAsStorageChange,
-    setEstimatedStorageTime,
-    setIsSubmitting,
-    setShowConfirmation,
-    setDistanceValue,
-    setAdditionalInfo,
-    setProductType,
-    setDescription,
-    setPresentation,
-    setClarification,
-    setCargoValue,
-    setShippingTime,
-    setQuantity,
-    setQuantityUnit,
-    setCategory,
-    handleSubmit,
+    
+    // Location methods
+    setStorageProvince: locationState.setStorageProvince,
+    setStorageCity: locationState.setStorageCity,
+    setOriginProvince: locationState.setOriginProvince,
+    setOriginCity: locationState.setOriginCity,
+    setDestinationProvince: locationState.setDestinationProvince,
+    setDestinationCity: locationState.setDestinationCity,
+    handleUseOriginAsStorageChange: locationState.handleUseOriginAsStorageChange,
+    handleUseDestinationAsStorageChange: locationState.handleUseDestinationAsStorageChange,
+    setEstimatedStorageTime: locationState.setEstimatedStorageTime,
+    
+    // Product methods
+    setProductType: productState.setProductType,
+    setDescription: productState.setDescription,
+    setPresentation: productState.setPresentation,
+    setClarification: productState.setClarification,
+    setCargoValue: productState.setCargoValue,
+    setShippingTime: productState.setShippingTime,
+    setQuantity: productState.setQuantity,
+    setQuantityUnit: productState.setQuantityUnit,
+    setCategory: productState.setCategory,
+    
+    // Contact methods
+    setAdditionalInfo: productState.setAdditionalInfo,
+    
+    // Form action methods
     resetForm,
-    confirmRequest,
-    cancelRequest,
-    validateForm: validateFormWrapper,
   };
 };
