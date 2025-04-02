@@ -1,9 +1,18 @@
 
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Package } from "lucide-react";
+import { Package, CalendarIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { fetchShippingTimes, fetchPresentations } from "@/data/locations";
+import { fetchPresentations } from "@/data/locations";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface ProductDetailsProps {
   productType: string;
@@ -44,10 +53,8 @@ const ProductDetails = ({
 }: ProductDetailsProps) => {
   const [productOptions, setProductOptions] = useState<string[]>([]);
   const [presentationOptions, setPresentationOptions] = useState<string[]>([]);
-  const [shippingTimeOptions, setShippingTimeOptions] = useState<string[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [isLoadingPresentations, setIsLoadingPresentations] = useState(true);
-  const [isLoadingShippingTimes, setIsLoadingShippingTimes] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -134,27 +141,9 @@ const ProductDetails = ({
         setIsLoadingPresentations(false);
       }
     };
-    
-    const fetchAvailableShippingTimes = async () => {
-      setIsLoadingShippingTimes(true);
-      try {
-        const times = await fetchShippingTimes();
-        setShippingTimeOptions(times);
-      } catch (error) {
-        console.error("Error fetching shipping times:", error);
-        toast({
-          title: "Error",
-          description: "No se pudieron cargar los tiempos de envío. Usando opciones predeterminadas.",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoadingShippingTimes(false);
-      }
-    };
 
     fetchProductTypes();
     fetchAvailablePresentations();
-    fetchAvailableShippingTimes();
   }, [toast]);
 
   // Handle numeric input validation
@@ -188,6 +177,19 @@ const ProductDetails = ({
 
   // Check if the selected presentation is "Otro"
   const showClarificationInput = presentation === "Otro";
+  
+  // For date picker
+  const selectedDate = shippingTime ? new Date(shippingTime) : undefined;
+  const today = new Date();
+  
+  // Disable past dates
+  const disabledDays = { before: today };
+  
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      onShippingTimeChange(date.toISOString());
+    }
+  };
 
   return (
     <div className="form-section">
@@ -280,25 +282,34 @@ const ProductDetails = ({
         )}
 
         <div>
-          <label htmlFor="shippingTime" className="block text-sm font-medium text-agri-secondary mb-1">
-            Tiempo de envío estimado
+          <label htmlFor="shippingDate" className="block text-sm font-medium text-agri-secondary mb-1">
+            Fecha estimada de salida
           </label>
-          <select
-            id="shippingTime"
-            value={shippingTime}
-            onChange={(e) => onShippingTimeChange(e.target.value)}
-            className="w-full h-10 px-3 py-2 text-sm border border-input rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            disabled={isLoadingShippingTimes}
-          >
-            <option value="" disabled>
-              {isLoadingShippingTimes ? "Cargando tiempos de envío..." : "Seleccione un tiempo estimado"}
-            </option>
-            {shippingTimeOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                id="shippingDate"
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !selectedDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedDate ? format(selectedDate, "PPP") : <span>Seleccione una fecha</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={handleDateSelect}
+                disabled={disabledDays}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
