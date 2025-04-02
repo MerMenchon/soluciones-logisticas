@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -30,8 +29,8 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					DEFAULT: 'hsl(279 65% 25%)',  // Converted #452562 to HSL
+					foreground: 'hsl(0 0% 98%)'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -58,10 +57,10 @@ export default {
 					foreground: 'hsl(var(--card-foreground))'
 				},
 				agri: {
-					primary: '#213555',  // Updated primary color
+					primary: '#452562',  // Updated primary color
 					secondary: '#66785F',
 					light: '#E8EDDE',
-					dark: '#1A2A44',    // Adjusted dark shade for new primary color
+					dark: '#1A2A44',
 					accent: '#8A9B85',
 				},
 				sidebar: {
