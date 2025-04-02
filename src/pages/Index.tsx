@@ -21,13 +21,13 @@ const FormContent = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F9F9F7] py-12">
+    <div className="min-h-screen bg-gray-50 py-12">
       <div className="container max-w-4xl mx-auto px-4">
         <header className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-agri-primary mb-3">
+          <h1 className="reference-form-title text-3xl font-bold text-gray-900 mb-3">
             Servicio de logística
           </h1>
-          <p className="text-lg text-agri-secondary max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Seleccione el servicio que necesita para su mercadería
           </p>
         </header>

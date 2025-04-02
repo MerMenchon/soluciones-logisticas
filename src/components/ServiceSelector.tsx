@@ -15,38 +15,47 @@ const ServiceSelector = ({
   onSelectService,
 }: ServiceSelectorProps) => {
   return (
-    <div className="form-section">
-      <h2 className="form-title">Seleccione un servicio</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="reference-form-section">
+      <h2 className="reference-form-subtitle">Seleccione un servicio</h2>
+      <div className="reference-form-cols-3">
         <div
-          className={cn("service-card", selectedService === "storage" && "active")}
+          className={cn(
+            "border border-gray-200 rounded-lg p-4 flex flex-col items-center justify-center hover:border-blue-500 hover:shadow-md cursor-pointer transition-all duration-300",
+            selectedService === "storage" && "border-blue-500 bg-blue-50"
+          )}
           onClick={() => onSelectService("storage")}
         >
-          <Warehouse className="service-icon" />
+          <Warehouse className="text-blue-600 w-10 h-10 mb-2" />
           <span className="font-medium">Almacenamiento</span>
-          <p className="text-sm text-muted-foreground mt-2 text-center">
+          <p className="text-sm text-gray-500 mt-2 text-center">
             Servicio de almacenamiento de mercadería
           </p>
         </div>
 
         <div
-          className={cn("service-card", selectedService === "transport" && "active")}
+          className={cn(
+            "border border-gray-200 rounded-lg p-4 flex flex-col items-center justify-center hover:border-blue-500 hover:shadow-md cursor-pointer transition-all duration-300",
+            selectedService === "transport" && "border-blue-500 bg-blue-50"
+          )}
           onClick={() => onSelectService("transport")}
         >
-          <Truck className="service-icon" />
+          <Truck className="text-blue-600 w-10 h-10 mb-2" />
           <span className="font-medium">Transporte</span>
-          <p className="text-sm text-muted-foreground mt-2 text-center">
+          <p className="text-sm text-gray-500 mt-2 text-center">
             Servicio de transporte de mercadería
           </p>
         </div>
 
         <div
-          className={cn("service-card", selectedService === "both" && "active")}
+          className={cn(
+            "border border-gray-200 rounded-lg p-4 flex flex-col items-center justify-center hover:border-blue-500 hover:shadow-md cursor-pointer transition-all duration-300",
+            selectedService === "both" && "border-blue-500 bg-blue-50"
+          )}
           onClick={() => onSelectService("both")}
         >
-          <PackageCheck className="service-icon" />
+          <PackageCheck className="text-blue-600 w-10 h-10 mb-2" />
           <span className="font-medium">Almacenamiento y Transporte</span>
-          <p className="text-sm text-muted-foreground mt-2 text-center">
+          <p className="text-sm text-gray-500 mt-2 text-center">
             Servicios combinados para su mercadería
           </p>
         </div>

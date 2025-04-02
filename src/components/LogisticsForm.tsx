@@ -75,16 +75,16 @@ const LogisticsForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="reference-form space-y-8">
       <ServiceSelector 
         selectedService={selectedService as ServiceType} 
         onSelectService={useFormContext().setSelectedService} 
       />
 
       {/* Date Selector */}
-      <div className="form-section">
-        <h2 className="form-title">
-          <Calendar className="w-5 h-5" />
+      <div className="reference-form-section">
+        <h2 className="reference-form-subtitle">
+          <Calendar className="w-5 h-5 inline-block mr-2" />
           <span>Fecha de inicio de la solicitud</span>
         </h2>
         <div className="space-y-4">
@@ -94,7 +94,7 @@ const LogisticsForm = () => {
                 id="shippingDate"
                 variant="outline"
                 className={cn(
-                  "w-full justify-start text-left font-normal",
+                  "w-full justify-start text-left font-normal reference-form-input",
                   !selectedDate && "text-muted-foreground"
                 )}
               >
@@ -119,9 +119,9 @@ const LogisticsForm = () => {
       {selectedService && (
         <>
           {(selectedService === "storage" || selectedService === "both") && (
-            <div className="form-section">
-              <h2 className="form-title">
-                <Warehouse className="w-5 h-5" />
+            <div className="reference-form-section">
+              <h2 className="reference-form-subtitle">
+                <Warehouse className="w-5 h-5 inline-block mr-2" />
                 <span>Ubicación de Almacenamiento</span>
               </h2>
               
@@ -143,13 +143,13 @@ const LogisticsForm = () => {
           )}
 
           {(selectedService === "transport" || selectedService === "both") && (
-            <div className="form-section">
-              <h2 className="form-title">
-                <Truck className="w-5 h-5" />
+            <div className="reference-form-section">
+              <h2 className="reference-form-subtitle">
+                <Truck className="w-5 h-5 inline-block mr-2" />
                 <span>Ruta de Transporte</span>
               </h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="reference-form-cols-2">
                 <LocationSelector
                   type="origin"
                   provinceValue={originProvince}
@@ -213,7 +213,7 @@ const LogisticsForm = () => {
             <Button
               type="button"
               variant="outline"
-              className="border-agri-primary text-agri-primary hover:bg-agri-light"
+              className="reference-form-button-secondary"
               onClick={resetForm}
               disabled={isSubmitting}
             >
@@ -223,7 +223,7 @@ const LogisticsForm = () => {
             
             <Button
               type="submit"
-              className="bg-agri-primary hover:bg-agri-dark text-white"
+              className="reference-form-button"
               disabled={isSubmitting}
             >
               {isSubmitting ? (
