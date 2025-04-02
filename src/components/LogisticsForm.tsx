@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import ServiceSelector from "@/components/ServiceSelector";
@@ -74,7 +73,12 @@ const LogisticsForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      {/* Date Selector at the beginning */}
+      <ServiceSelector 
+        selectedService={selectedService as ServiceType} 
+        onSelectService={useFormContext().setSelectedService} 
+      />
+
+      {/* Date Selector */}
       <div className="form-section">
         <h2 className="form-title">
           <Calendar className="w-5 h-5" />
@@ -108,11 +112,6 @@ const LogisticsForm = () => {
           </Popover>
         </div>
       </div>
-
-      <ServiceSelector 
-        selectedService={selectedService as ServiceType} 
-        onSelectService={useFormContext().setSelectedService} 
-      />
 
       {selectedService && (
         <>
