@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import ServiceSelector from "@/components/ServiceSelector";
@@ -45,6 +46,8 @@ const LogisticsForm = () => {
     setPresentation,
     clarification,
     setClarification,
+    quantity,
+    setQuantity,
   } = useFormContext();
 
   return (
@@ -134,6 +137,8 @@ const LogisticsForm = () => {
             onPresentationChange={setPresentation}
             clarification={clarification}
             onClarificationChange={setClarification}
+            quantity={quantity}
+            onQuantityChange={setQuantity}
           />
           
           <ContactDetails

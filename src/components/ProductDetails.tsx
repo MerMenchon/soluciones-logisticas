@@ -34,6 +34,8 @@ interface ProductDetailsProps {
   onShippingTimeChange: (time: string) => void;
   clarification?: string;
   onClarificationChange?: (clarification: string) => void;
+  quantity: string;
+  onQuantityChange: (quantity: string) => void;
 }
 
 const ProductDetails = ({
@@ -49,6 +51,8 @@ const ProductDetails = ({
   onShippingTimeChange,
   clarification = "",
   onClarificationChange = () => {},
+  quantity,
+  onQuantityChange,
 }: ProductDetailsProps) => {
   const [productOptions, setProductOptions] = useState<string[]>([]);
   const [presentationOptions, setPresentationOptions] = useState<string[]>([]);
@@ -171,6 +175,19 @@ const ProductDetails = ({
     const newClarification = e.target.value;
     if (newClarification.length <= 50) {
       onClarificationChange(newClarification);
+    }
+  };
+
+  // Handle quantity input validation
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuantity = e.target.value;
+    
+    // Allow decimals and empty values (for UX)
+    if (newQuantity === '' || /^\d*\.?\d*$/.test(newQuantity)) {
+      // Check if value is greater than 0
+      if (newQuantity === '' || parseFloat(newQuantity) > 0) {
+        onQuantityChange(newQuantity);
+      }
     }
   };
 
@@ -316,6 +333,23 @@ const ProductDetails = ({
               />
             </PopoverContent>
           </Popover>
+        </div>
+
+        <div>
+          <label htmlFor="quantity" className="block text-sm font-medium text-agri-secondary mb-1">
+            Cantidad *
+          </label>
+          <Input
+            id="quantity"
+            placeholder="0.00"
+            value={quantity}
+            onChange={handleQuantityChange}
+            className="w-full"
+            required
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            Ingrese un valor numérico mayor a 0
+          </p>
         </div>
         
         <div>

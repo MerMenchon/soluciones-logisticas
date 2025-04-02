@@ -35,6 +35,7 @@ interface FormContextType {
   clarification: string;
   cargoValue: string;
   shippingTime: string;
+  quantity: string;
   
   // Contact information
   email: string;
@@ -56,6 +57,7 @@ interface FormContextType {
   setClarification: (clarification: string) => void;
   setCargoValue: (value: string) => void;
   setShippingTime: (time: string) => void;
+  setQuantity: (quantity: string) => void;
   setEmail: (email: string) => void;
   setAdditionalInfo: (info: string) => void;
   resetForm: () => void;
@@ -100,6 +102,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [clarification, setClarification] = useState("");
   const [cargoValue, setCargoValue] = useState("");
   const [shippingTime, setShippingTime] = useState("");
+  const [quantity, setQuantity] = useState("");
   
   // Contact information
   const [email, setEmail] = useState("");
@@ -125,6 +128,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setClarification("");
     setCargoValue("");
     setShippingTime("");
+    setQuantity("");
     
     setEmail("");
     setAdditionalInfo("");
@@ -238,6 +242,10 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return "Debe seleccionar tipo de producto";
     }
 
+    if (!quantity || parseFloat(quantity) <= 0) {
+      return "Debe ingresar una cantidad válida (mayor a cero)";
+    }
+
     if (!cargoValue || parseFloat(cargoValue) <= 0) {
       return "Debe ingresar un valor de carga válido (mayor a cero USD)";
     }
@@ -271,6 +279,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       "Presentación": presentation || null,
       "Aclaración": clarification || null,
       "Tiempo de Envío": shippingTime || null,
+      "Cantidad": quantity ? parseFloat(quantity) : null,
       "Valor": cargoValue ? parseFloat(cargoValue) : null,
       "Email": email,
       "Información Adicional": additionalInfo || null,
@@ -444,6 +453,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         clarification,
         cargoValue,
         shippingTime,
+        quantity,
         email,
         additionalInfo,
         setSelectedService: handleServiceChange,
@@ -461,6 +471,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setClarification,
         setCargoValue,
         setShippingTime,
+        setQuantity,
         setEmail,
         setAdditionalInfo,
         resetForm,
