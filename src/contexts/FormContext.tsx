@@ -1,3 +1,4 @@
+
 import React, {
   createContext,
   useState,
@@ -214,6 +215,11 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
     
     if (!productType) {
       return "Debe seleccionar tipo de producto";
+    }
+
+    // Add validation for description when product type is "Otro"
+    if (productType === "Otro" && !description.trim()) {
+      return "Debe ingresar una descripción del producto cuando el tipo es 'Otro'";
     }
 
     if (!quantity || parseFloat(quantity) <= 0) {

@@ -193,6 +193,9 @@ const ProductDetails = ({
 
   // Check if the selected presentation is "Otro"
   const showClarificationInput = presentation === "Otro";
+  
+  // Check if the product type is "Otro" to determine if description is required
+  const isDescriptionRequired = productType === "Otro";
 
   return (
     <div className="form-section">
@@ -336,17 +339,25 @@ const ProductDetails = ({
 
         <div>
           <label htmlFor="description" className="block text-sm font-medium text-agri-secondary mb-1">
-            Descripción del producto
+            Descripción del producto {isDescriptionRequired && <span className="text-red-500">*</span>}
           </label>
           <Input
             id="description"
             type="text"
-            placeholder="Describa brevemente su producto"
+            placeholder={isDescriptionRequired 
+              ? "Describa detalladamente su producto (obligatorio)" 
+              : "Describa brevemente su producto"}
             value={description}
             onChange={handleDescriptionChange}
             maxLength={100}
-            className="w-full"
+            className={`w-full ${isDescriptionRequired && !description ? 'border-red-500' : ''}`}
+            required={isDescriptionRequired}
           />
+          {isDescriptionRequired && !description && (
+            <p className="text-sm text-red-500 mt-1">
+              La descripción es obligatoria cuando el tipo de producto es "Otro"
+            </p>
+          )}
         </div>
       </div>
     </div>
@@ -354,4 +365,3 @@ const ProductDetails = ({
 };
 
 export default ProductDetails;
-
