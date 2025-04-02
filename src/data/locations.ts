@@ -19,49 +19,140 @@ export interface Location {
   hasStorage: boolean;
 }
 
-// Mock API call to fetch provinces and cities
+// Fetch provinces from Google Sheets
 export const fetchProvinces = async (): Promise<Province[]> => {
-  // In a real app, this would be an API call
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  
-  return [
-    {
-      value: "buenos-aires",
-      label: "Buenos Aires",
-      cities: [
-        { value: "la-plata", label: "La Plata" },
-        { value: "mar-del-plata", label: "Mar del Plata" },
-        { value: "quilmes", label: "Quilmes" },
-      ],
-    },
-    {
-      value: "cordoba",
-      label: "Córdoba",
-      cities: [
-        { value: "cordoba-capital", label: "Córdoba Capital" },
-        { value: "rio-cuarto", label: "Río Cuarto" },
-        { value: "villa-maria", label: "Villa María" },
-      ],
-    },
-    {
-      value: "santa-fe",
-      label: "Santa Fe",
-      cities: [
-        { value: "rosario", label: "Rosario" },
-        { value: "santa-fe-capital", label: "Santa Fe Capital" },
-        { value: "venado-tuerto", label: "Venado Tuerto" },
-      ],
-    },
-    {
-      value: "mendoza",
-      label: "Mendoza",
-      cities: [
-        { value: "mendoza-capital", label: "Mendoza Capital" },
-        { value: "san-rafael", label: "San Rafael" },
-        { value: "godoy-cruz", label: "Godoy Cruz" },
-      ],
-    },
-  ];
+  try {
+    const sheetId = "1VYDCQfaz3-7IrhPUGpAO4UBLMDR1mEyl6UCHU1hznwQ";
+    const sheetName = "PROVINCIAS"; // Sheet name for provinces
+    const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+    
+    const response = await fetch(sheetUrl);
+    
+    if (!response.ok) {
+      throw new Error("Error al cargar las provincias");
+    }
+    
+    const csvText = await response.text();
+    
+    // Parse CSV to extract provinces
+    const rows = csvText.split('\n');
+    
+    // Skip header row and map to Province objects
+    // Assuming the CSV structure has province names in the first column
+    const provinces = rows
+      .slice(1) // Skip header row
+      .map(row => {
+        const columns = row.split(',');
+        const provinceName = columns[0]?.replace(/"/g, '').trim();
+        
+        if (!provinceName) return null;
+        
+        return {
+          value: provinceName.toLowerCase().replace(/\s+/g, '-'),
+          label: provinceName,
+          cities: [] // Cities will be fetched separately
+        };
+      })
+      .filter(Boolean) as Province[];
+    
+    return provinces;
+  } catch (error) {
+    console.error("Error fetching provinces:", error);
+    // Return fallback provinces if fetch fails
+    return [
+      {
+        value: "buenos-aires",
+        label: "Buenos Aires",
+        cities: [],
+      },
+      {
+        value: "cordoba",
+        label: "Córdoba",
+        cities: [],
+      },
+      {
+        value: "santa-fe",
+        label: "Santa Fe",
+        cities: [],
+      },
+      {
+        value: "mendoza",
+        label: "Mendoza",
+        cities: [],
+      },
+    ];
+  }
+};
+
+// Fetch cities for a province from Google Sheets
+export const fetchCitiesForProvince = async (provinceValue: string): Promise<City[]> => {
+  try {
+    const sheetId = "1VYDCQfaz3-7IrhPUGpAO4UBLMDR1mEyl6UCHU1hznwQ";
+    const sheetName = "CIUDADES"; // Sheet name for cities
+    const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+    
+    const response = await fetch(sheetUrl);
+    
+    if (!response.ok) {
+      throw new Error("Error al cargar las ciudades");
+    }
+    
+    const csvText = await response.text();
+    
+    // Parse CSV to extract cities
+    const rows = csvText.split('\n');
+    
+    // Find the column indices for province, city and storage availability
+    const headers = rows[0].split(',');
+    const provinceColumnIndex = headers.findIndex(
+      header => header.trim().replace(/"/g, '').toUpperCase() === 'PROVINCIA'
+    );
+    const cityColumnIndex = headers.findIndex(
+      header => header.trim().replace(/"/g, '').toUpperCase() === 'CIUDAD'
+    );
+    const storageColumnIndex = headers.findIndex(
+      header => header.trim().replace(/"/g, '').toUpperCase() === 'ALMACENAMIENTO'
+    );
+    
+    if (provinceColumnIndex === -1 || cityColumnIndex === -1) {
+      throw new Error("No se encontraron las columnas necesarias en la hoja");
+    }
+    
+    // Get the province label from the province value
+    const provinces = await fetchProvinces();
+    const provinceLabel = provinces.find(p => p.value === provinceValue)?.label;
+    
+    if (!provinceLabel) {
+      throw new Error(`No se encontró la provincia con valor ${provinceValue}`);
+    }
+    
+    // Extract cities for the selected province
+    const cities = rows
+      .slice(1) // Skip header row
+      .map(row => {
+        const columns = row.split(',');
+        const rowProvince = columns[provinceColumnIndex]?.replace(/"/g, '').trim();
+        const cityName = columns[cityColumnIndex]?.replace(/"/g, '').trim();
+        const hasStorage = columns[storageColumnIndex]?.replace(/"/g, '').trim().toLowerCase() === 'si';
+        
+        // Only include cities for the selected province
+        if (rowProvince.toLowerCase() === provinceLabel.toLowerCase() && cityName) {
+          return {
+            value: cityName.toLowerCase().replace(/\s+/g, '-'),
+            label: cityName,
+            hasStorage
+          };
+        }
+        return null;
+      })
+      .filter(Boolean) as (City & { hasStorage: boolean })[];
+    
+    return cities;
+  } catch (error) {
+    console.error(`Error fetching cities for province ${provinceValue}:`, error);
+    // Return empty array if fetch fails
+    return [];
+  }
 };
 
 // Legacy functions for compatibility with existing code
@@ -76,10 +167,12 @@ export const getCiudades = async (provincia: string): Promise<Location[]> => {
   
   if (!selectedProvince) return [];
   
+  const cities = await fetchCitiesForProvince(selectedProvince.value);
+  
   // Convert to the expected Location format
-  return selectedProvince.cities.map(city => ({
+  return cities.map(city => ({
     ciudad: city.label,
-    hasStorage: Math.random() > 0.5 // Random for demo purposes
+    hasStorage: (city as any).hasStorage || false
   }));
 };
 
@@ -184,7 +277,8 @@ export const useCities = (provinceValue: string) => {
         (province) => province.value === provinceValue
       );
       
-      return selectedProvince?.cities || [];
+      const cities = await fetchCitiesForProvince(provinceValue);
+      return cities;
     },
     enabled: !!provinces && !!provinceValue,
   });

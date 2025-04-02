@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Location } from "@/data/locations";
 import { useFormContext } from "@/contexts/FormContext";
+import { Badge } from "@/components/ui/badge";
 
 interface CitySelectorProps {
   id: string;
@@ -52,10 +53,21 @@ const CitySelector = ({
           } />
         </SelectTrigger>
         <SelectContent>
+          {cities.length === 0 && !isLoading && (
+            <div className="px-2 py-4 text-center text-sm text-muted-foreground">
+              No hay ciudades disponibles para esta provincia
+            </div>
+          )}
           {cities.map((city) => (
-            <SelectItem key={city.ciudad} value={city.ciudad}>
-              {city.ciudad}
-              {shouldShowStorageInfo && city.hasStorage && " (Depósito disponible)"}
+            <SelectItem key={city.ciudad} value={city.ciudad} className="flex justify-between">
+              <div className="flex items-center justify-between w-full">
+                <span>{city.ciudad}</span>
+                {(type === "storage" || shouldShowStorageInfo) && city.hasStorage && (
+                  <Badge variant="outline" className="ml-2 bg-green-50 text-green-600 border-green-200">
+                    Almacenamiento
+                  </Badge>
+                )}
+              </div>
             </SelectItem>
           ))}
         </SelectContent>

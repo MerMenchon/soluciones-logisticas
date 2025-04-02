@@ -54,7 +54,16 @@ export const useLocationSelect = ({
           
           // If this is a storage selector, only show cities with storage
           if (type === "storage") {
-            setCities(citiesData.filter(city => city.hasStorage));
+            const citiesWithStorage = citiesData.filter(city => city.hasStorage);
+            setCities(citiesWithStorage);
+            
+            // If no cities with storage are available, show a toast
+            if (citiesWithStorage.length === 0) {
+              toast({
+                title: "Información",
+                description: "No hay ciudades con almacenamiento disponible en esta provincia.",
+              });
+            }
           } else {
             setCities(citiesData);
           }
@@ -96,7 +105,7 @@ export const useLocationSelect = ({
     checkStorageAvailability();
   }, [provinceValue, cityValue]);
 
-  const handleCityChange = async (value: string) => {
+  const handleCityChange = (value: string) => {
     const selectedLocation = cities.find(city => city.ciudad === value);
     onCityChange(value, selectedLocation?.hasStorage || false);
   };
