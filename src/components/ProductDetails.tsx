@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Package, CalendarIcon } from "lucide-react";
@@ -346,14 +347,14 @@ const ProductDetails = ({
           <label htmlFor="quantity" className="block text-sm font-medium text-agri-secondary mb-1">
             Cantidad *
           </label>
-          <div className="flex items-center gap-2">
+          <div className="flex items-stretch gap-2">
             <div className="w-1/3">
               <Input
                 id="quantity"
                 placeholder="0.00"
                 value={quantity}
                 onChange={handleQuantityChange}
-                className="w-full"
+                className="w-full h-full"
                 required
               />
               <p className="text-xs text-muted-foreground mt-1">
@@ -361,7 +362,7 @@ const ProductDetails = ({
               </p>
             </div>
             
-            <div className="w-2/3">
+            <div className="w-2/3 flex items-center">
               {isLoadingQuantityUnits ? (
                 <div className="text-sm text-muted-foreground py-2">Cargando...</div>
               ) : (
@@ -371,7 +372,7 @@ const ProductDetails = ({
                   onValueChange={(value) => {
                     if (value) onQuantityUnitChange(value);
                   }}
-                  className="flex justify-start"
+                  className="flex justify-start h-10"
                 >
                   {quantityUnitOptions.slice(0, 3).map((unit) => (
                     <ToggleGroupItem 
@@ -379,7 +380,7 @@ const ProductDetails = ({
                       value={unit} 
                       aria-label={unit}
                       variant="bordered"
-                      className="rounded-md text-sm border border-agri-light"
+                      className="rounded-md text-sm border border-agri-light h-full"
                     >
                       {unit}
                     </ToggleGroupItem>
