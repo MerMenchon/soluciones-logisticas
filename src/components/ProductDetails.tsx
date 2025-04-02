@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Package, CalendarIcon } from "lucide-react";
@@ -347,8 +346,8 @@ const ProductDetails = ({
           <label htmlFor="quantity" className="block text-sm font-medium text-agri-secondary mb-1">
             Cantidad *
           </label>
-          <div className="grid grid-cols-1 gap-4">
-            <div>
+          <div className="flex gap-4 items-start">
+            <div className="flex-1">
               <Input
                 id="quantity"
                 placeholder="0.00"
@@ -357,41 +356,37 @@ const ProductDetails = ({
                 className="w-full"
                 required
               />
+              <p className="text-xs text-muted-foreground mt-1">
+                Ingrese un valor numérico mayor a 0
+              </p>
+            </div>
+            
+            <div className="flex-1">
+              {isLoadingQuantityUnits ? (
+                <div className="text-sm text-muted-foreground py-2">Cargando unidades...</div>
+              ) : (
+                <ToggleGroup 
+                  type="single" 
+                  value={quantityUnit}
+                  onValueChange={(value) => {
+                    if (value) onQuantityUnitChange(value);
+                  }}
+                  className="flex flex-wrap gap-2"
+                >
+                  {quantityUnitOptions.map((unit) => (
+                    <ToggleGroupItem 
+                      key={unit} 
+                      value={unit} 
+                      aria-label={unit}
+                      className="px-4 py-2 rounded-md text-sm"
+                    >
+                      {unit}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              )}
             </div>
           </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            Ingrese un valor numérico mayor a 0
-          </p>
-        </div>
-
-        <div>
-          <label htmlFor="quantityUnit" className="block text-sm font-medium text-agri-secondary mb-1">
-            Unidad de medida *
-          </label>
-          
-          {isLoadingQuantityUnits ? (
-            <div className="text-sm text-muted-foreground py-2">Cargando unidades de medida...</div>
-          ) : (
-            <ToggleGroup 
-              type="single" 
-              value={quantityUnit}
-              onValueChange={(value) => {
-                if (value) onQuantityUnitChange(value);
-              }}
-              className="flex flex-wrap gap-2"
-            >
-              {quantityUnitOptions.map((unit) => (
-                <ToggleGroupItem 
-                  key={unit} 
-                  value={unit} 
-                  aria-label={unit}
-                  className="px-4 py-2 rounded-md text-sm"
-                >
-                  {unit}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-          )}
         </div>
         
         <div>
