@@ -36,7 +36,7 @@ const FormActions = ({ onReset, isSubmitting, isFormValid }: FormActionsProps) =
         ) : (
           <>
             <Send className="w-4 h-4 mr-2" />
-            Enviar consulta
+            Costo aproximado
           </>
         )}
       </Button>
@@ -45,3 +45,4 @@ const FormActions = ({ onReset, isSubmitting, isFormValid }: FormActionsProps) =
 };
 
 export default FormActions;
+
