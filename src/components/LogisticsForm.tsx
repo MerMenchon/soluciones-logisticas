@@ -52,8 +52,6 @@ const LogisticsForm = () => {
     quantityUnit,
     setQuantityUnit,
     setAdditionalInfo,
-    category,
-    setCategory,
     validateForm,
     estimatedStorageTime,
     setEstimatedStorageTime,
@@ -162,8 +160,6 @@ const LogisticsForm = () => {
             onQuantityChange={setQuantity}
             quantityUnit={quantityUnit}
             onQuantityUnitChange={setQuantityUnit}
-            category={category}
-            onCategoryChange={setCategory}
           />
           
           <ContactDetails

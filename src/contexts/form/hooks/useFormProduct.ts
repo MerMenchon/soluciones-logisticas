@@ -10,7 +10,6 @@ interface ProductState {
   shippingTime: string;
   quantity: string;
   quantityUnit: string;
-  category: string;
   additionalInfo: string;
 }
 
@@ -24,7 +23,6 @@ export const useFormProduct = (initialState: Partial<ProductState> = {}) => {
     shippingTime: "",
     quantity: "",
     quantityUnit: "",
-    category: "",
     additionalInfo: "",
     ...initialState,
   });
@@ -57,9 +55,6 @@ export const useFormProduct = (initialState: Partial<ProductState> = {}) => {
   
   const setQuantityUnit = (unit: string) => 
     updateProductState({ quantityUnit: unit });
-  
-  const setCategory = (category: string) => 
-    updateProductState({ category });
 
   // Contact handler
   const setAdditionalInfo = (info: string) => 
@@ -75,7 +70,6 @@ export const useFormProduct = (initialState: Partial<ProductState> = {}) => {
       shippingTime: "",
       quantity: "",
       quantityUnit: "",
-      category: "",
       additionalInfo: "",
     });
   };
@@ -90,7 +84,6 @@ export const useFormProduct = (initialState: Partial<ProductState> = {}) => {
     setShippingTime,
     setQuantity,
     setQuantityUnit,
-    setCategory,
     setAdditionalInfo,
     resetProductDetails,
   };

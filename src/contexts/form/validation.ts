@@ -1,3 +1,4 @@
+
 import { FormState } from "./types";
 
 export const validateForm = (formState: FormState): string | null => {
@@ -93,7 +94,6 @@ export const getFormData = (formState: FormState) => {
     destinationCity,
     additionalInfo,
     productType,
-    category,
     description,
     presentation,
     clarification,
@@ -116,7 +116,6 @@ export const getFormData = (formState: FormState) => {
     
     // Product details
     "Tipo de Producto": productType,
-    "Categoría": category || null,
     "Descripción": description || null,
     "Presentación": presentation || null,
     "Aclaración": clarification || null,

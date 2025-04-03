@@ -63,7 +63,6 @@ export interface FormContextType {
   shippingTime: string;
   quantity: string;
   quantityUnit: string;
-  category: string;
 
   // Contact setters
   setAdditionalInfo: (info: string) => void;
@@ -77,7 +76,6 @@ export interface FormContextType {
   setShippingTime: (time: string) => void;
   setQuantity: (quantity: string) => void;
   setQuantityUnit: (unit: string) => void;
-  setCategory: (category: string) => void;
 
   // Form submission
   handleSubmit: (e: React.FormEvent) => Promise<void>;
@@ -120,7 +118,6 @@ export interface FormState {
   shippingTime: string;
   quantity: string;
   quantityUnit: string;
-  category: string;
 }
 
 export interface FormProviderProps {

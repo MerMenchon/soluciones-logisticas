@@ -2,7 +2,6 @@
 import React from "react";
 import { Package } from "lucide-react";
 import ProductTypeSelector from "./product/ProductTypeSelector";
-import CategorySelector from "./product/CategorySelector";
 import PresentationSelector from "./product/PresentationSelector";
 import QuantityInput from "./product/QuantityInput";
 import ValueInput from "./product/ValueInput";
@@ -25,8 +24,6 @@ interface ProductDetailsProps {
   onQuantityChange: (quantity: string) => void;
   quantityUnit: string;
   onQuantityUnitChange: (unit: string) => void;
-  category: string;
-  onCategoryChange: (category: string) => void;
 }
 
 const ProductDetails = ({
@@ -46,8 +43,6 @@ const ProductDetails = ({
   onQuantityChange,
   quantityUnit,
   onQuantityUnitChange,
-  category,
-  onCategoryChange,
 }: ProductDetailsProps) => {
   // Check if the product type is "Otro" to determine if description is required
   const isDescriptionRequired = productType === "Otro";
@@ -62,11 +57,6 @@ const ProductDetails = ({
         <ProductTypeSelector 
           productType={productType} 
           onProductTypeChange={onProductTypeChange} 
-        />
-
-        <CategorySelector
-          category={category}
-          onCategoryChange={onCategoryChange}
         />
 
         <PresentationSelector

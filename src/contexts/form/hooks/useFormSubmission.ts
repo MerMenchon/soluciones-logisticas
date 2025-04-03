@@ -108,7 +108,6 @@ export const useFormSubmission = (formState: FormState) => {
         },
         product: {
           type: formState.productType,
-          category: formState.category || null,
           description: formState.description || null,
           presentation: formState.presentation,
           clarification: formState.clarification || null,
