@@ -1,6 +1,6 @@
 
 import React from "react";
-import { RotateCcw, Scale } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface FormActionsProps {
@@ -34,10 +34,7 @@ const FormActions = ({ onReset, isSubmitting, isFormValid }: FormActionsProps) =
             Procesando...
           </>
         ) : (
-          <>
-            <Scale className="w-4 h-4 mr-2" />
-            Costo aproximado
-          </>
+          "Costo aproximado"
         )}
       </Button>
     </div>
