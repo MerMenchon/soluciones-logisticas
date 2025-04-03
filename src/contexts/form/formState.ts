@@ -43,7 +43,6 @@ export const useFormState = () => {
     shippingTime: "",
     quantity: "",
     quantityUnit: "",
-    category: "",
   });
 
   // Use individual hooks for state management
@@ -68,7 +67,6 @@ export const useFormState = () => {
     shippingTime: formState.shippingTime,
     quantity: formState.quantity,
     quantityUnit: formState.quantityUnit,
-    category: formState.category,
     additionalInfo: formState.additionalInfo,
   });
   
@@ -100,7 +98,6 @@ export const useFormState = () => {
       shippingTime: productState.shippingTime,
       quantity: productState.quantity,
       quantityUnit: productState.quantityUnit,
-      category: productState.category,
     }));
   }, [
     serviceState,
@@ -171,7 +168,6 @@ export const useFormState = () => {
     setShippingTime: productState.setShippingTime,
     setQuantity: productState.setQuantity,
     setQuantityUnit: productState.setQuantityUnit,
-    setCategory: productState.setCategory,
     
     // Contact methods
     setAdditionalInfo: productState.setAdditionalInfo,
