@@ -58,7 +58,15 @@ export const useFormSubmission = (formState: FormState) => {
         throw new Error(`Webhook response was not ok: ${response.status}`);
       }
 
-      return await response.json();
+      // Check if there's content in the response before trying to parse JSON
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const text = await response.text();
+        return text ? JSON.parse(text) : { success: true };
+      }
+      
+      // If not JSON or empty response, just return a success object
+      return { success: true };
     } catch (error) {
       console.error('Error sending data to webhook:', error);
       throw error;

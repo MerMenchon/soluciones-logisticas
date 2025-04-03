@@ -34,7 +34,7 @@ const FormActions = ({ onReset, isSubmitting, isFormValid }: FormActionsProps) =
             Procesando...
           </>
         ) : (
-          "Costo aproximado"
+          "Enviar Consulta"
         )}
       </Button>
     </div>
