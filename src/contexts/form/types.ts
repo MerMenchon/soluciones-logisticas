@@ -29,11 +29,11 @@ export interface FormContextType {
 
   // Location setters
   setStorageProvince: (province: string) => void;
-  setStorageCity: (city: string) => void;
+  setStorageCity: (city: string, hasStorage: boolean) => void;
   setOriginProvince: (province: string) => void;
-  setOriginCity: (city: string) => void;
+  setOriginCity: (city: string, hasStorage: boolean) => void;
   setDestinationProvince: (province: string) => void;
-  setDestinationCity: (city: string) => void;
+  setDestinationCity: (city: string, hasStorage: boolean) => void;
   handleUseOriginAsStorageChange: (checked: boolean) => void;
   handleUseDestinationAsStorageChange: (checked: boolean) => void;
   setEstimatedStorageTime: (time: string) => void;
