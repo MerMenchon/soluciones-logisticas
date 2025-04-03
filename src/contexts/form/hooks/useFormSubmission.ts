@@ -84,6 +84,7 @@ export const useFormSubmission = (formState: FormState) => {
     try {
       // Prepare full form data with proper structure
       const formData = {
+        submissionDate: new Date().toISOString(), // Add current date and time
         service: {
           type: formState.selectedService,
         },
