@@ -48,17 +48,26 @@ const SuccessMessage = ({ onReset }: SuccessMessageProps) => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
-
+  
+  // Display loading message while waiting for response
   if (isWaitingForResponse) {
     return <LoadingMessage />;
   }
-
+  
+  // Clean up the title by removing extra quotes if they exist
+  const cleanTitle = webhookResponse?.titulo 
+    ? webhookResponse.titulo.replace(/^"(.+)"$/, '$1') 
+    : "¡Consulta enviada!";
+  
   // Format price for display, handling it as a string
   const formattedPrice = webhookResponse?.precio 
     ? Number(webhookResponse.precio).toLocaleString('es-AR')
     : '0';
   
   const showPrice = webhookResponse?.precio && webhookResponse.precio !== "0";
+  
+  // Log the response for debugging
+  console.log("Displaying webhook response:", webhookResponse);
 
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center py-12">
@@ -77,7 +86,7 @@ const SuccessMessage = ({ onReset }: SuccessMessageProps) => {
         transition={{ delay: 0.2, duration: 0.5 }}
         className="text-3xl font-semibold text-agri-primary mb-3"
       >
-        {webhookResponse?.titulo || "¡Consulta enviada!"}
+        {cleanTitle}
       </motion.h2>
       
       <motion.p

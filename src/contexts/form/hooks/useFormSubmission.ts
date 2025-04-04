@@ -77,17 +77,20 @@ export const useFormSubmission = (formState: FormState) => {
         throw new Error("No response received from webhook");
       }
 
+      // Extract first item if it's an array (API returns array with one object)
+      const responseData = Array.isArray(webhookResponse) ? webhookResponse[0] : webhookResponse;
+
       // Show success message with webhook response details
       toast({
-        title: webhookResponse.titulo || "Éxito",
-        description: `${webhookResponse.mensaje}\nPrecio aproximado: $${webhookResponse.precio}`,
+        title: responseData.titulo?.replace(/^"(.+)"$/, '$1') || "Éxito",
+        description: `${responseData.mensaje}${responseData.precio ? `\nPrecio aproximado: $${responseData.precio}` : ''}`,
       });
 
       updateSubmissionState({ 
         formSubmitted: true, 
         isSubmitting: false,
         isWaitingForResponse: false,
-        webhookResponse 
+        webhookResponse: responseData 
       });
     } catch (error) {
       // Handle webhook submission error
