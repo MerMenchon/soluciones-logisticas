@@ -31,6 +31,7 @@ export interface FormState {
   showConfirmation: boolean;
   distanceValue: string | null;
   isWaitingForResponse: boolean;
+  showResponseDialog: boolean; // New state for controlling dialog visibility
 
   // Contact state
   additionalInfo: string;
@@ -77,6 +78,10 @@ export interface FormContextType extends FormState {
   
   // Contact methods
   setAdditionalInfo: (info: string) => void;
+  
+  // Dialog methods
+  setShowResponseDialog: (show: boolean) => void;
+  handleCloseResponseDialog: () => void;
   
   // Form action methods
   resetForm: () => void;

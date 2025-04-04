@@ -8,6 +8,7 @@ import ShippingDateSelector from "@/components/logistics/ShippingDateSelector";
 import StorageLocationSection from "@/components/logistics/StorageLocationSection";
 import TransportRouteSection from "@/components/logistics/TransportRouteSection";
 import FormActions from "@/components/logistics/FormActions";
+import SuccessMessage from "@/components/SuccessMessage";
 
 // Define the ServiceType to match the one in ServiceSelector
 type ServiceType = "storage" | "transport" | "both";
@@ -55,6 +56,9 @@ const LogisticsForm = () => {
     validateForm,
     estimatedStorageTime,
     setEstimatedStorageTime,
+    showResponseDialog,
+    handleCloseResponseDialog,
+    isWaitingForResponse,
   } = useFormContext();
 
   // State for form validation
@@ -96,85 +100,93 @@ const LogisticsForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="reference-form space-y-8">
-      <ServiceSelector 
-        selectedService={selectedService as ServiceType} 
-        onSelectService={useFormContext().setSelectedService} 
+    <>
+      {/* Response Dialog */}
+      <SuccessMessage 
+        open={showResponseDialog || isWaitingForResponse} 
+        onClose={handleCloseResponseDialog} 
       />
+      
+      <form onSubmit={handleSubmit} className="reference-form space-y-8">
+        <ServiceSelector 
+          selectedService={selectedService as ServiceType} 
+          onSelectService={useFormContext().setSelectedService} 
+        />
 
-      {/* Date Selector */}
-      <ShippingDateSelector
-        selectedDate={selectedDate}
-        onDateSelect={handleDateSelect}
-        disabledDays={disabledDays}
-      />
+        {/* Date Selector */}
+        <ShippingDateSelector
+          selectedDate={selectedDate}
+          onDateSelect={handleDateSelect}
+          disabledDays={disabledDays}
+        />
 
-      {selectedService && (
-        <>
-          {(selectedService === "storage" || selectedService === "both") && (
-            <StorageLocationSection
-              selectedService={selectedService}
-              storageProvince={storageProvince}
-              storageCity={storageCity}
-              setStorageProvince={setStorageProvince}
-              setStorageCity={setStorageCity}
-              estimatedStorageTime={estimatedStorageTime}
-              setEstimatedStorageTime={setEstimatedStorageTime}
+        {selectedService && (
+          <>
+            {(selectedService === "storage" || selectedService === "both") && (
+              <StorageLocationSection
+                selectedService={selectedService}
+                storageProvince={storageProvince}
+                storageCity={storageCity}
+                setStorageProvince={setStorageProvince}
+                setStorageCity={setStorageCity}
+                estimatedStorageTime={estimatedStorageTime}
+                setEstimatedStorageTime={setEstimatedStorageTime}
+              />
+            )}
+
+            {(selectedService === "transport" || selectedService === "both") && (
+              <TransportRouteSection
+                originProvince={originProvince}
+                originCity={originCity}
+                setOriginProvince={setOriginProvince}
+                setOriginCity={setOriginCity}
+                destinationProvince={destinationProvince}
+                destinationCity={destinationCity}
+                setDestinationProvince={setDestinationProvince}
+                setDestinationCity={setDestinationCity}
+                selectedService={selectedService}
+                useOriginAsStorage={useOriginAsStorage}
+                handleUseOriginAsStorageChange={handleUseOriginAsStorageChange}
+                useDestinationAsStorage={useDestinationAsStorage}
+                handleUseDestinationAsStorageChange={handleUseDestinationAsStorageChange}
+                estimatedStorageTime={estimatedStorageTime}
+                setEstimatedStorageTime={setEstimatedStorageTime}
+              />
+            )}
+
+            <ProductDetails 
+              productType={productType}
+              onProductTypeChange={setProductType}
+              value={cargoValue}
+              onValueChange={setCargoValue}
+              shippingTime={shippingTime}
+              onShippingTimeChange={setShippingTime}
+              description={description}
+              onDescriptionChange={setDescription}
+              presentation={presentation}
+              onPresentationChange={setPresentation}
+              clarification={clarification}
+              onClarificationChange={setClarification}
+              quantity={quantity}
+              onQuantityChange={setQuantity}
+              quantityUnit={quantityUnit}
+              onQuantityUnitChange={setQuantityUnit}
             />
-          )}
-
-          {(selectedService === "transport" || selectedService === "both") && (
-            <TransportRouteSection
-              originProvince={originProvince}
-              originCity={originCity}
-              setOriginProvince={setOriginProvince}
-              setOriginCity={setOriginCity}
-              destinationProvince={destinationProvince}
-              destinationCity={destinationCity}
-              setDestinationProvince={setDestinationProvince}
-              setDestinationCity={setDestinationCity}
-              selectedService={selectedService}
-              useOriginAsStorage={useOriginAsStorage}
-              handleUseOriginAsStorageChange={handleUseOriginAsStorageChange}
-              useDestinationAsStorage={useDestinationAsStorage}
-              handleUseDestinationAsStorageChange={handleUseDestinationAsStorageChange}
-              estimatedStorageTime={estimatedStorageTime}
-              setEstimatedStorageTime={setEstimatedStorageTime}
+            
+            <ContactDetails
+              additionalInfo={additionalInfo}
+              onAdditionalInfoChange={setAdditionalInfo}
             />
-          )}
 
-          <ProductDetails 
-            productType={productType}
-            onProductTypeChange={setProductType}
-            value={cargoValue}
-            onValueChange={setCargoValue}
-            shippingTime={shippingTime}
-            onShippingTimeChange={setShippingTime}
-            description={description}
-            onDescriptionChange={setDescription}
-            presentation={presentation}
-            onPresentationChange={setPresentation}
-            clarification={clarification}
-            onClarificationChange={setClarification}
-            quantity={quantity}
-            onQuantityChange={setQuantity}
-            quantityUnit={quantityUnit}
-            onQuantityUnitChange={setQuantityUnit}
-          />
-          
-          <ContactDetails
-            additionalInfo={additionalInfo}
-            onAdditionalInfoChange={setAdditionalInfo}
-          />
-
-          <FormActions 
-            onReset={resetForm} 
-            isSubmitting={isSubmitting} 
-            isFormValid={isFormValid}
-          />
-        </>
-      )}
-    </form>
+            <FormActions 
+              onReset={resetForm} 
+              isSubmitting={isSubmitting} 
+              isFormValid={isFormValid}
+            />
+          </>
+        )}
+      </form>
+    </>
   );
 };
 

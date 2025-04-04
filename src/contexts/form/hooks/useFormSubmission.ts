@@ -13,6 +13,7 @@ interface SubmissionState {
   distanceValue: string | null;
   webhookResponse?: WebhookResponse;
   isWaitingForResponse: boolean;
+  showResponseDialog: boolean; // Added this state
 }
 
 export const useFormSubmission = (formState: FormState) => {
@@ -23,6 +24,7 @@ export const useFormSubmission = (formState: FormState) => {
     showConfirmation: false,
     distanceValue: null,
     isWaitingForResponse: false,
+    showResponseDialog: false, // New state to control dialog visibility
   });
 
   const updateSubmissionState = (updates: Partial<SubmissionState>) => {
@@ -37,6 +39,9 @@ export const useFormSubmission = (formState: FormState) => {
   
   const setDistanceValue = (distanceValue: string | null) => 
     updateSubmissionState({ distanceValue });
+    
+  const setShowResponseDialog = (showResponseDialog: boolean) =>
+    updateSubmissionState({ showResponseDialog });
 
   // Form validation wrapper
   const validateFormWrapper = () => {
@@ -59,7 +64,8 @@ export const useFormSubmission = (formState: FormState) => {
 
     updateSubmissionState({ 
       isSubmitting: true,
-      isWaitingForResponse: true
+      isWaitingForResponse: true,
+      showResponseDialog: true // Show dialog when submitting
     });
 
     try {
@@ -80,11 +86,13 @@ export const useFormSubmission = (formState: FormState) => {
       // Extract first item if it's an array (API returns array with one object)
       const responseData = Array.isArray(webhookResponse) ? webhookResponse[0] : webhookResponse;
 
-      // We don't show toast notification for response anymore, it's displayed in the UI
-      // Instead, just update the state with the response data
+      // Show success toast
+      toast({
+        title: "Éxito",
+        description: "Su consulta ha sido procesada correctamente",
+      });
 
       updateSubmissionState({ 
-        formSubmitted: true, 
         isSubmitting: false,
         isWaitingForResponse: false,
         webhookResponse: responseData 
@@ -100,9 +108,15 @@ export const useFormSubmission = (formState: FormState) => {
 
       updateSubmissionState({ 
         isSubmitting: false,
-        isWaitingForResponse: false
+        isWaitingForResponse: false,
+        showResponseDialog: false // Hide dialog on error
       });
     }
+  };
+
+  // Dialog close handler
+  const handleCloseResponseDialog = () => {
+    setShowResponseDialog(false);
   };
 
   // These functions are maintained for API compatibility
@@ -113,14 +127,16 @@ export const useFormSubmission = (formState: FormState) => {
   const cancelRequest = () => {
     updateSubmissionState({ 
       isSubmitting: false,
-      isWaitingForResponse: false
+      isWaitingForResponse: false,
+      showResponseDialog: false
     });
   };
 
   const submitForm = async () => {
     updateSubmissionState({ 
       isSubmitting: true,
-      isWaitingForResponse: true
+      isWaitingForResponse: true,
+      showResponseDialog: true
     });
 
     // Simulate form submission
@@ -137,7 +153,7 @@ export const useFormSubmission = (formState: FormState) => {
     });
 
     updateSubmissionState({ 
-      formSubmitted: true, 
+      formSubmitted: false, 
       isSubmitting: false,
       isWaitingForResponse: false
     });
@@ -148,9 +164,11 @@ export const useFormSubmission = (formState: FormState) => {
     setIsSubmitting,
     setShowConfirmation,
     setDistanceValue,
+    setShowResponseDialog,
     handleSubmit,
     confirmRequest,
     cancelRequest,
+    handleCloseResponseDialog,
     validateForm: validateFormWrapper,
   };
 };

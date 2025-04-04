@@ -1,19 +1,9 @@
 
 import React from "react";
-import { FormProvider, useFormContext } from "@/contexts/form";
+import { FormProvider } from "@/contexts/form";
 import LogisticsForm from "@/components/LogisticsForm";
-import SuccessMessage from "@/components/SuccessMessage";
 
-const FormContent = () => {
-  const { 
-    formSubmitted, 
-    resetForm
-  } = useFormContext();
-
-  if (formSubmitted) {
-    return <SuccessMessage onReset={resetForm} />;
-  }
-
+const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="container max-w-4xl mx-auto px-4">
@@ -26,17 +16,11 @@ const FormContent = () => {
           </p>
         </header>
 
-        <LogisticsForm />
+        <FormProvider>
+          <LogisticsForm />
+        </FormProvider>
       </div>
     </div>
-  );
-};
-
-const Index = () => {
-  return (
-    <FormProvider>
-      <FormContent />
-    </FormProvider>
   );
 };
 
