@@ -1,10 +1,10 @@
+
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { FormState, WebhookResponse } from "../types";
 import { validateForm, getFormData } from "../validation";
-
-// Webhook configuration with the specified URL
-const WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/recepcionFormulario";
+import { sendToWebhook } from "./useWebhook";
+import { prepareFormData } from "./useFormData";
 
 interface SubmissionState {
   isSubmitting: boolean;
@@ -41,32 +41,6 @@ export const useFormSubmission = (formState: FormState) => {
     return validateForm(formState);
   };
 
-  // Function to send data to webhook
-  const sendToWebhook = async (formData: any): Promise<WebhookResponse> => {
-    try {
-      console.log("Sending data to webhook:", JSON.stringify(formData, null, 2));
-      
-      const response = await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Webhook response was not ok: ${response.status}`);
-      }
-
-      // Parse the response as JSON
-      const responseData = await response.json();
-      return responseData;
-    } catch (error) {
-      console.error('Error sending data to webhook:', error);
-      throw error;
-    }
-  };
-
   // Form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,46 +59,7 @@ export const useFormSubmission = (formState: FormState) => {
 
     try {
       // Prepare full form data with proper structure
-      const formData = {
-        submissionDate: new Date().toISOString(), // Add current date and time
-        service: {
-          type: formState.selectedService,
-        },
-        locations: {
-          storage: {
-            province: formState.selectedService === "storage" || formState.selectedService === "both" ? formState.storageProvince : null,
-            city: formState.selectedService === "storage" || formState.selectedService === "both" ? formState.storageCity : null,
-            estimatedStorageTime: formState.selectedService === "storage" || formState.selectedService === "both" 
-              ? (formState.estimatedStorageTime ? parseInt(formState.estimatedStorageTime) : null) 
-              : null
-          },
-          transport: {
-            origin: {
-              province: formState.selectedService === "transport" || formState.selectedService === "both" ? formState.originProvince : null,
-              city: formState.selectedService === "transport" || formState.selectedService === "both" ? formState.originCity : null,
-            },
-            destination: {
-              province: formState.selectedService === "transport" || formState.selectedService === "both" ? formState.destinationProvince : null,
-              city: formState.selectedService === "transport" || formState.selectedService === "both" ? formState.destinationCity : null,
-            },
-          },
-        },
-        product: {
-          type: formState.productType,
-          description: formState.description || null,
-          presentation: formState.presentation,
-          clarification: formState.clarification || null,
-          quantity: {
-            value: formState.quantity ? parseFloat(formState.quantity) : null,
-            unit: formState.quantityUnit || null,
-          },
-          value: formState.cargoValue ? parseFloat(formState.cargoValue) : null,
-        },
-        shipping: {
-          time: formState.shippingTime || null,
-        },
-        additionalInfo: formState.additionalInfo || null,
-      };
+      const formData = prepareFormData(formState);
 
       // Send to webhook and get response
       const webhookResponse = await sendToWebhook(formData);
