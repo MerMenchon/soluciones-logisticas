@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, TrendingUp, Loader2, ArrowLeft } from "lucide-react";
-import { useFormContext } from "@/contexts/FormContext";
+import { useFormContext } from "@/contexts/form";
 
 interface ConfirmationDialogProps {
   distanceValue: string;
