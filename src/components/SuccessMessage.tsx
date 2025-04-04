@@ -1,8 +1,17 @@
-import React, { useEffect } from "react";
+
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, Loader, ArrowLeft } from "lucide-react";
+import { CheckCircle, Loader, ArrowLeft, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFormContext } from "@/contexts/form";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface SuccessMessageProps {
   onReset: () => void;
@@ -43,6 +52,7 @@ const LoadingMessage = () => {
 
 const SuccessMessage = ({ onReset }: SuccessMessageProps) => {
   const { webhookResponse, isWaitingForResponse, resetForm } = useFormContext();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -68,6 +78,7 @@ const SuccessMessage = ({ onReset }: SuccessMessageProps) => {
   // Function to handle submit request
   const handleSubmitRequest = () => {
     console.log("Enviar solicitud clicked");
+    setIsDialogOpen(false);
     // Here you would implement the actual submission logic
     // For now it's just a placeholder
   };
@@ -75,9 +86,56 @@ const SuccessMessage = ({ onReset }: SuccessMessageProps) => {
   // Handle returning to the form
   const handleReturnToForm = () => {
     console.log("Returning to form");
+    setIsDialogOpen(false);
     // Reset the form to its initial state
     resetForm();
   };
+
+  // Response dialog content
+  const ResponseDialog = () => (
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-semibold text-center text-agri-primary">
+            {cleanTitle}
+          </DialogTitle>
+        </DialogHeader>
+        
+        <div className="py-4">
+          <p className="text-center text-muted-foreground mb-6">
+            {webhookResponse?.mensaje || "Gracias por su consulta. Nos pondremos en contacto con usted a la brevedad para brindarle más información sobre el servicio solicitado."}
+          </p>
+          
+          {showPrice && (
+            <div className="mb-6 text-center">
+              <div className="text-sm text-muted-foreground mb-1">Precio aproximado:</div>
+              <div className="text-4xl font-bold text-agri-primary">
+                ${formattedPrice}
+              </div>
+            </div>
+          )}
+        </div>
+        
+        <DialogFooter className="sm:justify-center gap-4">
+          <Button
+            variant="outline"
+            onClick={handleReturnToForm}
+            className="w-full sm:w-auto"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver al formulario
+          </Button>
+          
+          <Button
+            className="bg-agri-primary hover:bg-agri-dark text-white w-full sm:w-auto"
+            onClick={handleSubmitRequest}
+          >
+            Enviar solicitud
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
 
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center py-12">
@@ -103,29 +161,15 @@ const SuccessMessage = ({ onReset }: SuccessMessageProps) => {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.5 }}
-        className="text-lg text-muted-foreground text-center max-w-md mb-6"
+        className="text-lg text-muted-foreground text-center max-w-md mb-8"
       >
-        {webhookResponse?.mensaje || "Gracias por su consulta. Nos pondremos en contacto con usted a la brevedad para brindarle más información sobre el servicio solicitado."}
+        Su consulta ha sido procesada correctamente.
       </motion.p>
-      
-      {showPrice && (
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-          className="mb-8 text-center"
-        >
-          <div className="text-sm text-muted-foreground mb-1">Precio aproximado:</div>
-          <div className="text-4xl font-bold text-agri-primary">
-            ${formattedPrice}
-          </div>
-        </motion.div>
-      )}
       
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.5, duration: 0.5 }}
+        transition={{ delay: 0.4, duration: 0.5 }}
         className="flex flex-col sm:flex-row gap-4 mt-4"
       >
         <Button
@@ -139,11 +183,15 @@ const SuccessMessage = ({ onReset }: SuccessMessageProps) => {
         
         <Button
           className="bg-agri-primary hover:bg-agri-dark text-white order-1 sm:order-2"
-          onClick={handleSubmitRequest}
+          onClick={() => setIsDialogOpen(true)}
         >
-          Enviar solicitud
+          <ExternalLink className="w-4 h-4 mr-2" />
+          Ver costo aproximado
         </Button>
       </motion.div>
+      
+      {/* Render the dialog */}
+      <ResponseDialog />
     </div>
   );
 };
