@@ -19,12 +19,9 @@ export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => 
       throw new Error(`Webhook response was not ok: ${response.status}`);
     }
 
-    // Parse the response as JSON and ensure precio is a number
+    // Parse the response as JSON and return it as is with precio as string
     const responseData = await response.json();
-    return {
-      ...responseData,
-      precio: Number(responseData.precio) // Ensure precio is a number
-    };
+    return responseData;
   } catch (error) {
     console.error('Error sending data to webhook:', error);
     throw error;

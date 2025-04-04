@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
@@ -15,10 +16,12 @@ const SuccessMessage = ({ onReset }: SuccessMessageProps) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  // Ensure precio is a number, defaulting to 0 if not valid
-  const precio = webhookResponse?.precio 
-    ? Number(webhookResponse.precio).toLocaleString('es-AR') 
+  // Format price for display, handling it as a string
+  const formattedPrice = webhookResponse?.precio 
+    ? Number(webhookResponse.precio).toLocaleString('es-AR')
     : '0';
+  
+  const showPrice = webhookResponse?.precio && webhookResponse.precio !== "0";
 
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center py-12">
@@ -44,12 +47,12 @@ const SuccessMessage = ({ onReset }: SuccessMessageProps) => {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.5 }}
-        className="text-muted-foreground text-center max-w-md mb-6"
+        className="text-lg text-muted-foreground text-center max-w-md mb-6"
       >
         {webhookResponse?.mensaje || "Gracias por su consulta. Nos pondremos en contacto con usted a la brevedad para brindarle más información sobre el servicio solicitado."}
       </motion.p>
       
-      {precio !== '0' && (
+      {showPrice && (
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -58,7 +61,7 @@ const SuccessMessage = ({ onReset }: SuccessMessageProps) => {
         >
           <div className="text-sm text-muted-foreground mb-1">Precio aproximado:</div>
           <div className="text-4xl font-bold text-agri-primary">
-            ${precio}
+            ${formattedPrice}
           </div>
         </motion.div>
       )}
