@@ -43,7 +43,7 @@ const LoadingMessage = () => {
 };
 
 const SuccessMessage = ({ onReset }: SuccessMessageProps) => {
-  const { webhookResponse, isWaitingForResponse } = useFormContext();
+  const { webhookResponse, isWaitingForResponse, resetForm } = useFormContext();
   
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -74,6 +74,13 @@ const SuccessMessage = ({ onReset }: SuccessMessageProps) => {
     console.log("Enviar solicitud clicked");
     // Here you would implement the actual submission logic
     // For now it's just a placeholder
+  };
+  
+  // Handle returning to the form
+  const handleReturnToForm = () => {
+    console.log("Returning to form");
+    // Call the onReset function passed as prop
+    onReset();
   };
 
   return (
@@ -127,7 +134,7 @@ const SuccessMessage = ({ onReset }: SuccessMessageProps) => {
       >
         <Button
           variant="outline"
-          onClick={onReset}
+          onClick={handleReturnToForm}
           className="order-2 sm:order-1"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
