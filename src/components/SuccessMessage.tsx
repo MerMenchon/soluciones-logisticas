@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, Loader, ArrowLeft } from "lucide-react";
@@ -66,9 +65,6 @@ const SuccessMessage = ({ onReset }: SuccessMessageProps) => {
   
   const showPrice = webhookResponse?.precio && webhookResponse.precio !== "0";
   
-  // Log the response for debugging
-  console.log("Displaying webhook response:", webhookResponse);
-
   // Function to handle submit request
   const handleSubmitRequest = () => {
     console.log("Enviar solicitud clicked");
@@ -79,8 +75,8 @@ const SuccessMessage = ({ onReset }: SuccessMessageProps) => {
   // Handle returning to the form
   const handleReturnToForm = () => {
     console.log("Returning to form");
-    // Call the onReset function passed as prop
-    onReset();
+    // Reset the form to its initial state
+    resetForm();
   };
 
   return (
