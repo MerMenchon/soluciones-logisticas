@@ -1,7 +1,7 @@
 
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, Loader } from "lucide-react";
+import { CheckCircle, Loader, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFormContext } from "@/contexts/form";
 
@@ -69,6 +69,13 @@ const SuccessMessage = ({ onReset }: SuccessMessageProps) => {
   // Log the response for debugging
   console.log("Displaying webhook response:", webhookResponse);
 
+  // Function to handle submit request
+  const handleSubmitRequest = () => {
+    console.log("Enviar solicitud clicked");
+    // Here you would implement the actual submission logic
+    // For now it's just a placeholder
+  };
+
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center py-12">
       <motion.div
@@ -116,12 +123,22 @@ const SuccessMessage = ({ onReset }: SuccessMessageProps) => {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.5 }}
+        className="flex flex-col sm:flex-row gap-4 mt-4"
       >
         <Button
-          className="bg-agri-primary hover:bg-agri-dark text-white"
+          variant="outline"
           onClick={onReset}
+          className="order-2 sm:order-1"
         >
+          <ArrowLeft className="w-4 h-4 mr-2" />
           Volver al formulario
+        </Button>
+        
+        <Button
+          className="bg-agri-primary hover:bg-agri-dark text-white order-1 sm:order-2"
+          onClick={handleSubmitRequest}
+        >
+          Enviar solicitud
         </Button>
       </motion.div>
     </div>
