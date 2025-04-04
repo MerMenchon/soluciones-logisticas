@@ -1,12 +1,8 @@
 
 import { WebhookResponse } from "../types";
 
-// Webhook configuration with the specified URL
 const WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/recepcionFormulario";
 
-/**
- * Sends form data to the configured webhook endpoint
- */
 export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => {
   try {
     console.log("Sending data to webhook:", JSON.stringify(formData, null, 2));
@@ -23,9 +19,12 @@ export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => 
       throw new Error(`Webhook response was not ok: ${response.status}`);
     }
 
-    // Parse the response as JSON
+    // Parse the response as JSON and ensure precio is a number
     const responseData = await response.json();
-    return responseData;
+    return {
+      ...responseData,
+      precio: Number(responseData.precio) // Ensure precio is a number
+    };
   } catch (error) {
     console.error('Error sending data to webhook:', error);
     throw error;
