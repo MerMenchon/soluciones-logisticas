@@ -1,3 +1,4 @@
+
 // Define ServiceType for form state
 export type ServiceType = "storage" | "transport" | "both" | "";
 
@@ -29,6 +30,7 @@ export interface FormState {
   formSubmitted: boolean;
   showConfirmation: boolean;
   distanceValue: string | null;
+  isWaitingForResponse: boolean;
 
   // Contact state
   additionalInfo: string;

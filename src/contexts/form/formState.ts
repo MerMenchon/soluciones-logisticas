@@ -30,6 +30,7 @@ export const useFormState = () => {
     formSubmitted: false,
     showConfirmation: false,
     distanceValue: null,
+    isWaitingForResponse: false,
 
     // Contact state
     additionalInfo: "",
@@ -117,6 +118,7 @@ export const useFormState = () => {
       showConfirmation: submissionState.showConfirmation,
       distanceValue: submissionState.distanceValue,
       webhookResponse: submissionState.webhookResponse,
+      isWaitingForResponse: submissionState.isWaitingForResponse,
     }));
   }, [submissionState]);
 
@@ -139,6 +141,7 @@ export const useFormState = () => {
       showConfirmation: false,
       distanceValue: null,
       webhookResponse: undefined,
+      isWaitingForResponse: false,
     }));
   };
 

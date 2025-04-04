@@ -12,6 +12,7 @@ interface SubmissionState {
   showConfirmation: boolean;
   distanceValue: string | null;
   webhookResponse?: WebhookResponse;
+  isWaitingForResponse: boolean;
 }
 
 export const useFormSubmission = (formState: FormState) => {
@@ -21,6 +22,7 @@ export const useFormSubmission = (formState: FormState) => {
     formSubmitted: false,
     showConfirmation: false,
     distanceValue: null,
+    isWaitingForResponse: false,
   });
 
   const updateSubmissionState = (updates: Partial<SubmissionState>) => {
@@ -55,14 +57,25 @@ export const useFormSubmission = (formState: FormState) => {
       return;
     }
 
-    updateSubmissionState({ isSubmitting: true });
+    updateSubmissionState({ 
+      isSubmitting: true,
+      isWaitingForResponse: true
+    });
 
     try {
       // Prepare full form data with proper structure
       const formData = prepareFormData(formState);
 
+      console.log("Sending form data to webhook and waiting for response...");
+      
       // Send to webhook and get response
       const webhookResponse = await sendToWebhook(formData);
+      
+      console.log("Received webhook response:", webhookResponse);
+
+      if (!webhookResponse) {
+        throw new Error("No response received from webhook");
+      }
 
       // Show success message with webhook response details
       toast({
@@ -73,6 +86,7 @@ export const useFormSubmission = (formState: FormState) => {
       updateSubmissionState({ 
         formSubmitted: true, 
         isSubmitting: false,
+        isWaitingForResponse: false,
         webhookResponse 
       });
     } catch (error) {
@@ -84,7 +98,10 @@ export const useFormSubmission = (formState: FormState) => {
         variant: "destructive",
       });
 
-      updateSubmissionState({ isSubmitting: false });
+      updateSubmissionState({ 
+        isSubmitting: false,
+        isWaitingForResponse: false
+      });
     }
   };
 
@@ -94,11 +111,17 @@ export const useFormSubmission = (formState: FormState) => {
   };
 
   const cancelRequest = () => {
-    updateSubmissionState({ isSubmitting: false });
+    updateSubmissionState({ 
+      isSubmitting: false,
+      isWaitingForResponse: false
+    });
   };
 
   const submitForm = async () => {
-    updateSubmissionState({ isSubmitting: true });
+    updateSubmissionState({ 
+      isSubmitting: true,
+      isWaitingForResponse: true
+    });
 
     // Simulate form submission
     await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -113,7 +136,11 @@ export const useFormSubmission = (formState: FormState) => {
       description: "Su consulta ha sido enviada correctamente!",
     });
 
-    updateSubmissionState({ formSubmitted: true, isSubmitting: false });
+    updateSubmissionState({ 
+      formSubmitted: true, 
+      isSubmitting: false,
+      isWaitingForResponse: false
+    });
   };
 
   return {

@@ -1,7 +1,7 @@
 
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Loader } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFormContext } from "@/contexts/form";
 
@@ -9,12 +9,49 @@ interface SuccessMessageProps {
   onReset: () => void;
 }
 
+const LoadingMessage = () => {
+  return (
+    <div className="min-h-[60vh] flex flex-col items-center justify-center py-12">
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="text-agri-primary mb-6"
+      >
+        <Loader size={80} strokeWidth={1.5} className="animate-spin" />
+      </motion.div>
+      
+      <motion.h2
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+        className="text-3xl font-semibold text-agri-primary mb-3"
+      >
+        Procesando su consulta
+      </motion.h2>
+      
+      <motion.p
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+        className="text-lg text-muted-foreground text-center max-w-md"
+      >
+        Por favor espere mientras recibimos la respuesta...
+      </motion.p>
+    </div>
+  );
+};
+
 const SuccessMessage = ({ onReset }: SuccessMessageProps) => {
-  const { webhookResponse } = useFormContext();
+  const { webhookResponse, isWaitingForResponse } = useFormContext();
   
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
+
+  if (isWaitingForResponse) {
+    return <LoadingMessage />;
+  }
 
   // Format price for display, handling it as a string
   const formattedPrice = webhookResponse?.precio 
