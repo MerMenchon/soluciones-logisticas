@@ -7,11 +7,18 @@ import { validateForm, getFormData } from "../validation";
 // Webhook configuration with the specified URL
 const WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/recepcionFormulario";
 
+interface WebhookResponse {
+  titulo: string;
+  mensaje: string;
+  precio: number;
+}
+
 interface SubmissionState {
   isSubmitting: boolean;
   formSubmitted: boolean;
   showConfirmation: boolean;
   distanceValue: string | null;
+  webhookResponse?: WebhookResponse;
 }
 
 export const useFormSubmission = (formState: FormState) => {
@@ -42,7 +49,7 @@ export const useFormSubmission = (formState: FormState) => {
   };
 
   // Function to send data to webhook
-  const sendToWebhook = async (formData: any) => {
+  const sendToWebhook = async (formData: any): Promise<WebhookResponse> => {
     try {
       console.log("Sending data to webhook:", JSON.stringify(formData, null, 2));
       
@@ -58,15 +65,9 @@ export const useFormSubmission = (formState: FormState) => {
         throw new Error(`Webhook response was not ok: ${response.status}`);
       }
 
-      // Check if there's content in the response before trying to parse JSON
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        const text = await response.text();
-        return text ? JSON.parse(text) : { success: true };
-      }
-      
-      // If not JSON or empty response, just return a success object
-      return { success: true };
+      // Parse the response as JSON
+      const responseData = await response.json();
+      return responseData;
     } catch (error) {
       console.error('Error sending data to webhook:', error);
       throw error;
@@ -132,18 +133,19 @@ export const useFormSubmission = (formState: FormState) => {
         additionalInfo: formState.additionalInfo || null,
       };
 
-      // Send to webhook
-      await sendToWebhook(formData);
+      // Send to webhook and get response
+      const webhookResponse = await sendToWebhook(formData);
 
-      // Show success message
+      // Show success message with webhook response details
       toast({
-        title: "Éxito",
-        description: "Su consulta ha sido enviada correctamente!",
+        title: webhookResponse.titulo || "Éxito",
+        description: `${webhookResponse.mensaje}\nPrecio aproximado: $${webhookResponse.precio}`,
       });
 
       updateSubmissionState({ 
         formSubmitted: true, 
-        isSubmitting: false 
+        isSubmitting: false,
+        webhookResponse 
       });
     } catch (error) {
       // Handle webhook submission error
@@ -197,3 +199,4 @@ export const useFormSubmission = (formState: FormState) => {
     validateForm: validateFormWrapper,
   };
 };
+
