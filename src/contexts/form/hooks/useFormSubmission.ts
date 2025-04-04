@@ -80,11 +80,8 @@ export const useFormSubmission = (formState: FormState) => {
       // Extract first item if it's an array (API returns array with one object)
       const responseData = Array.isArray(webhookResponse) ? webhookResponse[0] : webhookResponse;
 
-      // Show success message with webhook response details
-      toast({
-        title: responseData.titulo?.replace(/^"(.+)"$/, '$1') || "Éxito",
-        description: `${responseData.mensaje}${responseData.precio ? `\nPrecio aproximado: $${responseData.precio}` : ''}`,
-      });
+      // We don't show toast notification for response anymore, it's displayed in the UI
+      // Instead, just update the state with the response data
 
       updateSubmissionState({ 
         formSubmitted: true, 
