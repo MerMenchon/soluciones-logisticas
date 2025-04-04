@@ -1,17 +1,10 @@
-
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { FormState } from "../types";
+import { FormState, WebhookResponse } from "../types";
 import { validateForm, getFormData } from "../validation";
 
 // Webhook configuration with the specified URL
 const WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/recepcionFormulario";
-
-interface WebhookResponse {
-  titulo: string;
-  mensaje: string;
-  precio: number;
-}
 
 interface SubmissionState {
   isSubmitting: boolean;
@@ -199,4 +192,3 @@ export const useFormSubmission = (formState: FormState) => {
     validateForm: validateFormWrapper,
   };
 };
-

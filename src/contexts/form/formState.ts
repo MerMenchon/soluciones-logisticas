@@ -116,6 +116,7 @@ export const useFormState = () => {
       formSubmitted: submissionState.formSubmitted,
       showConfirmation: submissionState.showConfirmation,
       distanceValue: submissionState.distanceValue,
+      webhookResponse: submissionState.webhookResponse,
     }));
   }, [submissionState]);
 
@@ -137,6 +138,7 @@ export const useFormState = () => {
       formSubmitted: false,
       showConfirmation: false,
       distanceValue: null,
+      webhookResponse: undefined,
     }));
   };
 

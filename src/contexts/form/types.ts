@@ -10,6 +10,13 @@ export interface ProvinceCityOption {
   label: string;
 }
 
+// Define webhook response type
+export interface WebhookResponse {
+  titulo: string;
+  mensaje: string;
+  precio: number;
+}
+
 // Form Context type
 export interface FormContextType {
   // Service selection
@@ -43,6 +50,7 @@ export interface FormContextType {
   formSubmitted: boolean;
   showConfirmation: boolean;
   distanceValue: string | null;
+  webhookResponse?: WebhookResponse;
   setIsSubmitting: React.Dispatch<React.SetStateAction<boolean>>;
   setShowConfirmation: React.Dispatch<React.SetStateAction<boolean>>;
   setDistanceValue: React.Dispatch<React.SetStateAction<string | null>>;
@@ -105,6 +113,7 @@ export interface FormState {
   formSubmitted: boolean;
   showConfirmation: boolean;
   distanceValue: string | null;
+  webhookResponse?: WebhookResponse;
 
   // Contact state
   additionalInfo: string;
