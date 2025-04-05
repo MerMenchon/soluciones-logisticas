@@ -1,7 +1,7 @@
 
 import { WebhookResponse } from "../types";
 
-const WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/recepcionFormulario";
+const WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook/recepcionFormulario";
 const WEBHOOK_TIMEOUT = 30000; // 30 seconds timeout
 
 export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => {
