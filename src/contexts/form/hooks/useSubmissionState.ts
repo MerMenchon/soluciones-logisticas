@@ -41,6 +41,9 @@ export const useSubmissionState = () => {
     
   const setShowResponseDialog = (showResponseDialog: boolean) =>
     updateSubmissionState({ showResponseDialog });
+    
+  const setFormSubmitted = (formSubmitted: boolean) =>
+    updateSubmissionState({ formSubmitted });
 
   return {
     submissionState,
@@ -48,6 +51,7 @@ export const useSubmissionState = () => {
     setIsSubmitting,
     setShowConfirmation,
     setDistanceValue,
-    setShowResponseDialog
+    setShowResponseDialog,
+    setFormSubmitted
   };
 };

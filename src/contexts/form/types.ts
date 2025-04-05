@@ -110,6 +110,7 @@ export interface FormContextType extends FormState {
   setIsSubmitting: (isSubmitting: boolean) => void;
   setShowConfirmation: (showConfirmation: boolean) => void;
   setDistanceValue: (distanceValue: string | null) => void;
+  setFormSubmitted: (formSubmitted: boolean) => void;
   
   // Validation methods  
   validateForm: () => string | null;

@@ -13,7 +13,8 @@ export const useFormSubmission = (formState: FormState) => {
     setIsSubmitting,
     setShowConfirmation,
     setDistanceValue,
-    setShowResponseDialog
+    setShowResponseDialog,
+    setFormSubmitted
   } = useSubmissionState();
   
   // Form validation
@@ -39,7 +40,17 @@ export const useFormSubmission = (formState: FormState) => {
   } = useFormHandler(
     formState,
     validateFields,
-    (updates) => updateSubmissionState(updates)
+    (updates) => {
+      // Mark form as submitted when validation happens during submission
+      if ('validationResult' in updates) {
+        updateSubmissionState({
+          ...updates,
+          formSubmitted: true
+        });
+      } else {
+        updateSubmissionState(updates);
+      }
+    }
   );
 
   return {
@@ -48,6 +59,7 @@ export const useFormSubmission = (formState: FormState) => {
     setShowConfirmation,
     setDistanceValue,
     setShowResponseDialog,
+    setFormSubmitted,
     handleSubmit,
     confirmRequest,
     cancelRequest,

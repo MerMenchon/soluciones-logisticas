@@ -5,6 +5,7 @@ export const useFieldTracking = (
   submissionState: {
     touchedFields: TouchedFields;
     validationResult: ValidationResult;
+    formSubmitted: boolean;
   },
   updateSubmissionState: (updates: Partial<{
     touchedFields: TouchedFields;
@@ -21,8 +22,8 @@ export const useFieldTracking = (
       }
     });
     
-    // Auto-validate field when marked as touched
-    if (validateField) {
+    // Only validate field if it's been touched AND form has been submitted once
+    if (validateField && submissionState.formSubmitted) {
       validateField(fieldName);
     }
   };
@@ -32,9 +33,9 @@ export const useFieldTracking = (
     return !!submissionState.touchedFields[fieldName];
   };
   
-  // Method to get a field's error only if it's been touched
+  // Method to get a field's error only if form was submitted and field still has error
   const getFieldError = (fieldName: string): string | null => {
-    if (isFieldTouched(fieldName)) {
+    if (submissionState.formSubmitted) {
       return submissionState.validationResult.errors[fieldName] || null;
     }
     return null;

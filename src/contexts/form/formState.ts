@@ -144,6 +144,7 @@ export const useFormState = () => {
     productState.resetProductDetails();
     submissionState.setIsSubmitting(false);
     submissionState.setShowResponseDialog(false); // Close dialog when resetting form
+    submissionState.setFormSubmitted(false); // Reset form submitted state
     setFormState(prev => ({
       ...prev,
       selectedService: "",

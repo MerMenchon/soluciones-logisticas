@@ -20,6 +20,9 @@ export const useFormHandler = (
   // Form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Mark form as submitted to trigger validation display
+    updateSubmission({ formSubmitted: true });
 
     // Validate all fields and update validation state
     const validationResult = validateFields();
