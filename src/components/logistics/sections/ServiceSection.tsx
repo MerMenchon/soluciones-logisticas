@@ -25,11 +25,14 @@ const ServiceSection = () => {
     }
   };
 
+  // Only get the error if we need to show it (user has interacted with the form)
+  const serviceError = getFieldError("selectedService");
+
   return (
     <ServiceSelector 
       selectedService={selectedService as "storage" | "transport" | "both"} 
       onSelectService={handleServiceSelect} 
-      error={getFieldError("selectedService")}
+      error={serviceError}
     />
   );
 };

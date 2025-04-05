@@ -22,8 +22,8 @@ export const useSubmissionState = () => {
     distanceValue: null,
     isWaitingForResponse: false,
     showResponseDialog: false,
-    validationResult: { isValid: true, errors: {} }, // Start with no errors
-    touchedFields: {}
+    validationResult: { isValid: true, errors: {} }, // Start with empty errors
+    touchedFields: {} // Start with no touched fields
   });
 
   const updateSubmissionState = (updates: Partial<SubmissionState>) => {

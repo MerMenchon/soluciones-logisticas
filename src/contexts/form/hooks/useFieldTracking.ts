@@ -1,3 +1,4 @@
+
 import { TouchedFields, ValidationResult } from "../types";
 
 export const useFieldTracking = (
@@ -45,6 +46,7 @@ export const useFieldTracking = (
   // Method to get a field's error - show errors for touched fields or after form submission
   const getFieldError = (fieldName: string): string | null => {
     // Only show errors if form has been submitted OR the field has been touched
+    // This is the key change - don't show ANY errors until the form is submitted or field is touched
     if (submissionState.formSubmitted || submissionState.touchedFields[fieldName]) {
       return submissionState.validationResult.errors[fieldName] || null;
     }
