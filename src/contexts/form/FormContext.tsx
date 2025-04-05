@@ -15,12 +15,8 @@ export const useFormContext = () => {
   return context;
 };
 
-// Form Context Provider component with added _context type
-type FormProviderComponent = React.FC<FormProviderProps> & {
-  _context?: React.Context<FormContextType | undefined>
-};
-
-export const FormProvider: FormProviderComponent = ({ children }) => {
+// Form Context Provider component
+export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
   const formState = useFormState();
   
   return (
@@ -29,6 +25,3 @@ export const FormProvider: FormProviderComponent = ({ children }) => {
     </FormContext.Provider>
   );
 };
-
-// Fix: Add _context property for direct access when needed
-FormProvider._context = FormContext;

@@ -3,7 +3,7 @@ import React from "react";
 import { useLogisticsForm } from "@/hooks/useLogisticsForm";
 import SuccessMessage from "@/components/SuccessMessage";
 import FormSections from "@/components/logistics/FormSections";
-import { FormProvider } from "@/contexts/form";
+import { FormProvider } from "@/contexts/form/FormContext";
 
 const LogisticsForm = () => {
   return (
