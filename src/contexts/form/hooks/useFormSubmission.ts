@@ -1,7 +1,8 @@
+
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { FormState, WebhookResponse } from "../types";
-import { validateForm, validateFormFields, ValidationResult } from "../validation";
+import { validateForm, validateFormFields, ValidationResult, validateField } from "../validation";
 import { sendToWebhook } from "./useWebhook";
 import { prepareFormData } from "./useFormData";
 
@@ -54,6 +55,30 @@ export const useFormSubmission = (formState: FormState) => {
     const result = validateFormFields(formState);
     updateSubmissionState({ validationResult: result });
     return result;
+  };
+
+  // NEW: Single field validation - for immediate feedback
+  const validateFieldWrapper = (fieldName: string) => {
+    // Get current validation state
+    const currentValidation = { ...submissionState.validationResult };
+    
+    // Validate just this field
+    const fieldError = validateField(formState, fieldName);
+    
+    // Update only this field's error status
+    currentValidation.errors = {
+      ...currentValidation.errors,
+      [fieldName]: fieldError
+    };
+    
+    // Check if form is now valid
+    const hasErrors = Object.values(currentValidation.errors).some(error => error !== null);
+    currentValidation.isValid = !hasErrors;
+    
+    // Update state with new validation result
+    updateSubmissionState({ validationResult: currentValidation });
+    
+    return currentValidation;
   };
 
   // Form submission
@@ -176,5 +201,6 @@ export const useFormSubmission = (formState: FormState) => {
     handleCloseResponseDialog,
     validateForm: validateFormWrapper,
     validateFields: validateFieldsWrapper,
+    validateField: validateFieldWrapper, // Add new field validation method
   };
 };

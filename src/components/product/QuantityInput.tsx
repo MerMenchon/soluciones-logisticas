@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { useQuantityUnits } from "@/hooks/useLocationData";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useFormContext } from "@/contexts/form";
 
 interface QuantityInputProps {
   quantity: string;
@@ -24,6 +25,7 @@ const QuantityInput = ({
 }: QuantityInputProps) => {
   // Use the React Query hook for quantity units
   const { data: quantityUnitOptions = [], isLoading: isLoadingQuantityUnits } = useQuantityUnits();
+  const { validateField } = useFormContext();
 
   // Set default quantity unit when options are loaded and no value is selected
   useEffect(() => {
@@ -42,6 +44,23 @@ const QuantityInput = ({
       // Check if value is greater than 0
       if (newQuantity === '' || parseFloat(newQuantity) > 0) {
         onQuantityChange(newQuantity);
+        
+        // Immediately validate this field after change
+        if (errors.quantity) {
+          setTimeout(() => validateField("quantity"), 0);
+        }
+      }
+    }
+  };
+
+  // Handle unit change and validate immediately
+  const handleUnitChange = (value: string) => {
+    if (value) {
+      onQuantityUnitChange(value);
+      
+      // Immediately validate this field after change
+      if (errors.quantityUnit) {
+        setTimeout(() => validateField("quantityUnit"), 0);
       }
     }
   };
@@ -68,9 +87,7 @@ const QuantityInput = ({
             <ToggleGroup 
               type="single" 
               value={quantityUnit}
-              onValueChange={(value) => {
-                if (value) onQuantityUnitChange(value);
-              }}
+              onValueChange={handleUnitChange}
               className={`flex flex-wrap gap-1 ml-2 ${errors.quantityUnit ? 'border-red-500' : ''}`}
             >
               {quantityUnitOptions.map((unit) => (

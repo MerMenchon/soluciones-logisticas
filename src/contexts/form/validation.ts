@@ -1,4 +1,3 @@
-
 import { FormState } from "./types";
 
 export type ValidationResult = {
@@ -87,6 +86,78 @@ export const validateForm = (formState: FormState): string | null => {
   }
 
   return null;
+};
+
+// New function to validate a single field
+export const validateField = (formState: FormState, fieldName: string): string | null => {
+  const {
+    selectedService,
+    storageProvince,
+    storageCity,
+    originProvince,
+    originCity,
+    destinationProvince,
+    destinationCity,
+    estimatedStorageTime,
+    productType,
+    description,
+    presentation,
+    quantity,
+    quantityUnit,
+    cargoValue,
+    shippingTime,
+  } = formState;
+
+  // Return validation for the specific field
+  switch (fieldName) {
+    case "selectedService":
+      return !selectedService ? "Debe seleccionar un servicio" : null;
+    
+    case "storageProvince":
+      return selectedService === "storage" && !storageProvince ? "Debe seleccionar una provincia" : null;
+    
+    case "storageCity":
+      return selectedService === "storage" && !storageCity ? "Debe seleccionar una ciudad" : null;
+    
+    case "originProvince":
+      return (selectedService === "transport" || selectedService === "both") && !originProvince ? "Debe seleccionar una provincia de origen" : null;
+    
+    case "originCity":
+      return (selectedService === "transport" || selectedService === "both") && !originCity ? "Debe seleccionar una ciudad de origen" : null;
+    
+    case "destinationProvince":
+      return (selectedService === "transport" || selectedService === "both") && !destinationProvince ? "Debe seleccionar una provincia de destino" : null;
+    
+    case "destinationCity":
+      return (selectedService === "transport" || selectedService === "both") && !destinationCity ? "Debe seleccionar una ciudad de destino" : null;
+    
+    case "estimatedStorageTime":
+      return (selectedService === "storage" || selectedService === "both") && !estimatedStorageTime ? "Debe ingresar un tiempo estimado de almacenamiento" : null;
+    
+    case "productType":
+      return !productType ? "Debe seleccionar tipo de producto" : null;
+    
+    case "description":
+      return productType === "Otro" && !description.trim() ? "La descripción del producto es obligatoria" : null;
+    
+    case "presentation":
+      return !presentation.trim() ? "La presentación del producto es obligatoria" : null;
+    
+    case "quantity":
+      return !quantity || parseFloat(quantity) <= 0 ? "Debe ingresar una cantidad válida (mayor a cero)" : null;
+    
+    case "quantityUnit":
+      return !quantityUnit ? "Debe seleccionar una unidad de medida" : null;
+    
+    case "cargoValue":
+      return !cargoValue || parseFloat(cargoValue) <= 0 ? "Debe ingresar un valor válido (mayor a cero)" : null;
+    
+    case "shippingTime":
+      return !shippingTime ? "Debe seleccionar una fecha de inicio" : null;
+    
+    default:
+      return null;
+  }
 };
 
 // New function to validate individual fields and return field-specific errors

@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Input } from "@/components/ui/input";
+import { useFormContext } from "@/contexts/form";
 
 interface ValueInputProps {
   value: string;
@@ -9,6 +10,8 @@ interface ValueInputProps {
 }
 
 const ValueInput = ({ value, onValueChange, error }: ValueInputProps) => {
+  const { validateField } = useFormContext();
+
   // Handle numeric input validation
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -18,6 +21,11 @@ const ValueInput = ({ value, onValueChange, error }: ValueInputProps) => {
       // Check if value is greater than 0
       if (newValue === '' || parseFloat(newValue) > 0) {
         onValueChange(newValue);
+        
+        // Immediately validate this field after change
+        if (error) {
+          setTimeout(() => validateField("cargoValue"), 0);
+        }
       }
     }
   };

@@ -2,6 +2,7 @@
 import React from "react";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useFormContext } from "@/contexts/form";
 
 interface ProvinceSelectorProps {
   id: string;
@@ -20,6 +21,27 @@ const ProvinceSelector = ({
   onChange,
   error
 }: ProvinceSelectorProps) => {
+  const { validateField } = useFormContext();
+  
+  // Enhanced onChange handler that also triggers validation
+  const handleProvinceChange = (newValue: string) => {
+    onChange(newValue);
+    
+    // Determine which field this is based on the id and validate it
+    if (error) {
+      const fieldNames: Record<string, string> = {
+        'storage-province': 'storageProvince',
+        'origin-province': 'originProvince',
+        'destination-province': 'destinationProvince'
+      };
+      
+      const fieldName = fieldNames[id] || '';
+      if (fieldName) {
+        setTimeout(() => validateField(fieldName), 0);
+      }
+    }
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
@@ -27,7 +49,7 @@ const ProvinceSelector = ({
       </div>
       <Select 
         value={value} 
-        onValueChange={onChange}
+        onValueChange={handleProvinceChange}
         disabled={isLoading}
       >
         <SelectTrigger 

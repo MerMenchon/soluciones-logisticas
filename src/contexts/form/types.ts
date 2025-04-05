@@ -104,6 +104,7 @@ export interface FormContextType extends FormState {
   setDistanceValue: (distanceValue: string | null) => void;
   validateForm: () => string | null;
   validateFields: () => ValidationResult;
+  validateField: (fieldName: string) => ValidationResult; // Added new method
 }
 
 // FormProviderProps interface
