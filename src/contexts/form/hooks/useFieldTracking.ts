@@ -1,4 +1,3 @@
-
 import { TouchedFields, ValidationResult } from "../types";
 
 export const useFieldTracking = (
@@ -21,21 +20,18 @@ export const useFieldTracking = (
         [fieldName]: true
       }
     });
-    
-    // Only validate field if it's been touched AND form has been submitted once
-    if (validateField && submissionState.formSubmitted) {
-      validateField(fieldName);
-    }
   };
   
-  // Method to validate field on blur - updated to always clear errors if field is valid
+  // Method to validate field on blur - clears error if field is now valid
   const validateOnBlur = (fieldName: string) => {
-    if (validateField) {
+    // Only validate if form has been submitted once
+    // This ensures we don't show errors while user is still filling the form
+    if (validateField && submissionState.formSubmitted) {
       // Get the validation result for this field
       const result = validateField(fieldName);
       
-      // IMPORTANT: Always update the UI whether there's an error or not
-      // This ensures the error message disappears when the field value is valid
+      // Update the UI to reflect the current validation state
+      // This ensures errors disappear when the field is fixed
       updateSubmissionState({
         validationResult: {
           ...result
@@ -49,18 +45,14 @@ export const useFieldTracking = (
     return !!submissionState.touchedFields[fieldName];
   };
   
-  // Method to get a field's error - updated to show errors based on field state
+  // Method to get a field's error - ONLY show errors after form submission
   const getFieldError = (fieldName: string): string | null => {
-    // Only show errors for fields that have been touched
-    if (submissionState.touchedFields[fieldName]) {
-      return submissionState.validationResult.errors[fieldName] || null;
-    }
-    
-    // If form has been submitted, show all errors
+    // Only show errors if form has been submitted
     if (submissionState.formSubmitted) {
       return submissionState.validationResult.errors[fieldName] || null;
     }
     
+    // Otherwise, don't show any errors
     return null;
   };
 

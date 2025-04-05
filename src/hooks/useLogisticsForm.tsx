@@ -33,6 +33,7 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
   } = formContext;
 
   // Effect to validate the form when relevant values change
+  // This doesn't show the errors - it just tracks if the form is valid
   useEffect(() => {
     const isValid = validateForm() === null;
     setIsFormValid(isValid);
@@ -68,8 +69,10 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
       // Mark field as touched
       setFieldTouched("shippingTime");
       
-      // Validate the field immediately
-      validateField("shippingTime");
+      // Only validate if form has been submitted
+      if (formSubmitted) {
+        validateField("shippingTime");
+      }
     }
   };
   
@@ -78,22 +81,22 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
     setFieldTouched("shippingTime");
   };
 
-  // Function to validate the field when clicking outside (onBlur)
+  // Function to validate only when form has been submitted
   const handleDateBlur = () => {
-    if (shippingTime) {
+    if (shippingTime && formSubmitted) {
       validateOnBlur("shippingTime");
     }
   };
   
-  // Create a generic field blur handler
+  // Create a generic field blur handler that only validates if form was submitted
   const handleFieldBlur = (fieldName: string) => {
-    validateOnBlur(fieldName);
+    if (formSubmitted) {
+      validateOnBlur(fieldName);
+    }
   };
 
   // Function to handle form submission and validate all fields
   const handleFormSubmit = (e: React.FormEvent): void => {
-    // Validate all fields before submitting
-    validateFields();
     handleSubmit(e);
   };
 
@@ -113,6 +116,7 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
     setFieldTouched,
     getFieldError,
     isFieldTouched,
-    formSubmitted
+    formSubmitted,
+    validateOnBlur
   };
 };
