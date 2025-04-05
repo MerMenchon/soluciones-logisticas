@@ -1,16 +1,23 @@
 
 import { useEffect, useState } from "react";
 import { useFormContext } from "@/contexts/FormContext";
+import { LogisticsFormHookReturn } from "@/types/logistics";
 
-export const useLogisticsForm = () => {
+/**
+ * Custom hook that manages the logistics form state and validation.
+ * 
+ * @returns {LogisticsFormHookReturn} An object containing form state, methods, and validation functionality
+ */
+export const useLogisticsForm = (): LogisticsFormHookReturn => {
   const formContext = useFormContext();
-  const [isFormValid, setIsFormValid] = useState(false);
+  const [isFormValid, setIsFormValid] = useState<boolean>(false);
   
   // Extract all the values and functions we need from form context
   const {
     selectedService,
     validateForm,
     validateFields,
+    validateField,
     handleSubmit,
     shippingTime,
     setShippingTime,
@@ -50,14 +57,14 @@ export const useLogisticsForm = () => {
   // Disable past dates
   const disabledDays = { before: today };
   
-  const handleDateSelect = (date: Date | undefined) => {
+  const handleDateSelect = (date: Date | undefined): void => {
     if (date) {
       setShippingTime(date.toISOString());
     }
   };
 
   // Function to handle form submission and validate all fields
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent): void => {
     // Validate all fields before submitting
     validateFields();
     handleSubmit(e);
