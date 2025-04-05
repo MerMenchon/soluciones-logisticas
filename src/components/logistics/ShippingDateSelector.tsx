@@ -11,12 +11,14 @@ interface ShippingDateSelectorProps {
   selectedDate: Date | undefined;
   onDateSelect: (date: Date | undefined) => void;
   disabledDays: { before: Date };
+  error?: string | null;
 }
 
 const ShippingDateSelector = ({
   selectedDate,
   onDateSelect,
-  disabledDays
+  disabledDays,
+  error
 }: ShippingDateSelectorProps) => {
   return (
     <div className="reference-form-section">
@@ -32,7 +34,8 @@ const ShippingDateSelector = ({
               variant="outline"
               className={cn(
                 "w-full justify-start text-left font-normal reference-form-input",
-                !selectedDate && "text-muted-foreground"
+                !selectedDate && "text-muted-foreground",
+                error && "border-red-500 focus:ring-red-500"
               )}
             >
               <Calendar className="mr-2 h-4 w-4" />
@@ -50,6 +53,9 @@ const ShippingDateSelector = ({
             />
           </PopoverContent>
         </Popover>
+        {error && (
+          <p className="text-sm text-red-500">{error}</p>
+        )}
       </div>
     </div>
   );

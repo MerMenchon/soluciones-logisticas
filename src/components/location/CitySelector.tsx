@@ -14,6 +14,7 @@ interface CitySelectorProps {
   isLoading: boolean;
   type: "origin" | "destination" | "storage" | "transport";
   onChange: (value: string) => void;
+  error?: string | null;
 }
 
 const CitySelector = ({
@@ -24,6 +25,7 @@ const CitySelector = ({
   isLoading,
   type,
   onChange,
+  error
 }: CitySelectorProps) => {
   const { selectedService } = useFormContext();
   
@@ -46,7 +48,10 @@ const CitySelector = ({
         onValueChange={onChange}
         disabled={!provinceValue || isLoading}
       >
-        <SelectTrigger id={id} className="w-full">
+        <SelectTrigger 
+          id={id} 
+          className={`w-full ${error ? 'border-red-500 ring-red-500' : ''}`}
+        >
           <SelectValue placeholder={
             !provinceValue 
               ? "Primero seleccione provincia" 
@@ -77,6 +82,9 @@ const CitySelector = ({
           ))}
         </SelectContent>
       </Select>
+      {error && (
+        <p className="text-sm text-red-500 mt-1">{error}</p>
+      )}
     </div>
   );
 };

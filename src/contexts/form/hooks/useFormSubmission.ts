@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { FormState, WebhookResponse } from "../types";
@@ -149,7 +148,7 @@ export const useFormSubmission = (formState: FormState) => {
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     // Here you would typically send the form data to your server
-    const formData = getFormData(formState);
+    const formData = prepareFormData(formState);
     console.log("Form data submitted:", formData);
 
     // Show success message

@@ -14,11 +14,13 @@ import { useState, useEffect } from "react";
 interface ProductTypeSelectorProps {
   productType: string;
   onProductTypeChange: (type: string) => void;
+  error?: string | null;
 }
 
 const ProductTypeSelector = ({
   productType,
   onProductTypeChange,
+  error
 }: ProductTypeSelectorProps) => {
   const [productOptions, setProductOptions] = useState<string[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
@@ -105,7 +107,7 @@ const ProductTypeSelector = ({
         onValueChange={onProductTypeChange}
         disabled={isLoadingProducts}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className={`w-full ${error ? 'border-red-500 focus:ring-red-500' : ''}`}>
           <SelectValue placeholder={
             isLoadingProducts 
               ? "Cargando tipos de producto..." 
@@ -120,6 +122,9 @@ const ProductTypeSelector = ({
           ))}
         </SelectContent>
       </Select>
+      {error && (
+        <p className="text-sm text-red-500 mt-1">{error}</p>
+      )}
     </div>
   );
 };

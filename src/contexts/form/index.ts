@@ -1,5 +1,6 @@
 
 export * from './FormContext';
 export * from './types';
-export * from './validation';
+// Export validation but rename ValidationResult to avoid ambiguity
+export { validateForm, validateFormFields } from './validation';
 export * from './formState';

@@ -9,6 +9,7 @@ interface ProvinceSelectorProps {
   provinces: string[];
   isLoading: boolean;
   onChange: (value: string) => void;
+  error?: string | null;
 }
 
 const ProvinceSelector = ({
@@ -17,6 +18,7 @@ const ProvinceSelector = ({
   provinces,
   isLoading,
   onChange,
+  error
 }: ProvinceSelectorProps) => {
   return (
     <div className="space-y-2">
@@ -28,7 +30,10 @@ const ProvinceSelector = ({
         onValueChange={onChange}
         disabled={isLoading}
       >
-        <SelectTrigger id={id} className="w-full">
+        <SelectTrigger 
+          id={id} 
+          className={`w-full ${error ? 'border-red-500 ring-red-500' : ''}`}
+        >
           <SelectValue placeholder={isLoading ? "Cargando provincias..." : "Seleccione provincia"} />
         </SelectTrigger>
         <SelectContent>
@@ -39,6 +44,9 @@ const ProvinceSelector = ({
           ))}
         </SelectContent>
       </Select>
+      {error && (
+        <p className="text-sm text-red-500 mt-1">{error}</p>
+      )}
     </div>
   );
 };
