@@ -15,7 +15,7 @@ interface PresentationSelectorProps {
   clarification: string;
   onClarificationChange: (clarification: string) => void;
   error?: string | null;
-  onBlur?: () => void; // Add onBlur prop
+  onBlur?: () => void;
 }
 
 const PresentationSelector = ({
@@ -34,6 +34,11 @@ const PresentationSelector = ({
     "Latas",
     "Otro",
   ];
+  
+  const [userInteracted, setUserInteracted] = React.useState(false);
+  
+  // Only show error if user has interacted with the component
+  const shouldShowError = error && userInteracted;
 
   return (
     <div>
@@ -43,13 +48,19 @@ const PresentationSelector = ({
       <div className="space-y-2">
         <Select
           value={presentation}
-          onValueChange={onPresentationChange}
+          onValueChange={(value) => {
+            onPresentationChange(value);
+            setUserInteracted(true);
+          }}
           onOpenChange={(open) => {
+            if (open) {
+              setUserInteracted(true);
+            }
             if (!open && onBlur) onBlur();
           }}
         >
           <SelectTrigger 
-            className={`w-full ${error ? 'border-red-500 focus:ring-red-500' : ''}`}
+            className={`w-full ${shouldShowError ? 'border-red-500 focus:ring-red-500' : ''}`}
           >
             <SelectValue placeholder="Seleccione una presentación" />
           </SelectTrigger>
@@ -66,13 +77,16 @@ const PresentationSelector = ({
           <Input
             placeholder="Especifique la presentación"
             value={clarification}
-            onChange={(e) => onClarificationChange(e.target.value)}
+            onChange={(e) => {
+              onClarificationChange(e.target.value);
+              setUserInteracted(true);
+            }}
             onBlur={onBlur}
             className="mt-2"
           />
         )}
         
-        {error && (
+        {shouldShowError && (
           <p className="text-sm text-red-500">{error}</p>
         )}
       </div>

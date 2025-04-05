@@ -41,21 +41,28 @@ export const useFieldTracking = (
     return !!submissionState.touchedFields[fieldName];
   };
   
-  // Method to get a field's error
+  // Enhanced method to get a field's error
   // Only show errors if:
   // 1. Form was submitted, OR
-  // 2. Field has been touched AND has been validated (e.g., on blur)
+  // 2. Field has been touched AND has been validated (e.g., on blur) AND still has an error
+  // 3. Never show errors for fields with default/pre-selected values unless form is submitted
   const getFieldError = (fieldName: string): string | null => {
     const error = submissionState.validationResult.errors[fieldName] || null;
     const fieldTouched = submissionState.touchedFields[fieldName];
     
-    // Show error if either form was submitted OR field was touched and has an error
-    if (submissionState.formSubmitted || (fieldTouched && error)) {
+    // If form was submitted, show all errors
+    if (submissionState.formSubmitted) {
       return error;
     }
     
-    // Otherwise, don't show any errors
-    return null;
+    // For fields that haven't been explicitly touched by the user,
+    // don't show errors even if validation detected an issue
+    if (!fieldTouched) {
+      return null;
+    }
+    
+    // Only show errors for touched fields that have errors
+    return error;
   };
 
   // Method to handle value change and validation in one step
@@ -63,8 +70,14 @@ export const useFieldTracking = (
     // First set the value using the provided setter
     setter(value);
     
-    // Then mark as touched
-    setFieldTouched(fieldName);
+    // If the field has a value that isn't empty/null/undefined,
+    // don't mark it as touched to avoid showing validation errors
+    if (value !== "" && value !== null && value !== undefined) {
+      // Don't mark as touched for non-empty values
+    } else {
+      // Only mark empty fields as touched
+      setFieldTouched(fieldName);
+    }
     
     // Always validate immediately to clear any errors when the field has been touched
     if (validateField) {

@@ -13,9 +13,9 @@ interface CitySelectorProps {
   provinceValue: string;
   isLoading: boolean;
   type: "origin" | "destination" | "storage" | "transport";
-  onChange: (value: string, hasStorage?: boolean) => void;  // Updated to accept an optional second parameter
+  onChange: (value: string, hasStorage?: boolean) => void;
   error?: string | null;
-  onBlur?: () => void; // Add onBlur prop
+  onBlur?: () => void;
 }
 
 const CitySelector = ({
@@ -30,6 +30,10 @@ const CitySelector = ({
   onBlur
 }: CitySelectorProps) => {
   const { selectedService } = useFormContext();
+  const [userInteracted, setUserInteracted] = React.useState(false);
+  
+  // Only show errors if the user has directly interacted with this field
+  const shouldShowError = error && userInteracted;
   
   // Filter cities based on storage availability if this is a storage selector
   const filteredCities = type === "storage" 
@@ -44,6 +48,7 @@ const CitySelector = ({
   const handleCitySelect = (cityValue: string) => {
     const selectedCity = cities.find(city => city.ciudad === cityValue);
     onChange(cityValue, selectedCity?.hasStorage || false);
+    setUserInteracted(true);
   };
 
   return (
@@ -53,15 +58,18 @@ const CitySelector = ({
       </div>
       <Select 
         value={value} 
-        onValueChange={handleCitySelect}  // Now using our wrapper function
+        onValueChange={handleCitySelect}
         disabled={!provinceValue || isLoading}
         onOpenChange={(open) => {
+          if (open) {
+            setUserInteracted(true);
+          }
           if (!open && onBlur) onBlur();
         }}
       >
         <SelectTrigger 
           id={id} 
-          className={`w-full ${error ? 'border-red-500 ring-red-500' : ''}`}
+          className={`w-full ${shouldShowError ? 'border-red-500 ring-red-500' : ''}`}
         >
           <SelectValue placeholder={
             !provinceValue 
@@ -93,7 +101,7 @@ const CitySelector = ({
           ))}
         </SelectContent>
       </Select>
-      {error && (
+      {shouldShowError && (
         <p className="text-sm text-red-500 mt-1">{error}</p>
       )}
     </div>

@@ -13,7 +13,7 @@ interface ProductTypeSelectorProps {
   productType: string;
   onProductTypeChange: (type: string) => void;
   error?: string | null;
-  onBlur?: () => void; // Add onBlur prop
+  onBlur?: () => void;
 }
 
 const ProductTypeSelector = ({ 
@@ -23,7 +23,11 @@ const ProductTypeSelector = ({
   onBlur
 }: ProductTypeSelectorProps) => {
   const { data: productTypeOptions = [], isLoading } = useProductTypes();
+  const [userInteracted, setUserInteracted] = React.useState(false);
 
+  // Only show error if user has interacted with the component
+  const shouldShowError = error && userInteracted;
+  
   return (
     <div>
       <label htmlFor="productType" className="block text-sm font-medium text-agri-secondary mb-1">
@@ -31,8 +35,15 @@ const ProductTypeSelector = ({
       </label>
       <Select
         value={productType}
-        onValueChange={onProductTypeChange}
+        onValueChange={(value) => {
+          onProductTypeChange(value);
+          setUserInteracted(true);
+        }}
         onOpenChange={(open) => {
+          // When the dropdown opens, mark as interacted
+          if (open) {
+            setUserInteracted(true);
+          }
           // When the dropdown closes, trigger onBlur if provided
           if (!open && onBlur) {
             onBlur();
@@ -41,7 +52,7 @@ const ProductTypeSelector = ({
       >
         <SelectTrigger 
           id="productType"
-          className={`w-full ${error ? 'border-red-500 focus:ring-red-500' : ''}`}
+          className={`w-full ${shouldShowError ? 'border-red-500 focus:ring-red-500' : ''}`}
           disabled={isLoading}
         >
           <SelectValue placeholder="Seleccione un tipo de producto" />
@@ -58,7 +69,7 @@ const ProductTypeSelector = ({
           )}
         </SelectContent>
       </Select>
-      {error && (
+      {shouldShowError && (
         <p className="text-sm text-red-500 mt-1">{error}</p>
       )}
     </div>

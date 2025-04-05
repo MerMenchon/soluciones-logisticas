@@ -13,8 +13,6 @@ interface ServiceSelectorProps {
 }
 
 const ServiceSelector = ({ selectedService, onSelectService, error }: ServiceSelectorProps) => {
-  const { setFieldTouched, validateOnBlur } = useFormContext();
-  
   // Handle service selection
   const handleServiceSelect = (service: string) => {
     onSelectService(service);
@@ -64,7 +62,7 @@ const ServiceSelector = ({ selectedService, onSelectService, error }: ServiceSel
           </Card>
         ))}
       </div>
-      {/* No mostrar mensajes de error */}
+      {/* Removed error message display */}
     </div>
   );
 };

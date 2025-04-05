@@ -24,10 +24,17 @@ const ProvinceSelector = ({
   onBlur
 }: ProvinceSelectorProps) => {
   const { validateField, setFieldTouched } = useFormContext();
+  const [userInteracted, setUserInteracted] = React.useState(false);
+  
+  // Only show errors if the user has directly interacted with this field
+  const shouldShowError = error && userInteracted;
   
   const handleProvinceChange = (newValue: string) => {
     // First, change the province
     onChange(newValue);
+    
+    // Mark that user has interacted with this field
+    setUserInteracted(true);
     
     // Determine which field this is based on the id
     const fieldNames: Record<string, string> = {
@@ -38,8 +45,13 @@ const ProvinceSelector = ({
     
     const fieldName = fieldNames[id];
     if (fieldName) {
-      // Always mark the field as touched
-      setFieldTouched(fieldName);
+      // If a valid value is selected, don't mark as touched
+      if (newValue) {
+        // Don't mark as touched to avoid showing errors
+      } else {
+        // Only mark as touched for empty selections
+        setFieldTouched(fieldName);
+      }
       
       // Always validate immediately to clear any error messages
       validateField(fieldName);
@@ -56,12 +68,15 @@ const ProvinceSelector = ({
         onValueChange={handleProvinceChange}
         disabled={isLoading}
         onOpenChange={(open) => {
+          if (open) {
+            setUserInteracted(true);
+          }
           if (!open && onBlur) onBlur();
         }}
       >
         <SelectTrigger 
           id={id} 
-          className={`w-full ${error ? 'border-red-500 ring-red-500' : ''}`}
+          className={`w-full ${shouldShowError ? 'border-red-500 ring-red-500' : ''}`}
         >
           <SelectValue placeholder={isLoading ? "Cargando provincias..." : "Seleccione provincia"} />
         </SelectTrigger>
@@ -73,7 +88,7 @@ const ProvinceSelector = ({
           ))}
         </SelectContent>
       </Select>
-      {error && (
+      {shouldShowError && (
         <p className="text-sm text-red-500 mt-1">{error}</p>
       )}
     </div>
