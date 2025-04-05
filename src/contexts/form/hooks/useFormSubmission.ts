@@ -28,6 +28,7 @@ export const useFormSubmission = (formState: FormState) => {
   const { 
     setFieldTouched,
     isFieldTouched,
+    validateOnBlur,
     getFieldError 
   } = useFieldTracking(submissionState, updateSubmissionState, validateField);
   
@@ -70,6 +71,7 @@ export const useFormSubmission = (formState: FormState) => {
     validateFields,
     validateField,
     setFieldTouched,
+    validateOnBlur,
     getFieldError,
     isFieldTouched,
   };

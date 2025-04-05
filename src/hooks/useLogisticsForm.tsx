@@ -18,6 +18,7 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
     validateForm,
     validateFields,
     validateField,
+    validateOnBlur,
     handleSubmit,
     shippingTime,
     setShippingTime,
@@ -84,9 +85,13 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
   // Function to validate the field when clicking outside (onBlur)
   const handleDateBlur = () => {
     if (shippingTime) {
-      // Sólo validamos si ya hay una fecha seleccionada
-      validateField("shippingTime");
+      validateOnBlur("shippingTime");
     }
+  };
+  
+  // Create a generic field blur handler
+  const handleFieldBlur = (fieldName: string) => {
+    validateOnBlur(fieldName);
   };
 
   // Function to handle form submission and validate all fields
@@ -104,6 +109,7 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
     handleDateSelect,
     handleDatePopoverOpen,
     handleDateBlur,
+    handleFieldBlur,
     handleFormSubmit,
     showResponseDialog,
     handleCloseResponseDialog,

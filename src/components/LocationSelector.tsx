@@ -23,7 +23,7 @@ const LocationSelector = ({
   onEstimatedTimeChange,
   errors = { province: null, city: null, time: null }
 }: LocationSelectorProps) => {
-  const { setFieldTouched, validateField } = useFormContext();
+  const { setFieldTouched, validateField, validateOnBlur } = useFormContext();
 
   const {
     cities,
@@ -40,24 +40,29 @@ const LocationSelector = ({
     onCityChange,
   });
 
+  // Function to get the field name based on location type
+  const getFieldName = (fieldType: 'province' | 'city' | 'time') => {
+    let prefix = type;
+    if (fieldType === 'time') {
+      return "estimatedStorageTime";
+    }
+    return `${prefix}${fieldType.charAt(0).toUpperCase() + fieldType.slice(1)}`;
+  };
+
   // Handle province change with field tracking and immediate validation
   const handleProvinceChange = (province: string) => {
     onProvinceChange(province);
     
     // Mark field as touched based on location type
-    let fieldName = "";
-    if (type === "storage") {
-      fieldName = "storageProvince";
-    } else if (type === "origin") {
-      fieldName = "originProvince";
-    } else if (type === "destination") {
-      fieldName = "destinationProvince";
-    }
-    
-    if (fieldName) {
-      setFieldTouched(fieldName);
-      if (validateField) validateField(fieldName);
-    }
+    const fieldName = getFieldName('province');
+    setFieldTouched(fieldName);
+    if (validateField) validateField(fieldName);
+  };
+
+  // Handle province blur
+  const handleProvinceBlur = () => {
+    const fieldName = getFieldName('province');
+    validateOnBlur(fieldName);
   };
 
   // Handle city change with field tracking and immediate validation
@@ -65,19 +70,15 @@ const LocationSelector = ({
     onCityChange(city, hasStorage);
     
     // Mark field as touched based on location type
-    let fieldName = "";
-    if (type === "storage") {
-      fieldName = "storageCity";
-    } else if (type === "origin") {
-      fieldName = "originCity";
-    } else if (type === "destination") {
-      fieldName = "destinationCity";
-    }
-    
-    if (fieldName) {
-      setFieldTouched(fieldName);
-      if (validateField) validateField(fieldName);
-    }
+    const fieldName = getFieldName('city');
+    setFieldTouched(fieldName);
+    if (validateField) validateField(fieldName);
+  };
+
+  // Handle city blur
+  const handleCityBlur = () => {
+    const fieldName = getFieldName('city');
+    validateOnBlur(fieldName);
   };
 
   // Set default value for estimatedTime if it's empty
@@ -100,6 +101,11 @@ const LocationSelector = ({
     }
   };
 
+  // Handle time blur
+  const handleTimeBlur = () => {
+    validateOnBlur("estimatedStorageTime");
+  };
+
   return (
     <div className="grid gap-4">
       <ProvinceSelector
@@ -109,6 +115,7 @@ const LocationSelector = ({
         isLoading={isLoadingProvinces}
         onChange={handleProvinceChange}
         error={errors?.province}
+        onBlur={handleProvinceBlur}
       />
 
       <CitySelector
@@ -120,6 +127,7 @@ const LocationSelector = ({
         type={type}
         onChange={handleLocalCityChange}
         error={errors?.city}
+        onBlur={handleCityBlur}
       />
 
       {(type === "storage" || (useAsStorage && cityValue)) && (
@@ -132,6 +140,7 @@ const LocationSelector = ({
               inputMode="numeric"
               value={estimatedTime || ''}
               onChange={handleEstimatedTimeChange}
+              onBlur={handleTimeBlur}
               placeholder="30"
               className={`w-32 ${errors?.time ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
             />

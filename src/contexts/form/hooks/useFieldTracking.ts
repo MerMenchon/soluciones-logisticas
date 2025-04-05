@@ -28,6 +28,13 @@ export const useFieldTracking = (
     }
   };
   
+  // Method to validate field on blur
+  const validateOnBlur = (fieldName: string) => {
+    if (validateField) {
+      validateField(fieldName);
+    }
+  };
+  
   // Method to check if a field is touched
   const isFieldTouched = (fieldName: string): boolean => {
     return !!submissionState.touchedFields[fieldName];
@@ -44,6 +51,7 @@ export const useFieldTracking = (
   return {
     setFieldTouched,
     isFieldTouched,
+    validateOnBlur,
     getFieldError
   };
 };

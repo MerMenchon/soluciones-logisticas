@@ -64,6 +64,7 @@ export interface LogisticsFormHookReturn {
   setFieldTouched: (fieldName: string) => void;
   getFieldError: (fieldName: string) => string | null;
   isFieldTouched: (fieldName: string) => boolean;
+  handleFieldBlur: (fieldName: string) => void;
   
   // Date related
   shippingTime: string;

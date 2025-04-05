@@ -13,11 +13,15 @@ const ContactDetails = ({
   additionalInfo,
   onAdditionalInfoChange,
 }: ContactDetailsProps) => {
-  const { validateField } = useFormContext();
+  const { validateField, validateOnBlur } = useFormContext();
   
   const handleInfoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onAdditionalInfoChange(e.target.value);
     validateField("additionalInfo");  // Validate the field as it changes
+  };
+  
+  const handleBlur = () => {
+    validateOnBlur("additionalInfo");
   };
 
   return (
@@ -37,6 +41,7 @@ const ContactDetails = ({
             placeholder="Cualquier detalle adicional que debamos conocer..."
             value={additionalInfo}
             onChange={handleInfoChange}
+            onBlur={handleBlur}
             className="reference-form-input min-h-[100px]"
           />
         </div>

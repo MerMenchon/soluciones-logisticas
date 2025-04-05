@@ -13,13 +13,15 @@ interface ServiceSelectorProps {
 }
 
 const ServiceSelector = ({ selectedService, onSelectService, error }: ServiceSelectorProps) => {
-  const { setFieldTouched } = useFormContext();
+  const { setFieldTouched, validateOnBlur } = useFormContext();
   
   // Handle service selection
   const handleServiceSelect = (service: string) => {
     onSelectService(service);
     // Mark the field as touched when user interacts
     setFieldTouched("selectedService");
+    // Validate immediately on selection
+    validateOnBlur("selectedService");
   };
   
   const services = [
