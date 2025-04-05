@@ -21,7 +21,6 @@ const ServiceSection = () => {
     
     // Always validate immediately to clear any errors
     if (validateField) {
-      // Use setTimeout to ensure the state update happens first
       validateField("selectedService");
     }
   };

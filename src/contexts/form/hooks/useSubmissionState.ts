@@ -22,7 +22,7 @@ export const useSubmissionState = () => {
     distanceValue: null,
     isWaitingForResponse: false,
     showResponseDialog: false,
-    validationResult: { isValid: true, errors: {} },
+    validationResult: { isValid: true, errors: {} }, // Start with no errors
     touchedFields: {}
   });
 
