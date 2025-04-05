@@ -6,6 +6,7 @@ import PresentationSelector from "./product/PresentationSelector";
 import QuantityInput from "./product/QuantityInput";
 import ValueInput from "./product/ValueInput";
 import DescriptionInput from "./product/DescriptionInput";
+import { useFormContext } from "@/contexts/form";
 
 interface ProductDetailsProps {
   productType: string;
@@ -62,6 +63,23 @@ const ProductDetails = ({
 }: ProductDetailsProps) => {
   // Check if the product type is "Otro" to determine if description is required
   const isDescriptionRequired = productType === "Otro";
+  const { validateField } = useFormContext();
+
+  // Handlers with immediate validation
+  const handleProductTypeChange = (type: string) => {
+    onProductTypeChange(type);
+    validateField("productType");
+  };
+  
+  const handleDescriptionChange = (text: string) => {
+    onDescriptionChange(text);
+    if (isDescriptionRequired) validateField("description");
+  };
+  
+  const handlePresentationChange = (value: string) => {
+    onPresentationChange(value);
+    validateField("presentation");
+  };
 
   return (
     <div className="reference-form-section">
@@ -72,13 +90,13 @@ const ProductDetails = ({
       <div className="space-y-6">
         <ProductTypeSelector 
           productType={productType} 
-          onProductTypeChange={onProductTypeChange}
+          onProductTypeChange={handleProductTypeChange}
           error={errors.productType}
         />
 
         <PresentationSelector
           presentation={presentation}
-          onPresentationChange={onPresentationChange}
+          onPresentationChange={handlePresentationChange}
           clarification={clarification}
           onClarificationChange={onClarificationChange}
           error={errors.presentation}
@@ -103,7 +121,7 @@ const ProductDetails = ({
 
         <DescriptionInput
           description={description}
-          onDescriptionChange={onDescriptionChange}
+          onDescriptionChange={handleDescriptionChange}
           isRequired={isDescriptionRequired}
           error={errors.description}
         />

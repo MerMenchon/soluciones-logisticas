@@ -2,6 +2,7 @@
 import React from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Info } from "lucide-react";
+import { useFormContext } from "@/contexts/form";
 
 interface ContactDetailsProps {
   additionalInfo: string;
@@ -12,6 +13,13 @@ const ContactDetails = ({
   additionalInfo,
   onAdditionalInfoChange,
 }: ContactDetailsProps) => {
+  const { validateField } = useFormContext();
+  
+  const handleInfoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onAdditionalInfoChange(e.target.value);
+    validateField("additionalInfo");  // Validate the field as it changes
+  };
+
   return (
     <div className="reference-form-section">
       <h2 className="reference-form-subtitle">
@@ -28,7 +36,7 @@ const ContactDetails = ({
             id="additionalInfo"
             placeholder="Cualquier detalle adicional que debamos conocer..."
             value={additionalInfo}
-            onChange={(e) => onAdditionalInfoChange(e.target.value)}
+            onChange={handleInfoChange}
             className="reference-form-input min-h-[100px]"
           />
         </div>

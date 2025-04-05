@@ -8,6 +8,7 @@ import StorageAlert from "@/components/location/StorageAlert";
 import { LocationSelectorProps } from "@/types/location";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useFormContext } from "@/contexts/form";
 
 const LocationSelector = ({
   type,
@@ -22,6 +23,8 @@ const LocationSelector = ({
   onEstimatedTimeChange,
   errors = { province: null, city: null, time: null }
 }: LocationSelectorProps) => {
+  const { validateField } = useFormContext();
+
   const {
     cities,
     provinces,
@@ -37,6 +40,34 @@ const LocationSelector = ({
     onCityChange,
   });
 
+  // Handle province change with immediate validation
+  const handleProvinceChange = (province: string) => {
+    onProvinceChange(province);
+    
+    // Validate the appropriate field based on location type
+    if (type === "storage") {
+      validateField("storageProvince");
+    } else if (type === "origin") {
+      validateField("originProvince");
+    } else if (type === "destination") {
+      validateField("destinationProvince");
+    }
+  };
+
+  // Handle city change with immediate validation
+  const handleLocalCityChange = (city: string, hasStorage: boolean) => {
+    handleCityChange(city, hasStorage);
+    
+    // Validate the appropriate field based on location type
+    if (type === "storage") {
+      validateField("storageCity");
+    } else if (type === "origin") {
+      validateField("originCity");
+    } else if (type === "destination") {
+      validateField("destinationCity");
+    }
+  };
+
   // Set default value for estimatedTime if it's empty
   React.useEffect(() => {
     if ((type === "storage" || useAsStorage) && cityValue && !estimatedTime && onEstimatedTimeChange) {
@@ -50,6 +81,11 @@ const LocationSelector = ({
     // Only allow empty string or natural numbers (positive integers)
     if (value === '' || (/^\d+$/.test(value) && parseInt(value) > 0)) {
       onEstimatedTimeChange?.(value);
+      
+      // Validate the estimated storage time field
+      if ((type === "storage" || useAsStorage) && errors?.time) {
+        validateField("estimatedStorageTime");
+      }
     }
   };
 
@@ -60,7 +96,7 @@ const LocationSelector = ({
         value={provinceValue}
         provinces={provinces}
         isLoading={isLoadingProvinces}
-        onChange={onProvinceChange}
+        onChange={handleProvinceChange}
         error={errors?.province}
       />
 
@@ -71,7 +107,7 @@ const LocationSelector = ({
         provinceValue={provinceValue}
         isLoading={isLoadingCities}
         type={type}
-        onChange={handleCityChange}
+        onChange={handleLocalCityChange}
         error={errors?.city}
       />
 

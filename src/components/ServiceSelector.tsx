@@ -19,10 +19,8 @@ const ServiceSelector = ({ selectedService, onSelectService, error }: ServiceSel
   const handleServiceSelect = (service: string) => {
     onSelectService(service);
     
-    // Immediately validate the service field if there was an error
-    if (error) {
-      setTimeout(() => validateField("selectedService"), 0);
-    }
+    // Immediately validate the service field
+    setTimeout(() => validateField("selectedService"), 0);
   };
   
   const services = [

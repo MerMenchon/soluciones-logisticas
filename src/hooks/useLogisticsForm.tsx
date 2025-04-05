@@ -60,6 +60,8 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
   const handleDateSelect = (date: Date | undefined): void => {
     if (date) {
       setShippingTime(date.toISOString());
+      // Validate the field immediately after change
+      validateField("shippingTime");
     }
   };
 
