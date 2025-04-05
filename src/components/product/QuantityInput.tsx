@@ -14,8 +14,8 @@ interface QuantityInputProps {
     quantity: string | null;
     quantityUnit: string | null;
   };
-  onQuantityBlur?: () => void; // Add onQuantityBlur prop
-  onQuantityUnitBlur?: () => void; // Add onQuantityUnitBlur prop
+  onQuantityBlur?: () => void;
+  onQuantityUnitBlur?: () => void;
 }
 
 const QuantityInput = ({
@@ -29,13 +29,14 @@ const QuantityInput = ({
 }: QuantityInputProps) => {
   // Use the React Query hook for quantity units
   const { data: quantityUnitOptions = [], isLoading: isLoadingQuantityUnits } = useQuantityUnits();
-  const { setFieldTouched } = useFormContext();
+  const { setFieldTouched, formSubmitted } = useFormContext();
 
   // Set default quantity unit when options are loaded and no value is selected
   useEffect(() => {
     // Set default quantity unit if options are available and no unit is selected yet
     if (quantityUnitOptions.length > 0 && (!quantityUnit || quantityUnit === "")) {
       onQuantityUnitChange(quantityUnitOptions[0]);
+      // Don't mark as touched automatically to avoid validation errors
     }
   }, [quantityUnitOptions, quantityUnit, onQuantityUnitChange]);
 
@@ -66,6 +67,10 @@ const QuantityInput = ({
     }
   };
 
+  // Only show errors when the form has been submitted
+  const displayQuantityError = formSubmitted ? errors.quantity : null;
+  const displayUnitError = formSubmitted ? errors.quantityUnit : null;
+
   return (
     <div>
       <label htmlFor="quantity" className="block text-sm font-medium text-agri-secondary mb-1">
@@ -79,7 +84,7 @@ const QuantityInput = ({
             value={quantity}
             onChange={handleQuantityChange}
             onBlur={onQuantityBlur}
-            className={`w-32 ${errors.quantity ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+            className={`w-32 ${displayQuantityError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
             required
           />
           
@@ -90,7 +95,7 @@ const QuantityInput = ({
               type="single" 
               value={quantityUnit}
               onValueChange={handleUnitChange}
-              className={`flex flex-wrap gap-1 ml-2 ${errors.quantityUnit ? 'border-red-500' : ''}`}
+              className={`flex flex-wrap gap-1 ml-2 ${displayUnitError ? 'border-red-500' : ''}`}
             >
               {quantityUnitOptions.map((unit) => (
                 <ToggleGroupItem 
@@ -107,12 +112,12 @@ const QuantityInput = ({
           )}
         </div>
         
-        {errors.quantity && (
-          <p className="text-sm text-red-500">{errors.quantity}</p>
+        {displayQuantityError && (
+          <p className="text-sm text-red-500">{displayQuantityError}</p>
         )}
         
-        {errors.quantityUnit && (
-          <p className="text-sm text-red-500">{errors.quantityUnit}</p>
+        {displayUnitError && (
+          <p className="text-sm text-red-500">{displayUnitError}</p>
         )}
       </div>
     </div>

@@ -9,7 +9,8 @@ const ServiceSection = () => {
     setSelectedService,
     getFieldError,
     setFieldTouched,
-    validateField
+    validateField,
+    formSubmitted
   } = useLogisticsForm();
 
   // Create a handler that first selects the service and then validates immediately
@@ -25,8 +26,8 @@ const ServiceSection = () => {
     }
   };
 
-  // Only get the error if we need to show it (user has interacted with the form)
-  const serviceError = getFieldError("selectedService");
+  // Only get the error if we need to show it (only when form is submitted)
+  const serviceError = formSubmitted ? getFieldError("selectedService") : null;
 
   return (
     <ServiceSelector 

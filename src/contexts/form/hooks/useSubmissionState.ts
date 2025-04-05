@@ -17,7 +17,7 @@ export interface SubmissionState {
 export const useSubmissionState = () => {
   const [submissionState, setSubmissionState] = useState<SubmissionState>({
     isSubmitting: false,
-    formSubmitted: false,
+    formSubmitted: false, // Start with form not submitted
     showConfirmation: false,
     distanceValue: null,
     isWaitingForResponse: false,
