@@ -9,7 +9,6 @@ const ServiceSection = () => {
     setSelectedService,
     getFieldError,
     setFieldTouched,
-    validateOnBlur
   } = useLogisticsForm();
 
   return (

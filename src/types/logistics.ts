@@ -59,6 +59,7 @@ export interface LogisticsFormHookReturn {
   validateForm: () => string | null;
   validateFields: () => ValidationResult;
   validateField: (fieldName: string) => ValidationResult;
+  validateOnBlur: (fieldName: string) => void; // Added this property
   
   // Field tracking methods
   setFieldTouched: (fieldName: string) => void;
