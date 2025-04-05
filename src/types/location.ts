@@ -10,11 +10,6 @@ export interface LocationSelectorProps {
   onUseAsStorageChange?: (value: boolean) => void;
   estimatedTime?: string;
   onEstimatedTimeChange?: (value: string) => void;
-  errors?: {
-    province: string | null;
-    city: string | null;
-    time: string | null;
-  };
 }
 
 export interface UseLocationSelectHookParams {

@@ -1,35 +1,23 @@
 
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useToast } from "@/hooks/use-toast";
 
 interface StorageAlertProps {
   show: boolean;
 }
 
 const StorageAlert = ({ show }: StorageAlertProps) => {
-  const { toast } = useToast();
-  const hasShownToast = useRef(false);
+  if (!show) return null;
   
-  useEffect(() => {
-    if (show && !hasShownToast.current) {
-      // Show toast notification instead of inline alert
-      toast({
-        variant: "destructive",
-        title: "No hay almacenamiento",
-        description: "No hay servicio de almacenamiento disponible en esta ciudad",
-        duration: 3000, // Auto-dismiss after 3 seconds
-      });
-      hasShownToast.current = true;
-    } else if (!show) {
-      // Reset the ref when the alert is hidden
-      hasShownToast.current = false;
-    }
-  }, [show, toast]);
-  
-  // Return null as we're using toast notification instead
-  return null;
+  return (
+    <Alert variant="destructive" className="mt-2">
+      <AlertCircle className="h-4 w-4" />
+      <AlertDescription>
+        No hay servicio de almacenamiento disponible en esta ciudad
+      </AlertDescription>
+    </Alert>
+  );
 };
 
 export default StorageAlert;

@@ -13,9 +13,7 @@ interface CitySelectorProps {
   provinceValue: string;
   isLoading: boolean;
   type: "origin" | "destination" | "storage" | "transport";
-  onChange: (value: string, hasStorage?: boolean) => void;
-  error?: string | null;
-  onBlur?: () => void;
+  onChange: (value: string) => void;
 }
 
 const CitySelector = ({
@@ -26,14 +24,8 @@ const CitySelector = ({
   isLoading,
   type,
   onChange,
-  error,
-  onBlur
 }: CitySelectorProps) => {
   const { selectedService } = useFormContext();
-  const [userInteracted, setUserInteracted] = React.useState(false);
-  
-  // Only show errors if the user has directly interacted with this field
-  const shouldShowError = error && userInteracted;
   
   // Filter cities based on storage availability if this is a storage selector
   const filteredCities = type === "storage" 
@@ -44,13 +36,6 @@ const CitySelector = ({
   const shouldShowStorageInfo = 
     selectedService === "both" && (type === "origin" || type === "destination");
 
-  // Function to handle city selection, passing both city value and storage status
-  const handleCitySelect = (cityValue: string) => {
-    const selectedCity = cities.find(city => city.ciudad === cityValue);
-    onChange(cityValue, selectedCity?.hasStorage || false);
-    setUserInteracted(true);
-  };
-
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
@@ -58,19 +43,10 @@ const CitySelector = ({
       </div>
       <Select 
         value={value} 
-        onValueChange={handleCitySelect}
+        onValueChange={onChange}
         disabled={!provinceValue || isLoading}
-        onOpenChange={(open) => {
-          if (open) {
-            setUserInteracted(true);
-          }
-          if (!open && onBlur) onBlur();
-        }}
       >
-        <SelectTrigger 
-          id={id} 
-          className={`w-full ${shouldShowError ? 'border-red-500 ring-red-500' : ''}`}
-        >
+        <SelectTrigger id={id} className="w-full">
           <SelectValue placeholder={
             !provinceValue 
               ? "Primero seleccione provincia" 
@@ -101,9 +77,6 @@ const CitySelector = ({
           ))}
         </SelectContent>
       </Select>
-      {shouldShowError && (
-        <p className="text-sm text-red-500 mt-1">{error}</p>
-      )}
     </div>
   );
 };

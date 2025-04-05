@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { FormState, TouchedFields } from "./types";
+import { FormState } from "./types";
 import { 
   useFormService,
   useFormLocation,
@@ -31,7 +31,7 @@ export const useFormState = () => {
     showConfirmation: false,
     distanceValue: null,
     isWaitingForResponse: false,
-    showResponseDialog: false,
+    showResponseDialog: false, // New state
 
     // Contact state
     additionalInfo: "",
@@ -45,9 +45,6 @@ export const useFormState = () => {
     shippingTime: "",
     quantity: "",
     quantityUnit: "",
-    
-    // Initialize touched fields as empty
-    touchedFields: {},
   });
 
   // Use individual hooks for state management
@@ -123,9 +120,7 @@ export const useFormState = () => {
       distanceValue: submissionState.distanceValue,
       webhookResponse: submissionState.webhookResponse,
       isWaitingForResponse: submissionState.isWaitingForResponse,
-      showResponseDialog: submissionState.showResponseDialog,
-      validationResult: submissionState.validationResult,
-      touchedFields: submissionState.touchedFields,
+      showResponseDialog: submissionState.showResponseDialog, // Update dialog state
     }));
   }, [submissionState]);
 
@@ -133,8 +128,6 @@ export const useFormState = () => {
   const setSelectedService = (service: string) => {
     serviceState.setSelectedService(service as any);
     locationState.resetLocations();
-    // Mark the field as touched when user interacts
-    submissionState.setFieldTouched("selectedService");
   };
 
   // Form reset function
@@ -143,8 +136,7 @@ export const useFormState = () => {
     locationState.resetLocations();
     productState.resetProductDetails();
     submissionState.setIsSubmitting(false);
-    submissionState.setShowResponseDialog(false); 
-    submissionState.setFormSubmitted(false); // Critical: Reset form submitted state to hide validation messages
+    submissionState.setShowResponseDialog(false); // Close dialog when resetting form
     setFormState(prev => ({
       ...prev,
       selectedService: "",
@@ -154,7 +146,6 @@ export const useFormState = () => {
       webhookResponse: undefined,
       isWaitingForResponse: false,
       showResponseDialog: false,
-      touchedFields: {}, // Reset all touched fields
     }));
   };
 

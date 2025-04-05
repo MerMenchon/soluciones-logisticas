@@ -1,12 +1,14 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { 
-  Select, 
+import { useToast } from "@/hooks/use-toast";
+import { fetchPresentations } from "@/data/products";
+import {
+  Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from "@/components/ui/select";
 
 interface PresentationSelectorProps {
@@ -14,8 +16,6 @@ interface PresentationSelectorProps {
   onPresentationChange: (presentation: string) => void;
   clarification: string;
   onClarificationChange: (clarification: string) => void;
-  error?: string | null;
-  onBlur?: () => void;
 }
 
 const PresentationSelector = ({
@@ -23,73 +23,85 @@ const PresentationSelector = ({
   onPresentationChange,
   clarification,
   onClarificationChange,
-  error,
-  onBlur
 }: PresentationSelectorProps) => {
-  const presentationOptions = [
-    "Bolsas",
-    "Cajas",
-    "A granel",
-    "Botellas",
-    "Latas",
-    "Otro",
-  ];
+  const [presentationOptions, setPresentationOptions] = useState<string[]>([]);
+  const [isLoadingPresentations, setIsLoadingPresentations] = useState(true);
+  const { toast } = useToast();
   
-  const [userInteracted, setUserInteracted] = React.useState(false);
-  
-  // Only show error if user has interacted with the component
-  const shouldShowError = error && userInteracted;
+  useEffect(() => {
+    const fetchAvailablePresentations = async () => {
+      setIsLoadingPresentations(true);
+      try {
+        const presentations = await fetchPresentations();
+        setPresentationOptions(presentations);
+      } catch (error) {
+        console.error("Error fetching presentations:", error);
+        toast({
+          title: "Error",
+          description: "No se pudieron cargar los tipos de presentación. Usando opciones predeterminadas.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoadingPresentations(false);
+      }
+    };
+
+    fetchAvailablePresentations();
+  }, [toast]);
+
+  // Handle clarification input with 50 character limit
+  const handleClarificationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newClarification = e.target.value;
+    if (newClarification.length <= 50) {
+      onClarificationChange(newClarification);
+    }
+  };
+
+  // Check if the selected presentation is "Otro"
+  const showClarificationInput = presentation === "Otro";
 
   return (
     <div>
       <label htmlFor="presentation" className="block text-sm font-medium text-agri-secondary mb-1">
-        Presentación del producto *
+        Presentación
       </label>
-      <div className="space-y-2">
-        <Select
-          value={presentation}
-          onValueChange={(value) => {
-            onPresentationChange(value);
-            // Don't mark as interacted when a value is selected
-          }}
-          onOpenChange={(open) => {
-            if (open) {
-              setUserInteracted(true);
-            }
-            if (!open && onBlur) onBlur();
-          }}
-        >
-          <SelectTrigger 
-            className={`w-full ${shouldShowError ? 'border-red-500 focus:ring-red-500' : ''}`}
-          >
-            <SelectValue placeholder="Seleccione una presentación" />
-          </SelectTrigger>
-          <SelectContent>
-            {presentationOptions.map((option) => (
-              <SelectItem key={option} value={option}>
-                {option}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <Select 
+        value={presentation} 
+        onValueChange={onPresentationChange}
+        disabled={isLoadingPresentations}
+      >
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder={
+            isLoadingPresentations 
+              ? "Cargando tipos de presentación..." 
+              : "Seleccione un tipo de presentación"
+          } />
+        </SelectTrigger>
+        <SelectContent>
+          {presentationOptions.map((option) => (
+            <SelectItem key={option} value={option}>
+              {option}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
-        {presentation === "Otro" && (
+      {showClarificationInput && (
+        <div className="mt-4">
+          <label htmlFor="clarification" className="block text-sm font-medium text-agri-secondary mb-1">
+            Aclaración
+          </label>
           <Input
-            placeholder="Especifique la presentación"
+            id="clarification"
+            type="text"
+            placeholder="Especifique detalles de la presentación"
             value={clarification}
-            onChange={(e) => {
-              onClarificationChange(e.target.value);
-              // Don't mark as interacted on change
-            }}
-            onBlur={onBlur}
-            className="mt-2"
+            onChange={handleClarificationChange}
+            maxLength={50}
+            className="w-full"
           />
-        )}
-        
-        {shouldShowError && (
-          <p className="text-sm text-red-500">{error}</p>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

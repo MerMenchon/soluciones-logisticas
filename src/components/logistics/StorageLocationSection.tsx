@@ -11,11 +11,6 @@ interface StorageLocationSectionProps {
   setStorageCity: (city: string, hasStorage: boolean) => void;
   estimatedStorageTime: string;
   setEstimatedStorageTime: (time: string) => void;
-  errors?: {
-    province: string | null;
-    city: string | null;
-    time: string | null;
-  };
 }
 
 const StorageLocationSection = ({
@@ -26,7 +21,6 @@ const StorageLocationSection = ({
   setStorageCity,
   estimatedStorageTime,
   setEstimatedStorageTime,
-  errors = { province: null, city: null, time: null }
 }: StorageLocationSectionProps) => {
   return (
     <div className="reference-form-section">
@@ -49,7 +43,6 @@ const StorageLocationSection = ({
           label="Almacenamiento"
           estimatedTime={estimatedStorageTime}
           onEstimatedTimeChange={setEstimatedStorageTime}
-          errors={errors}
         />
       )}
     </div>

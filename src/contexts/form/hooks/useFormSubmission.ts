@@ -1,60 +1,162 @@
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { FormState, WebhookResponse } from "../types";
+import { validateForm, getFormData } from "../validation";
+import { sendToWebhook } from "./useWebhook";
+import { prepareFormData } from "./useFormData";
 
-import { FormState, ValidationResult, WebhookResponse } from "../types";
-import { useSubmissionState } from "./useSubmissionState";
-import { useFieldTracking } from "./useFieldTracking";
-import { useFormValidation } from "./useFormValidation";
-import { useFormHandler } from "./useFormHandler";
+interface SubmissionState {
+  isSubmitting: boolean;
+  formSubmitted: boolean;
+  showConfirmation: boolean;
+  distanceValue: string | null;
+  webhookResponse?: WebhookResponse;
+  isWaitingForResponse: boolean;
+  showResponseDialog: boolean;
+}
 
 export const useFormSubmission = (formState: FormState) => {
-  // Use the new submission state hook
-  const { 
-    submissionState, 
-    updateSubmissionState,
-    setIsSubmitting,
-    setShowConfirmation,
-    setDistanceValue,
-    setShowResponseDialog,
-    setFormSubmitted
-  } = useSubmissionState();
+  const { toast } = useToast();
+  const [submissionState, setSubmissionState] = useState<SubmissionState>({
+    isSubmitting: false,
+    formSubmitted: false,
+    showConfirmation: false,
+    distanceValue: null,
+    isWaitingForResponse: false,
+    showResponseDialog: false,
+  });
+
+  const updateSubmissionState = (updates: Partial<SubmissionState>) => {
+    setSubmissionState(prev => ({ ...prev, ...updates }));
+  };
+
+  const setIsSubmitting = (isSubmitting: boolean) => 
+    updateSubmissionState({ isSubmitting });
   
-  // Form validation
-  const { 
-    validateForm,
-    validateFields,
-    validateField 
-  } = useFormValidation(formState, updateSubmissionState, submissionState);
+  const setShowConfirmation = (showConfirmation: boolean) => 
+    updateSubmissionState({ showConfirmation });
   
-  // Field tracking with validation
-  const { 
-    setFieldTouched,
-    isFieldTouched,
-    validateOnBlur,
-    getFieldError 
-  } = useFieldTracking(submissionState, updateSubmissionState, validateField);
-  
-  // Form handling
-  const { 
-    handleSubmit,
-    confirmRequest,
-    cancelRequest,
-    handleCloseResponseDialog
-  } = useFormHandler(
-    formState,
-    validateFields,
-    (updates) => {
-      // Handle the case when updates include validationResult
-      if ('validationResult' in updates) {
-        const validationUpdate = updates.validationResult as ValidationResult;
-        updateSubmissionState({
-          ...updates,
-          formSubmitted: true,
-          validationResult: validationUpdate
-        });
-      } else {
-        updateSubmissionState(updates);
-      }
+  const setDistanceValue = (distanceValue: string | null) => 
+    updateSubmissionState({ distanceValue });
+    
+  const setShowResponseDialog = (showResponseDialog: boolean) =>
+    updateSubmissionState({ showResponseDialog });
+
+  // Form validation wrapper
+  const validateFormWrapper = () => {
+    return validateForm(formState);
+  };
+
+  // Form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const validationError = validateFormWrapper();
+    if (validationError) {
+      // Commented out toast for validation error
+      // toast({
+      //   title: "Error",
+      //   description: validationError,
+      //   variant: "destructive",
+      // });
+      return;
     }
-  );
+
+    updateSubmissionState({ 
+      isSubmitting: true,
+      isWaitingForResponse: true,
+      showResponseDialog: true
+    });
+
+    try {
+      // Prepare full form data with proper structure
+      const formData = prepareFormData(formState);
+
+      console.log("Sending form data to webhook and waiting for response...");
+      
+      // Send to webhook and get response
+      const webhookResponse = await sendToWebhook(formData);
+      
+      console.log("Received webhook response:", webhookResponse);
+
+      if (!webhookResponse) {
+        throw new Error("No response received from webhook");
+      }
+
+      // Extract first item if it's an array (API returns array with one object)
+      const responseData = Array.isArray(webhookResponse) ? webhookResponse[0] : webhookResponse;
+
+      // Commented out success toast
+      // toast({
+      //   title: "Éxito",
+      //   description: "Su consulta ha sido procesada correctamente",
+      // });
+
+      updateSubmissionState({ 
+        isSubmitting: false,
+        isWaitingForResponse: false,
+        webhookResponse: responseData 
+      });
+    } catch (error) {
+      // Commented out error toast
+      // toast({
+      //   title: "Error",
+      //   description: "No se pudo enviar la consulta. Por favor, inténtelo de nuevo.",
+      //   variant: "destructive",
+      // });
+
+      updateSubmissionState({ 
+        isSubmitting: false,
+        isWaitingForResponse: false,
+        showResponseDialog: false
+      });
+    }
+  };
+
+  // Dialog close handler
+  const handleCloseResponseDialog = () => {
+    setShowResponseDialog(false);
+  };
+
+  // These functions are maintained for API compatibility
+  const confirmRequest = async () => {
+    submitForm();
+  };
+
+  const cancelRequest = () => {
+    updateSubmissionState({ 
+      isSubmitting: false,
+      isWaitingForResponse: false,
+      showResponseDialog: false
+    });
+  };
+
+  const submitForm = async () => {
+    updateSubmissionState({ 
+      isSubmitting: true,
+      isWaitingForResponse: true,
+      showResponseDialog: true
+    });
+
+    // Simulate form submission
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    // Here you would typically send the form data to your server
+    const formData = getFormData(formState);
+    console.log("Form data submitted:", formData);
+
+    // Show success message
+    toast({
+      title: "Éxito",
+      description: "Su consulta ha sido enviada correctamente!",
+    });
+
+    updateSubmissionState({ 
+      formSubmitted: false, 
+      isSubmitting: false,
+      isWaitingForResponse: false
+    });
+  };
 
   return {
     ...submissionState,
@@ -62,17 +164,10 @@ export const useFormSubmission = (formState: FormState) => {
     setShowConfirmation,
     setDistanceValue,
     setShowResponseDialog,
-    setFormSubmitted,
     handleSubmit,
     confirmRequest,
     cancelRequest,
     handleCloseResponseDialog,
-    validateForm,
-    validateFields,
-    validateField,
-    setFieldTouched,
-    validateOnBlur,
-    getFieldError,
-    isFieldTouched,
+    validateForm: validateFormWrapper,
   };
 };

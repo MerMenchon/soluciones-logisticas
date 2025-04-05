@@ -8,7 +8,6 @@ import StorageAlert from "@/components/location/StorageAlert";
 import { LocationSelectorProps } from "@/types/location";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useFormContext } from "@/contexts/form";
 
 const LocationSelector = ({
   type,
@@ -21,10 +20,7 @@ const LocationSelector = ({
   onUseAsStorageChange,
   estimatedTime,
   onEstimatedTimeChange,
-  errors = { province: null, city: null, time: null }
 }: LocationSelectorProps) => {
-  const { setFieldTouched, validateField } = useFormContext();
-
   const {
     cities,
     provinces,
@@ -40,60 +36,6 @@ const LocationSelector = ({
     onCityChange,
   });
 
-  // Function to get the field name based on location type
-  const getFieldName = (fieldType: 'province' | 'city' | 'time') => {
-    let prefix = type;
-    if (fieldType === 'time') {
-      return "estimatedStorageTime";
-    }
-    return `${prefix}${fieldType.charAt(0).toUpperCase() + fieldType.slice(1)}`;
-  };
-
-  // Handle province change with field tracking and immediate validation
-  const handleProvinceChange = (province: string) => {
-    onProvinceChange(province);
-    
-    // Mark field as touched based on location type
-    const fieldName = getFieldName('province');
-    setFieldTouched(fieldName);
-    
-    // Clear city value when province changes
-    if (onCityChange) {
-      onCityChange("", false);
-    }
-    
-    // Always validate immediately to clear errors
-    if (validateField) {
-      validateField(fieldName);
-    }
-  };
-
-  // Handle province blur
-  const handleProvinceBlur = () => {
-    const fieldName = getFieldName('province');
-    validateField(fieldName);
-  };
-
-  // Handle city change with field tracking and immediate validation
-  const handleLocalCityChange = (city: string, hasStorage: boolean) => {
-    onCityChange(city, hasStorage);
-    
-    // Mark field as touched based on location type
-    const fieldName = getFieldName('city');
-    setFieldTouched(fieldName);
-    
-    // Validate immediately to clear errors
-    if (validateField) {
-      validateField(fieldName);
-    }
-  };
-
-  // Handle city blur
-  const handleCityBlur = () => {
-    const fieldName = getFieldName('city');
-    validateField(fieldName);
-  };
-
   // Set default value for estimatedTime if it's empty
   React.useEffect(() => {
     if ((type === "storage" || useAsStorage) && cityValue && !estimatedTime && onEstimatedTimeChange) {
@@ -101,38 +43,23 @@ const LocationSelector = ({
     }
   }, [type, useAsStorage, cityValue, estimatedTime, onEstimatedTimeChange]);
 
-  // Handle natural numbers only in estimated time input with validation
+  // Handle natural numbers only in estimated time input
   const handleEstimatedTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     // Only allow empty string or natural numbers (positive integers)
     if (value === '' || (/^\d+$/.test(value) && parseInt(value) > 0)) {
       onEstimatedTimeChange?.(value);
-      
-      // Mark the estimated storage time field as touched
-      setFieldTouched("estimatedStorageTime");
-      
-      // Validate immediately to clear errors
-      if (validateField) {
-        validateField("estimatedStorageTime");
-      }
     }
-  };
-
-  // Handle time blur
-  const handleTimeBlur = () => {
-    validateField("estimatedStorageTime");
   };
 
   return (
     <div className="grid gap-4">
       <ProvinceSelector
-        id={`${type}-province`}
+        id={`${type}-provincia`}
         value={provinceValue}
         provinces={provinces}
         isLoading={isLoadingProvinces}
-        onChange={handleProvinceChange}
-        error={errors?.province}
-        onBlur={handleProvinceBlur}
+        onChange={onProvinceChange}
       />
 
       <CitySelector
@@ -142,9 +69,7 @@ const LocationSelector = ({
         provinceValue={provinceValue}
         isLoading={isLoadingCities}
         type={type}
-        onChange={handleLocalCityChange}
-        error={errors?.city}
-        onBlur={handleCityBlur}
+        onChange={handleCityChange}
       />
 
       {(type === "storage" || (useAsStorage && cityValue)) && (
@@ -157,15 +82,11 @@ const LocationSelector = ({
               inputMode="numeric"
               value={estimatedTime || ''}
               onChange={handleEstimatedTimeChange}
-              onBlur={handleTimeBlur}
               placeholder="30"
-              className={`w-32 ${errors?.time ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+              className="w-32"
             />
             <span className="text-sm text-muted-foreground whitespace-nowrap">días</span>
           </div>
-          {errors?.time && (
-            <p className="text-sm text-red-500">{errors.time}</p>
-          )}
         </div>
       )}
 

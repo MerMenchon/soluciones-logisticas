@@ -9,19 +9,6 @@ export interface WebhookResponse {
   precio: string; // Changed from number to string to match API response
 }
 
-// Validation result interface
-export interface ValidationResult {
-  isValid: boolean;
-  errors: {
-    [key: string]: string | null;
-  };
-}
-
-// New interface to track touched fields
-export interface TouchedFields {
-  [key: string]: boolean;
-}
-
 // Form State interface
 export interface FormState {
   // Service state
@@ -61,12 +48,6 @@ export interface FormState {
   
   // Optional webhook response
   webhookResponse?: WebhookResponse;
-  
-  // Validation state
-  validationResult?: ValidationResult;
-  
-  // Touched fields tracking
-  touchedFields: TouchedFields;
 }
 
 // FormContext type for providing form context
@@ -110,18 +91,7 @@ export interface FormContextType extends FormState {
   setIsSubmitting: (isSubmitting: boolean) => void;
   setShowConfirmation: (showConfirmation: boolean) => void;
   setDistanceValue: (distanceValue: string | null) => void;
-  setFormSubmitted: (formSubmitted: boolean) => void;
-  
-  // Validation methods  
   validateForm: () => string | null;
-  validateFields: () => ValidationResult;
-  validateField: (fieldName: string) => ValidationResult;
-  validateOnBlur: (fieldName: string) => void; // Add this property to fix the TypeScript error
-  
-  // Field tracking methods
-  setFieldTouched: (fieldName: string) => void;
-  getFieldError: (fieldName: string) => string | null;
-  isFieldTouched: (fieldName: string) => boolean;
 }
 
 // FormProviderProps interface

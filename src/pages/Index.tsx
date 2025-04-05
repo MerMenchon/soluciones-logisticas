@@ -1,5 +1,6 @@
 
 import React from "react";
+import { FormProvider } from "@/contexts/form";
 import LogisticsForm from "@/components/LogisticsForm";
 
 const Index = () => {
@@ -15,7 +16,9 @@ const Index = () => {
           </p>
         </header>
 
-        <LogisticsForm />
+        <FormProvider>
+          <LogisticsForm />
+        </FormProvider>
       </div>
     </div>
   );

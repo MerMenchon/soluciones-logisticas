@@ -3,20 +3,24 @@ import React, { createContext, useContext, ReactNode } from "react";
 import { FormContextType, FormProviderProps } from "./types";
 import { useFormState } from "./formState";
 
-// Create the context with undefined as initial value
+// Create the context
 const FormContext = createContext<FormContextType | undefined>(undefined);
 
 // Hook for using the form context
 export const useFormContext = () => {
   const context = useContext(FormContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useFormContext must be used within a FormProvider");
   }
   return context;
 };
 
-// Form Context Provider component
-export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
+// Form Context Provider component with added _context type
+type FormProviderComponent = React.FC<{children: ReactNode}> & {
+  _context?: React.Context<FormContextType | undefined>
+};
+
+export const FormProvider: FormProviderComponent = ({ children }) => {
   const formState = useFormState();
   
   return (
@@ -25,3 +29,6 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
     </FormContext.Provider>
   );
 };
+
+// Fix: Add _context property for direct access when needed
+FormProvider._context = FormContext;
