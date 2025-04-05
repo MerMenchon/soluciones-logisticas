@@ -32,6 +32,12 @@ export const useFormHandler = (
     if (!validationResult.isValid) {
       // Don't proceed with submission if there are validation errors
       // All fields are now marked as touched
+      toast({
+        variant: "destructive",
+        title: "Error de validación",
+        description: "Por favor, complete todos los campos obligatorios.",
+        duration: 3000, // Auto-dismiss after 3 seconds
+      });
       return;
     }
 
@@ -65,6 +71,13 @@ export const useFormHandler = (
         webhookResponse: responseData 
       });
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Ha ocurrido un error al enviar el formulario.",
+        duration: 3000,
+      });
+      
       updateSubmission({ 
         isSubmitting: false,
         isWaitingForResponse: false,
@@ -109,6 +122,7 @@ export const useFormHandler = (
     toast({
       title: "Éxito",
       description: "Su consulta ha sido enviada correctamente!",
+      duration: 3000, // Auto-dismiss after 3 seconds
     });
 
     updateSubmission({ 
