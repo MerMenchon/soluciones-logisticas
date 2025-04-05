@@ -23,7 +23,7 @@ const LocationSelector = ({
   onEstimatedTimeChange,
   errors = { province: null, city: null, time: null }
 }: LocationSelectorProps) => {
-  const { setFieldTouched } = useFormContext();
+  const { setFieldTouched, validateField } = useFormContext();
 
   const {
     cities,
@@ -40,31 +40,43 @@ const LocationSelector = ({
     onCityChange,
   });
 
-  // Handle province change with field tracking
+  // Handle province change with field tracking and immediate validation
   const handleProvinceChange = (province: string) => {
     onProvinceChange(province);
     
     // Mark field as touched based on location type
+    let fieldName = "";
     if (type === "storage") {
-      setFieldTouched("storageProvince");
+      fieldName = "storageProvince";
     } else if (type === "origin") {
-      setFieldTouched("originProvince");
+      fieldName = "originProvince";
     } else if (type === "destination") {
-      setFieldTouched("destinationProvince");
+      fieldName = "destinationProvince";
+    }
+    
+    if (fieldName) {
+      setFieldTouched(fieldName);
+      if (validateField) validateField(fieldName);
     }
   };
 
-  // Handle city change with field tracking
+  // Handle city change with field tracking and immediate validation
   const handleLocalCityChange = (city: string, hasStorage: boolean) => {
     onCityChange(city, hasStorage);
     
     // Mark field as touched based on location type
+    let fieldName = "";
     if (type === "storage") {
-      setFieldTouched("storageCity");
+      fieldName = "storageCity";
     } else if (type === "origin") {
-      setFieldTouched("originCity");
+      fieldName = "originCity";
     } else if (type === "destination") {
-      setFieldTouched("destinationCity");
+      fieldName = "destinationCity";
+    }
+    
+    if (fieldName) {
+      setFieldTouched(fieldName);
+      if (validateField) validateField(fieldName);
     }
   };
 
@@ -75,7 +87,7 @@ const LocationSelector = ({
     }
   }, [type, useAsStorage, cityValue, estimatedTime, onEstimatedTimeChange]);
 
-  // Handle natural numbers only in estimated time input
+  // Handle natural numbers only in estimated time input with validation
   const handleEstimatedTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     // Only allow empty string or natural numbers (positive integers)
@@ -84,6 +96,7 @@ const LocationSelector = ({
       
       // Mark the estimated storage time field as touched
       setFieldTouched("estimatedStorageTime");
+      if (validateField) validateField("estimatedStorageTime");
     }
   };
 

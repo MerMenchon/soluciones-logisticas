@@ -23,12 +23,12 @@ export const useFormSubmission = (formState: FormState) => {
     validateField 
   } = useFormValidation(formState, updateSubmissionState, submissionState);
   
-  // Field tracking
+  // Field tracking with validation
   const { 
     setFieldTouched,
     isFieldTouched,
     getFieldError 
-  } = useFieldTracking(submissionState, updateSubmissionState);
+  } = useFieldTracking(submissionState, updateSubmissionState, validateField);
   
   // Form handling
   const { 

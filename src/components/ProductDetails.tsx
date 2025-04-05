@@ -63,37 +63,43 @@ const ProductDetails = ({
 }: ProductDetailsProps) => {
   // Check if the product type is "Otro" to determine if description is required
   const isDescriptionRequired = productType === "Otro";
-  const { setFieldTouched } = useFormContext();
+  const { setFieldTouched, validateField } = useFormContext();
 
-  // Handlers with field tracking
+  // Handlers with field tracking and immediate validation
   const handleProductTypeChange = (type: string) => {
     onProductTypeChange(type);
     setFieldTouched("productType");
+    if (validateField) validateField("productType");
   };
   
   const handleDescriptionChange = (text: string) => {
     onDescriptionChange(text);
     setFieldTouched("description");
+    if (validateField) validateField("description");
   };
   
   const handlePresentationChange = (value: string) => {
     onPresentationChange(value);
     setFieldTouched("presentation");
+    if (validateField) validateField("presentation");
   };
   
   const handleValueChange = (newValue: string) => {
     onValueChange(newValue);
     setFieldTouched("cargoValue");
+    if (validateField) validateField("cargoValue");
   };
 
   const handleQuantityChange = (newQuantity: string) => {
     onQuantityChange(newQuantity);
     setFieldTouched("quantity");
+    if (validateField) validateField("quantity");
   };
 
   const handleQuantityUnitChange = (newUnit: string) => {
     onQuantityUnitChange(newUnit);
     setFieldTouched("quantityUnit");
+    if (validateField) validateField("quantityUnit");
   };
 
   return (

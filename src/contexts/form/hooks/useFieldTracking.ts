@@ -9,7 +9,8 @@ export const useFieldTracking = (
   updateSubmissionState: (updates: Partial<{
     touchedFields: TouchedFields;
     validationResult: ValidationResult;
-  }>) => void
+  }>) => void,
+  validateField?: (fieldName: string) => ValidationResult
 ) => {
   // Method to mark a field as touched
   const setFieldTouched = (fieldName: string) => {
@@ -19,6 +20,11 @@ export const useFieldTracking = (
         [fieldName]: true
       }
     });
+    
+    // Auto-validate field when marked as touched
+    if (validateField) {
+      validateField(fieldName);
+    }
   };
   
   // Method to check if a field is touched

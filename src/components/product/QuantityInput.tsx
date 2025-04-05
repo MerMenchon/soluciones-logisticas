@@ -25,7 +25,7 @@ const QuantityInput = ({
 }: QuantityInputProps) => {
   // Use the React Query hook for quantity units
   const { data: quantityUnitOptions = [], isLoading: isLoadingQuantityUnits } = useQuantityUnits();
-  const { setFieldTouched } = useFormContext();
+  const { setFieldTouched, validateField } = useFormContext();
 
   // Set default quantity unit when options are loaded and no value is selected
   useEffect(() => {
@@ -45,8 +45,9 @@ const QuantityInput = ({
       if (newQuantity === '' || parseFloat(newQuantity) > 0) {
         onQuantityChange(newQuantity);
         
-        // Mark field as touched when user interacts
+        // Mark field as touched when user interacts and validate
         setFieldTouched("quantity");
+        if (validateField) validateField("quantity");
       }
     }
   };
@@ -56,6 +57,7 @@ const QuantityInput = ({
     if (value) {
       onQuantityUnitChange(value);
       setFieldTouched("quantityUnit");
+      if (validateField) validateField("quantityUnit");
     }
   };
 

@@ -41,11 +41,6 @@ export const useFormValidation = (
 
   // Check if a field is touched before validating
   const validateFieldWrapper = (fieldName: string) => {
-    // Only validate if the field has been touched
-    if (!submissionState.touchedFields[fieldName]) {
-      return submissionState.validationResult;
-    }
-    
     // Get current validation state
     const currentValidation = { ...submissionState.validationResult };
     
