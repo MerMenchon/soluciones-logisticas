@@ -28,23 +28,19 @@ export const useFieldTracking = (
     }
   };
   
-  // Method to validate field on blur - updated to check and clear errors
+  // Method to validate field on blur - updated to always clear errors if field is valid
   const validateOnBlur = (fieldName: string) => {
     if (validateField) {
+      // Get the validation result for this field
       const result = validateField(fieldName);
       
-      // If this field no longer has an error, make sure UI updates immediately
-      if (!result.errors[fieldName]) {
-        updateSubmissionState({
-          validationResult: {
-            ...submissionState.validationResult,
-            errors: {
-              ...submissionState.validationResult.errors,
-              [fieldName]: null
-            }
-          }
-        });
-      }
+      // IMPORTANT: Always update the UI whether there's an error or not
+      // This ensures the error message disappears when the field value is valid
+      updateSubmissionState({
+        validationResult: {
+          ...result
+        }
+      });
     }
   };
   

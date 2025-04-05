@@ -70,10 +70,6 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
       
       // Validate the field immediately
       validateField("shippingTime");
-      
-      // Force a validation update immediately
-      const isValid = validateForm() === null;
-      setIsFormValid(isValid);
     }
   };
   

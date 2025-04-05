@@ -53,7 +53,7 @@ export const useFormValidation = (
       [fieldName]: fieldError
     };
     
-    // Check if form is now valid
+    // Check if form is now valid by looking at all errors 
     const hasErrors = Object.values(currentValidation.errors).some(error => error !== null);
     currentValidation.isValid = !hasErrors;
     
