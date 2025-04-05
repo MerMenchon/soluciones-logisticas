@@ -111,9 +111,9 @@ export const useLocationSelect = ({
     checkStorageAvailability();
   }, [provinceValue, cityValue]);
 
-  const handleCityChange = (value: string) => {
-    const selectedLocation = cities.find(city => city.ciudad === value);
-    onCityChange(value, selectedLocation?.hasStorage || false);
+  // This function matches the signature in the LocationSelectParams interface
+  const handleCityChange = (value: string, hasStorage: boolean) => {
+    onCityChange(value, hasStorage);
   };
 
   return {

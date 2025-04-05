@@ -13,7 +13,7 @@ interface CitySelectorProps {
   provinceValue: string;
   isLoading: boolean;
   type: "origin" | "destination" | "storage" | "transport";
-  onChange: (value: string) => void;
+  onChange: (value: string, hasStorage?: boolean) => void;  // Updated to accept an optional second parameter
   error?: string | null;
 }
 
@@ -38,6 +38,12 @@ const CitySelector = ({
   const shouldShowStorageInfo = 
     selectedService === "both" && (type === "origin" || type === "destination");
 
+  // Function to handle city selection, passing both city value and storage status
+  const handleCitySelect = (cityValue: string) => {
+    const selectedCity = cities.find(city => city.ciudad === cityValue);
+    onChange(cityValue, selectedCity?.hasStorage || false);
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
@@ -45,7 +51,7 @@ const CitySelector = ({
       </div>
       <Select 
         value={value} 
-        onValueChange={onChange}
+        onValueChange={handleCitySelect}  // Now using our wrapper function
         disabled={!provinceValue || isLoading}
       >
         <SelectTrigger 

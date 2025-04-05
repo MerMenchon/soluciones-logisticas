@@ -56,7 +56,7 @@ const LocationSelector = ({
 
   // Handle city change with immediate validation
   const handleLocalCityChange = (city: string, hasStorage: boolean) => {
-    handleCityChange(city, hasStorage);
+    onCityChange(city, hasStorage);
     
     // Validate the appropriate field based on location type
     if (type === "storage") {
