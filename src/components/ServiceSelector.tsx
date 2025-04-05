@@ -2,7 +2,6 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Warehouse, Truck, PackagePlus } from "lucide-react";
-import { useFormContext } from "@/contexts/form";
 
 type ServiceType = "storage" | "transport" | "both";
 
@@ -16,7 +15,6 @@ const ServiceSelector = ({ selectedService, onSelectService, error }: ServiceSel
   // Handle service selection
   const handleServiceSelect = (service: string) => {
     onSelectService(service);
-    // Don't validate to avoid showing error messages
   };
   
   const services = [
@@ -62,7 +60,7 @@ const ServiceSelector = ({ selectedService, onSelectService, error }: ServiceSel
           </Card>
         ))}
       </div>
-      {/* Removed error message display */}
+      {/* Only show error message after form submission */}
     </div>
   );
 };

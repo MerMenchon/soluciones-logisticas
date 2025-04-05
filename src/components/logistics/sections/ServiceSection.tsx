@@ -2,29 +2,21 @@
 import React from "react";
 import ServiceSelector from "@/components/ServiceSelector";
 import { useLogisticsForm } from "@/hooks/useLogisticsForm";
-import { useFormContext } from "@/contexts/form";
 
 const ServiceSection = () => {
   const {
     selectedService,
     setSelectedService,
     getFieldError,
-    setFieldTouched,
-    validateField,
-    validateOnBlur
+    setFieldTouched
   } = useLogisticsForm();
 
-  // Create a handler that first selects the service and then validates immediately
+  // Create a handler that selects the service without immediate validation
   const handleServiceSelect = (service: string) => {
     setSelectedService(service);
     
-    // Mark field as touched
-    setFieldTouched("selectedService");
-    
-    // Always validate immediately to clear any errors
-    if (validateField) {
-      validateField("selectedService");
-    }
+    // Don't mark field as touched or validate immediately
+    // This prevents showing error messages when an option is selected
   };
   
   // Only get the error status based on our improved logic

@@ -22,14 +22,11 @@ export const useFormValidation = (
   const validateFieldsWrapper = () => {
     const result = validateFormFields(formState);
     updateSubmissionState({ validationResult: result });
-    
-    // Do not mark fields as touched when validating for form validity checks
-    // This prevents error messages from showing
-    
     return result;
   };
 
   // Improved field validation that properly updates the validation state
+  // without causing infinite loops
   const validateFieldWrapper = (fieldName: string) => {
     // Get current validation state
     const currentValidation = { ...submissionState.validationResult };
@@ -38,19 +35,26 @@ export const useFormValidation = (
     const fieldError = validateField(formState, fieldName);
     
     // Update only this field's error status
-    currentValidation.errors = {
+    const updatedErrors = {
       ...currentValidation.errors,
       [fieldName]: fieldError
     };
     
     // Check if form is now valid by looking at all errors 
-    const hasErrors = Object.values(currentValidation.errors).some(error => error !== null);
-    currentValidation.isValid = !hasErrors;
+    const hasErrors = Object.values(updatedErrors).some(error => error !== null);
     
-    // Update state with new validation result
-    updateSubmissionState({ validationResult: currentValidation });
+    // Create a new validation result object to avoid reference issues
+    const newValidation = {
+      isValid: !hasErrors,
+      errors: updatedErrors
+    };
     
-    return currentValidation;
+    // Only update the state if the validation result has actually changed
+    if (JSON.stringify(currentValidation) !== JSON.stringify(newValidation)) {
+      updateSubmissionState({ validationResult: newValidation });
+    }
+    
+    return newValidation;
   };
 
   return {

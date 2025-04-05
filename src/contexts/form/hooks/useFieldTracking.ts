@@ -27,12 +27,7 @@ export const useFieldTracking = (
   const validateOnBlur = (fieldName: string) => {
     if (validateField && submissionState.touchedFields[fieldName]) {
       // Get the validation result for this field
-      const result = validateField(fieldName);
-      
-      // Update the UI to reflect the current validation state
-      updateSubmissionState({
-        validationResult: result
-      });
+      validateField(fieldName);
     }
   };
   
@@ -44,8 +39,8 @@ export const useFieldTracking = (
   // Enhanced method to get a field's error
   // Only show errors if:
   // 1. Form was submitted, OR
-  // 2. Field has been touched AND has been validated (e.g., on blur) AND still has an error
-  // 3. Never show errors for fields with default/pre-selected values unless form is submitted
+  // 2. Field has been touched AND has been validated AND still has an error
+  // 3. Never show errors for fields with values unless form is submitted
   const getFieldError = (fieldName: string): string | null => {
     const error = submissionState.validationResult.errors[fieldName] || null;
     const fieldTouched = submissionState.touchedFields[fieldName];
@@ -79,11 +74,7 @@ export const useFieldTracking = (
       setFieldTouched(fieldName);
     }
     
-    // Always validate immediately to clear any errors when the field has been touched
-    if (validateField) {
-      // We need a small timeout to allow the state to update with the new value
-      setTimeout(() => validateField(fieldName), 0);
-    }
+    // Don't validate immediately to avoid showing errors
   };
 
   return {

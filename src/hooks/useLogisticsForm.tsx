@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useFormContext } from "@/contexts/form";
 import { LogisticsFormHookReturn } from "@/types/logistics";
 
@@ -33,11 +33,16 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
     formSubmitted
   } = formContext;
 
+  // Memoize the validation function to prevent infinite loops
+  const checkFormValidity = useCallback(() => {
+    const isValid = validateForm() === null;
+    setIsFormValid(isValid);
+  }, [validateForm]);
+
   // Effect to validate the form when relevant values change
   // This doesn't show the errors - it just tracks if the form is valid
   useEffect(() => {
-    const isValid = validateForm() === null;
-    setIsFormValid(isValid);
+    checkFormValidity();
   }, [
     formContext.selectedService,
     formContext.storageProvince,
@@ -54,7 +59,7 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
     formContext.cargoValue,
     formContext.shippingTime,
     formContext.estimatedStorageTime,
-    validateForm
+    checkFormValidity
   ]);
 
   // For date picker

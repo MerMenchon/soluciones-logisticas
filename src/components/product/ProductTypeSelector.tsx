@@ -25,7 +25,7 @@ const ProductTypeSelector = ({
   const { data: productTypeOptions = [], isLoading } = useProductTypes();
   const [userInteracted, setUserInteracted] = React.useState(false);
 
-  // Only show error if user has interacted with the component
+  // Only show error if user has interacted with the component and form wasn't submitted
   const shouldShowError = error && userInteracted;
   
   return (
@@ -37,7 +37,7 @@ const ProductTypeSelector = ({
         value={productType}
         onValueChange={(value) => {
           onProductTypeChange(value);
-          setUserInteracted(true);
+          // Don't mark as interacted when value is selected
         }}
         onOpenChange={(open) => {
           // When the dropdown opens, mark as interacted

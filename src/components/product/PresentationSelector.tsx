@@ -50,7 +50,7 @@ const PresentationSelector = ({
           value={presentation}
           onValueChange={(value) => {
             onPresentationChange(value);
-            setUserInteracted(true);
+            // Don't mark as interacted when a value is selected
           }}
           onOpenChange={(open) => {
             if (open) {
@@ -79,7 +79,7 @@ const PresentationSelector = ({
             value={clarification}
             onChange={(e) => {
               onClarificationChange(e.target.value);
-              setUserInteracted(true);
+              // Don't mark as interacted on change
             }}
             onBlur={onBlur}
             className="mt-2"
