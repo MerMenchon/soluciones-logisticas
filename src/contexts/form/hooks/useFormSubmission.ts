@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { FormState, WebhookResponse } from "../types";
@@ -13,7 +12,7 @@ interface SubmissionState {
   distanceValue: string | null;
   webhookResponse?: WebhookResponse;
   isWaitingForResponse: boolean;
-  showResponseDialog: boolean; // Added this state
+  showResponseDialog: boolean;
 }
 
 export const useFormSubmission = (formState: FormState) => {
@@ -24,7 +23,7 @@ export const useFormSubmission = (formState: FormState) => {
     showConfirmation: false,
     distanceValue: null,
     isWaitingForResponse: false,
-    showResponseDialog: false, // New state to control dialog visibility
+    showResponseDialog: false,
   });
 
   const updateSubmissionState = (updates: Partial<SubmissionState>) => {
@@ -54,18 +53,19 @@ export const useFormSubmission = (formState: FormState) => {
 
     const validationError = validateFormWrapper();
     if (validationError) {
-      toast({
-        title: "Error",
-        description: validationError,
-        variant: "destructive",
-      });
+      // Commented out toast for validation error
+      // toast({
+      //   title: "Error",
+      //   description: validationError,
+      //   variant: "destructive",
+      // });
       return;
     }
 
     updateSubmissionState({ 
       isSubmitting: true,
       isWaitingForResponse: true,
-      showResponseDialog: true // Show dialog when submitting
+      showResponseDialog: true
     });
 
     try {
@@ -86,11 +86,11 @@ export const useFormSubmission = (formState: FormState) => {
       // Extract first item if it's an array (API returns array with one object)
       const responseData = Array.isArray(webhookResponse) ? webhookResponse[0] : webhookResponse;
 
-      // Show success toast
-      toast({
-        title: "Éxito",
-        description: "Su consulta ha sido procesada correctamente",
-      });
+      // Commented out success toast
+      // toast({
+      //   title: "Éxito",
+      //   description: "Su consulta ha sido procesada correctamente",
+      // });
 
       updateSubmissionState({ 
         isSubmitting: false,
@@ -98,18 +98,17 @@ export const useFormSubmission = (formState: FormState) => {
         webhookResponse: responseData 
       });
     } catch (error) {
-      // Handle webhook submission error
-      console.error("Webhook submission error:", error);
-      toast({
-        title: "Error",
-        description: "No se pudo enviar la consulta. Por favor, inténtelo de nuevo.",
-        variant: "destructive",
-      });
+      // Commented out error toast
+      // toast({
+      //   title: "Error",
+      //   description: "No se pudo enviar la consulta. Por favor, inténtelo de nuevo.",
+      //   variant: "destructive",
+      // });
 
       updateSubmissionState({ 
         isSubmitting: false,
         isWaitingForResponse: false,
-        showResponseDialog: false // Hide dialog on error
+        showResponseDialog: false
       });
     }
   };
