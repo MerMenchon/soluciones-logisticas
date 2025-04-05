@@ -81,6 +81,14 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
     setFieldTouched("shippingTime");
   };
 
+  // Function to validate the field when clicking outside (onBlur)
+  const handleDateBlur = () => {
+    if (shippingTime) {
+      // Sólo validamos si ya hay una fecha seleccionada
+      validateField("shippingTime");
+    }
+  };
+
   // Function to handle form submission and validate all fields
   const handleFormSubmit = (e: React.FormEvent): void => {
     // Validate all fields before submitting
@@ -95,6 +103,7 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
     disabledDays,
     handleDateSelect,
     handleDatePopoverOpen,
+    handleDateBlur,
     handleFormSubmit,
     showResponseDialog,
     handleCloseResponseDialog,

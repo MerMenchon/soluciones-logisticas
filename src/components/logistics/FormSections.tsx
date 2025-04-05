@@ -20,6 +20,7 @@ const FormSections = () => {
     disabledDays,
     handleDateSelect,
     handleDatePopoverOpen,
+    handleDateBlur,
     isFormValid,
     getFieldError,
     isSubmitting,
@@ -39,6 +40,7 @@ const FormSections = () => {
         selectedDate={selectedDate}
         onDateSelect={handleDateSelect}
         onOpen={handleDatePopoverOpen}
+        onBlur={handleDateBlur}
         disabledDays={disabledDays}
         error={getFieldError("shippingTime")}
       />

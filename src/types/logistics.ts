@@ -72,6 +72,7 @@ export interface LogisticsFormHookReturn {
   disabledDays: { before: Date };
   handleDateSelect: (date: Date | undefined) => void;
   handleDatePopoverOpen: () => void;
+  handleDateBlur: () => void;
   
   // Form actions
   handleFormSubmit: (e: React.FormEvent) => void;

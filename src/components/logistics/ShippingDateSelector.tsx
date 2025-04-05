@@ -13,6 +13,7 @@ interface ShippingDateSelectorProps {
   disabledDays: { before: Date };
   error?: string | null;
   onOpen?: () => void;
+  onBlur?: () => void;
 }
 
 const ShippingDateSelector = ({
@@ -20,7 +21,8 @@ const ShippingDateSelector = ({
   onDateSelect,
   disabledDays,
   error,
-  onOpen
+  onOpen,
+  onBlur
 }: ShippingDateSelectorProps) => {
   // Function to handle date selection and close popover
   const handleDateSelection = (date: Date | undefined) => {
@@ -37,6 +39,9 @@ const ShippingDateSelector = ({
         <Popover onOpenChange={(open) => {
           if (open && onOpen) {
             onOpen();
+          } else if (!open && onBlur) {
+            // Validar cuando se cierra el popover
+            onBlur();
           }
         }}>
           <PopoverTrigger asChild>
