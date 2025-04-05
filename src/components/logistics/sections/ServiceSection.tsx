@@ -2,6 +2,7 @@
 import React from "react";
 import ServiceSelector from "@/components/ServiceSelector";
 import { useLogisticsForm } from "@/hooks/useLogisticsForm";
+import { useFormContext } from "@/contexts/form";
 
 const ServiceSection = () => {
   const {

@@ -9,6 +9,7 @@ import { LogisticsFormHookReturn } from "@/types/logistics";
  * @returns {LogisticsFormHookReturn} An object containing form state, methods, and validation functionality
  */
 export const useLogisticsForm = (): LogisticsFormHookReturn => {
+  // This hook must be used within a FormProvider component
   const formContext = useFormContext();
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   
