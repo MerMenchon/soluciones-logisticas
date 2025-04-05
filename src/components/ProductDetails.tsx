@@ -63,22 +63,37 @@ const ProductDetails = ({
 }: ProductDetailsProps) => {
   // Check if the product type is "Otro" to determine if description is required
   const isDescriptionRequired = productType === "Otro";
-  const { validateField } = useFormContext();
+  const { setFieldTouched } = useFormContext();
 
-  // Handlers with immediate validation
+  // Handlers with field tracking
   const handleProductTypeChange = (type: string) => {
     onProductTypeChange(type);
-    validateField("productType");
+    setFieldTouched("productType");
   };
   
   const handleDescriptionChange = (text: string) => {
     onDescriptionChange(text);
-    if (isDescriptionRequired) validateField("description");
+    setFieldTouched("description");
   };
   
   const handlePresentationChange = (value: string) => {
     onPresentationChange(value);
-    validateField("presentation");
+    setFieldTouched("presentation");
+  };
+  
+  const handleValueChange = (newValue: string) => {
+    onValueChange(newValue);
+    setFieldTouched("cargoValue");
+  };
+
+  const handleQuantityChange = (newQuantity: string) => {
+    onQuantityChange(newQuantity);
+    setFieldTouched("quantity");
+  };
+
+  const handleQuantityUnitChange = (newUnit: string) => {
+    onQuantityUnitChange(newUnit);
+    setFieldTouched("quantityUnit");
   };
 
   return (
@@ -104,9 +119,9 @@ const ProductDetails = ({
 
         <QuantityInput
           quantity={quantity}
-          onQuantityChange={onQuantityChange}
+          onQuantityChange={handleQuantityChange}
           quantityUnit={quantityUnit}
-          onQuantityUnitChange={onQuantityUnitChange}
+          onQuantityUnitChange={handleQuantityUnitChange}
           errors={{
             quantity: errors.quantity,
             quantityUnit: errors.quantityUnit
@@ -115,7 +130,7 @@ const ProductDetails = ({
         
         <ValueInput
           value={value}
-          onValueChange={onValueChange}
+          onValueChange={handleValueChange}
           error={errors.value}
         />
 

@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { FormState, WebhookResponse } from "../types";
+import { FormState, WebhookResponse, TouchedFields } from "../types";
 import { validateForm, validateFormFields, ValidationResult, validateField } from "../validation";
 import { sendToWebhook } from "./useWebhook";
 import { prepareFormData } from "./useFormData";
@@ -15,6 +15,7 @@ interface SubmissionState {
   isWaitingForResponse: boolean;
   showResponseDialog: boolean;
   validationResult: ValidationResult;
+  touchedFields: TouchedFields;
 }
 
 export const useFormSubmission = (formState: FormState) => {
@@ -26,7 +27,8 @@ export const useFormSubmission = (formState: FormState) => {
     distanceValue: null,
     isWaitingForResponse: false,
     showResponseDialog: false,
-    validationResult: { isValid: true, errors: {} }
+    validationResult: { isValid: true, errors: {} },
+    touchedFields: {}
   });
 
   const updateSubmissionState = (updates: Partial<SubmissionState>) => {
@@ -44,6 +46,29 @@ export const useFormSubmission = (formState: FormState) => {
     
   const setShowResponseDialog = (showResponseDialog: boolean) =>
     updateSubmissionState({ showResponseDialog });
+    
+  // New method to mark a field as touched
+  const setFieldTouched = (fieldName: string) => {
+    updateSubmissionState({
+      touchedFields: {
+        ...submissionState.touchedFields,
+        [fieldName]: true
+      }
+    });
+  };
+  
+  // Method to check if a field is touched
+  const isFieldTouched = (fieldName: string): boolean => {
+    return !!submissionState.touchedFields[fieldName];
+  };
+  
+  // Method to get a field's error only if it's been touched
+  const getFieldError = (fieldName: string): string | null => {
+    if (isFieldTouched(fieldName)) {
+      return submissionState.validationResult.errors[fieldName] || null;
+    }
+    return null;
+  };
 
   // Form validation wrapper
   const validateFormWrapper = () => {
@@ -54,11 +79,30 @@ export const useFormSubmission = (formState: FormState) => {
   const validateFieldsWrapper = () => {
     const result = validateFormFields(formState);
     updateSubmissionState({ validationResult: result });
+    
+    // Mark all fields as touched when validating the entire form
+    const allTouched = Object.keys(result.errors).reduce((acc, fieldName) => {
+      acc[fieldName] = true;
+      return acc;
+    }, {} as TouchedFields);
+    
+    updateSubmissionState({
+      touchedFields: {
+        ...submissionState.touchedFields,
+        ...allTouched
+      }
+    });
+    
     return result;
   };
 
-  // NEW: Single field validation - for immediate feedback
+  // Single field validation - for immediate feedback
   const validateFieldWrapper = (fieldName: string) => {
+    // Only validate if the field has been touched
+    if (!isFieldTouched(fieldName)) {
+      return submissionState.validationResult;
+    }
+    
     // Get current validation state
     const currentValidation = { ...submissionState.validationResult };
     
@@ -90,6 +134,7 @@ export const useFormSubmission = (formState: FormState) => {
     
     if (!validationResult.isValid) {
       // Don't proceed with submission if there are validation errors
+      // All fields are now marked as touched
       return;
     }
 
@@ -117,25 +162,12 @@ export const useFormSubmission = (formState: FormState) => {
       // Extract first item if it's an array (API returns array with one object)
       const responseData = Array.isArray(webhookResponse) ? webhookResponse[0] : webhookResponse;
 
-      // Commented out success toast
-      // toast({
-      //   title: "Éxito",
-      //   description: "Su consulta ha sido procesada correctamente",
-      // });
-
       updateSubmissionState({ 
         isSubmitting: false,
         isWaitingForResponse: false,
         webhookResponse: responseData 
       });
     } catch (error) {
-      // Commented out error toast
-      // toast({
-      //   title: "Error",
-      //   description: "No se pudo enviar la consulta. Por favor, inténtelo de nuevo.",
-      //   variant: "destructive",
-      // });
-
       updateSubmissionState({ 
         isSubmitting: false,
         isWaitingForResponse: false,
@@ -201,6 +233,9 @@ export const useFormSubmission = (formState: FormState) => {
     handleCloseResponseDialog,
     validateForm: validateFormWrapper,
     validateFields: validateFieldsWrapper,
-    validateField: validateFieldWrapper, // Add new field validation method
+    validateField: validateFieldWrapper,
+    setFieldTouched,
+    getFieldError,
+    isFieldTouched,
   };
 };

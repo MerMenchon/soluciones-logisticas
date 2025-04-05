@@ -25,6 +25,9 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
     showResponseDialog,
     handleCloseResponseDialog,
     isWaitingForResponse,
+    setFieldTouched,
+    getFieldError,
+    isFieldTouched
   } = formContext;
 
   // Effect to validate the form when relevant values change
@@ -60,8 +63,8 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
   const handleDateSelect = (date: Date | undefined): void => {
     if (date) {
       setShippingTime(date.toISOString());
-      // Validate the field immediately after change
-      validateField("shippingTime");
+      // Mark field as touched and validate
+      setFieldTouched("shippingTime");
     }
   };
 
@@ -82,5 +85,8 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
     showResponseDialog,
     handleCloseResponseDialog,
     isWaitingForResponse,
+    setFieldTouched,
+    getFieldError,
+    isFieldTouched
   };
 };

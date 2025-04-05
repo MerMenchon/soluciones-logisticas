@@ -10,7 +10,7 @@ interface ValueInputProps {
 }
 
 const ValueInput = ({ value, onValueChange, error }: ValueInputProps) => {
-  const { validateField } = useFormContext();
+  const { setFieldTouched } = useFormContext();
 
   // Handle numeric input validation
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,10 +22,8 @@ const ValueInput = ({ value, onValueChange, error }: ValueInputProps) => {
       if (newValue === '' || parseFloat(newValue) > 0) {
         onValueChange(newValue);
         
-        // Immediately validate this field after change
-        if (error) {
-          setTimeout(() => validateField("cargoValue"), 0);
-        }
+        // Mark field as touched when user interacts
+        setFieldTouched("cargoValue");
       }
     }
   };

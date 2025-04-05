@@ -60,6 +60,11 @@ export interface LogisticsFormHookReturn {
   validateFields: () => ValidationResult;
   validateField: (fieldName: string) => ValidationResult;
   
+  // Field tracking methods
+  setFieldTouched: (fieldName: string) => void;
+  getFieldError: (fieldName: string) => string | null;
+  isFieldTouched: (fieldName: string) => boolean;
+  
   // Date related
   shippingTime: string;
   setShippingTime: (time: string) => void;

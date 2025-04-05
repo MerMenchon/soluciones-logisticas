@@ -20,7 +20,7 @@ const FormSections = () => {
     disabledDays,
     handleDateSelect,
     isFormValid,
-    validationResult,
+    getFieldError,
     isSubmitting,
     resetForm,
   } = useLogisticsForm();
@@ -30,7 +30,7 @@ const FormSections = () => {
       <ServiceSelector 
         selectedService={selectedService as ServiceType} 
         onSelectService={setSelectedService} 
-        error={validationResult?.errors?.selectedService || null}
+        error={getFieldError("selectedService")}
       />
 
       {/* Date Selector */}
@@ -38,7 +38,7 @@ const FormSections = () => {
         selectedDate={selectedDate}
         onDateSelect={handleDateSelect}
         disabledDays={disabledDays}
-        error={validationResult?.errors?.shippingTime || null}
+        error={getFieldError("shippingTime")}
       />
 
       {selectedService && (
@@ -78,7 +78,7 @@ const RenderStorageSection = ({ selectedService }: { selectedService: ServiceTyp
     setStorageCity,
     estimatedStorageTime,
     setEstimatedStorageTime,
-    validationResult,
+    getFieldError,
   } = useLogisticsForm();
 
   return (
@@ -91,9 +91,9 @@ const RenderStorageSection = ({ selectedService }: { selectedService: ServiceTyp
       estimatedStorageTime={estimatedStorageTime}
       setEstimatedStorageTime={setEstimatedStorageTime}
       errors={{
-        province: validationResult?.errors?.storageProvince || null,
-        city: validationResult?.errors?.storageCity || null,
-        time: validationResult?.errors?.estimatedStorageTime || null
+        province: getFieldError("storageProvince"),
+        city: getFieldError("storageCity"),
+        time: getFieldError("estimatedStorageTime")
       }}
     />
   );
@@ -118,7 +118,7 @@ const RenderTransportSection = ({ selectedService }: { selectedService: ServiceT
     handleUseDestinationAsStorageChange,
     estimatedStorageTime,
     setEstimatedStorageTime,
-    validationResult,
+    getFieldError,
   } = useLogisticsForm();
 
   return (
@@ -139,11 +139,11 @@ const RenderTransportSection = ({ selectedService }: { selectedService: ServiceT
       estimatedStorageTime={estimatedStorageTime}
       setEstimatedStorageTime={setEstimatedStorageTime}
       errors={{
-        originProvince: validationResult?.errors?.originProvince || null,
-        originCity: validationResult?.errors?.originCity || null,
-        destinationProvince: validationResult?.errors?.destinationProvince || null,
-        destinationCity: validationResult?.errors?.destinationCity || null,
-        estimatedStorageTime: validationResult?.errors?.estimatedStorageTime || null
+        originProvince: getFieldError("originProvince"),
+        originCity: getFieldError("originCity"),
+        destinationProvince: getFieldError("destinationProvince"),
+        destinationCity: getFieldError("destinationCity"),
+        estimatedStorageTime: getFieldError("estimatedStorageTime")
       }}
     />
   );
@@ -168,7 +168,7 @@ const ProductDetailsSection = () => {
     setQuantity,
     quantityUnit,
     setQuantityUnit,
-    validationResult,
+    getFieldError,
   } = useLogisticsForm();
 
   return (
@@ -190,12 +190,12 @@ const ProductDetailsSection = () => {
       quantityUnit={quantityUnit}
       onQuantityUnitChange={setQuantityUnit}
       errors={{
-        productType: validationResult?.errors?.productType || null,
-        description: validationResult?.errors?.description || null,
-        presentation: validationResult?.errors?.presentation || null,
-        quantity: validationResult?.errors?.quantity || null,
-        quantityUnit: validationResult?.errors?.quantityUnit || null,
-        value: validationResult?.errors?.cargoValue || null
+        productType: getFieldError("productType"),
+        description: getFieldError("description"),
+        presentation: getFieldError("presentation"),
+        quantity: getFieldError("quantity"),
+        quantityUnit: getFieldError("quantityUnit"),
+        value: getFieldError("cargoValue")
       }}
     />
   );

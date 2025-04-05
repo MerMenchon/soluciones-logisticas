@@ -23,7 +23,7 @@ const LocationSelector = ({
   onEstimatedTimeChange,
   errors = { province: null, city: null, time: null }
 }: LocationSelectorProps) => {
-  const { validateField } = useFormContext();
+  const { setFieldTouched } = useFormContext();
 
   const {
     cities,
@@ -40,31 +40,31 @@ const LocationSelector = ({
     onCityChange,
   });
 
-  // Handle province change with immediate validation
+  // Handle province change with field tracking
   const handleProvinceChange = (province: string) => {
     onProvinceChange(province);
     
-    // Validate the appropriate field based on location type
+    // Mark field as touched based on location type
     if (type === "storage") {
-      validateField("storageProvince");
+      setFieldTouched("storageProvince");
     } else if (type === "origin") {
-      validateField("originProvince");
+      setFieldTouched("originProvince");
     } else if (type === "destination") {
-      validateField("destinationProvince");
+      setFieldTouched("destinationProvince");
     }
   };
 
-  // Handle city change with immediate validation
+  // Handle city change with field tracking
   const handleLocalCityChange = (city: string, hasStorage: boolean) => {
     onCityChange(city, hasStorage);
     
-    // Validate the appropriate field based on location type
+    // Mark field as touched based on location type
     if (type === "storage") {
-      validateField("storageCity");
+      setFieldTouched("storageCity");
     } else if (type === "origin") {
-      validateField("originCity");
+      setFieldTouched("originCity");
     } else if (type === "destination") {
-      validateField("destinationCity");
+      setFieldTouched("destinationCity");
     }
   };
 
@@ -82,10 +82,8 @@ const LocationSelector = ({
     if (value === '' || (/^\d+$/.test(value) && parseInt(value) > 0)) {
       onEstimatedTimeChange?.(value);
       
-      // Validate the estimated storage time field
-      if ((type === "storage" || useAsStorage) && errors?.time) {
-        validateField("estimatedStorageTime");
-      }
+      // Mark the estimated storage time field as touched
+      setFieldTouched("estimatedStorageTime");
     }
   };
 

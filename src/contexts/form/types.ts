@@ -17,6 +17,11 @@ export interface ValidationResult {
   };
 }
 
+// New interface to track touched fields
+export interface TouchedFields {
+  [key: string]: boolean;
+}
+
 // Form State interface
 export interface FormState {
   // Service state
@@ -59,6 +64,9 @@ export interface FormState {
   
   // Validation state
   validationResult?: ValidationResult;
+  
+  // Touched fields tracking
+  touchedFields: TouchedFields;
 }
 
 // FormContext type for providing form context
@@ -102,9 +110,16 @@ export interface FormContextType extends FormState {
   setIsSubmitting: (isSubmitting: boolean) => void;
   setShowConfirmation: (showConfirmation: boolean) => void;
   setDistanceValue: (distanceValue: string | null) => void;
+  
+  // Validation methods  
   validateForm: () => string | null;
   validateFields: () => ValidationResult;
-  validateField: (fieldName: string) => ValidationResult; // Added new method
+  validateField: (fieldName: string) => ValidationResult;
+  
+  // Field tracking methods
+  setFieldTouched: (fieldName: string) => void;
+  getFieldError: (fieldName: string) => string | null;
+  isFieldTouched: (fieldName: string) => boolean;
 }
 
 // FormProviderProps interface
