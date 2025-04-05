@@ -12,13 +12,15 @@ interface ShippingDateSelectorProps {
   onDateSelect: (date: Date | undefined) => void;
   disabledDays: { before: Date };
   error?: string | null;
+  onOpen?: () => void; // Añadimos esta prop para marcar el campo como tocado al abrir
 }
 
 const ShippingDateSelector = ({
   selectedDate,
   onDateSelect,
   disabledDays,
-  error
+  error,
+  onOpen
 }: ShippingDateSelectorProps) => {
   return (
     <div className="reference-form-section">
@@ -27,7 +29,7 @@ const ShippingDateSelector = ({
         <span>Fecha de inicio de la solicitud</span>
       </h2>
       <div className="space-y-4">
-        <Popover>
+        <Popover onOpenChange={(open) => open && onOpen && onOpen()}>
           <PopoverTrigger asChild>
             <Button
               id="shippingDate"
