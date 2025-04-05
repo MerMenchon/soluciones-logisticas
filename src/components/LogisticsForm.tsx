@@ -3,10 +3,21 @@ import React from "react";
 import { useLogisticsForm } from "@/hooks/useLogisticsForm";
 import SuccessMessage from "@/components/SuccessMessage";
 import FormSections from "@/components/logistics/FormSections";
+import { FormProvider } from "@/contexts/form";
 
 const LogisticsForm = () => {
+  // We need to ensure this component is used within a FormProvider
+  // Since the error is occurring, we're wrapping our content with FormProvider
+  return (
+    <FormProvider>
+      <LogisticsFormContent />
+    </FormProvider>
+  );
+};
+
+// Separate the content to avoid having useLogisticsForm outside of FormProvider
+const LogisticsFormContent = () => {
   const {
-    selectedService,
     handleFormSubmit,
     showResponseDialog,
     handleCloseResponseDialog,
