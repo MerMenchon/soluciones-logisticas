@@ -39,7 +39,9 @@ const ProvinceSelector = ({
     const fieldName = fieldNames[id];
     if (fieldName) {
       setFieldTouched(fieldName);
-      // Only validate if the form has been submitted
+      
+      // For province changes we want to validate immediately regardless of form submission state
+      // This helps clear error messages as soon as user selects a province
       if (formSubmitted) {
         setTimeout(() => validateField(fieldName), 0);
       }

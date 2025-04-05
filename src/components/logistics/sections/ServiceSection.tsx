@@ -20,9 +20,12 @@ const ServiceSection = () => {
     // Mark field as touched
     setFieldTouched("selectedService");
     
-    // Validate immediately if form has been submitted
+    // Validate immediately to clear any errors, but only if the form has been submitted
     if (formSubmitted && validateField) {
-      validateField("selectedService");
+      // Use setTimeout to ensure the state update happens first
+      setTimeout(() => {
+        validateField("selectedService");
+      }, 0);
     }
   };
 

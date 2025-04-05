@@ -26,7 +26,13 @@ export const useFieldTracking = (
     // we should validate it to clear the error if it's now valid
     if (submissionState.formSubmitted && validateField && 
         submissionState.validationResult.errors[fieldName]) {
-      validateField(fieldName);
+      // Immediately validate to update the UI
+      const result = validateField(fieldName);
+      
+      // Update the validation result
+      updateSubmissionState({
+        validationResult: result
+      });
     }
   };
   
@@ -41,9 +47,7 @@ export const useFieldTracking = (
       // Update the UI to reflect the current validation state
       // This ensures errors disappear when the field is fixed
       updateSubmissionState({
-        validationResult: {
-          ...result
-        }
+        validationResult: result
       });
     }
   };
@@ -64,10 +68,26 @@ export const useFieldTracking = (
     return null;
   };
 
+  // Method to handle value change and validation in one step
+  const handleFieldValueChange = (fieldName: string, value: any, setter: (value: any) => void) => {
+    // First set the value using the provided setter
+    setter(value);
+    
+    // Then mark as touched
+    setFieldTouched(fieldName);
+    
+    // If form was submitted, validate immediately to clear any errors
+    if (submissionState.formSubmitted && validateField) {
+      // We need a small timeout to allow the state to update with the new value
+      setTimeout(() => validateField(fieldName), 0);
+    }
+  };
+
   return {
     setFieldTouched,
     isFieldTouched,
     validateOnBlur,
-    getFieldError
+    getFieldError,
+    handleFieldValueChange
   };
 };
