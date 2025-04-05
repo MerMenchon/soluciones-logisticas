@@ -59,11 +59,13 @@ export interface LogisticsFormHookReturn {
   validateForm: () => string | null;
   validateFields: () => ValidationResult;
   validateField: (fieldName: string) => ValidationResult;
+  validateOnBlur: (fieldName: string) => void; // Added this property
   
   // Field tracking methods
   setFieldTouched: (fieldName: string) => void;
   getFieldError: (fieldName: string) => string | null;
   isFieldTouched: (fieldName: string) => boolean;
+  handleFieldBlur: (fieldName: string) => void;
   
   // Date related
   shippingTime: string;
@@ -72,6 +74,7 @@ export interface LogisticsFormHookReturn {
   disabledDays: { before: Date };
   handleDateSelect: (date: Date | undefined) => void;
   handleDatePopoverOpen: () => void;
+  handleDateBlur: () => void;
   
   // Form actions
   handleFormSubmit: (e: React.FormEvent) => void;

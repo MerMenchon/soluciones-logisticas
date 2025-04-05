@@ -7,7 +7,6 @@ export const useFormValidation = (
   updateSubmissionState: (updates: Partial<{
     validationResult: ValidationResult;
     touchedFields: TouchedFields;
-    formSubmitted: boolean;
   }>) => void,
   submissionState: {
     validationResult: ValidationResult;
@@ -19,15 +18,10 @@ export const useFormValidation = (
     return validateForm(formState);
   };
 
-  // Field validation wrapper - validates all fields and marks the form as submitted
+  // Field validation wrapper
   const validateFieldsWrapper = () => {
     const result = validateFormFields(formState);
-    
-    // Mark form as submitted, which will show all errors
-    updateSubmissionState({ 
-      validationResult: result,
-      formSubmitted: true
-    });
+    updateSubmissionState({ validationResult: result });
     
     // Mark all fields as touched when validating the entire form
     const allTouched = Object.keys(result.errors).reduce((acc, fieldName) => {
@@ -45,7 +39,7 @@ export const useFormValidation = (
     return result;
   };
 
-  // Validate a single field when it changes or loses focus
+  // Improved field validation that properly updates the validation state
   const validateFieldWrapper = (fieldName: string) => {
     // Get current validation state
     const currentValidation = { ...submissionState.validationResult };
@@ -59,7 +53,7 @@ export const useFormValidation = (
       [fieldName]: fieldError
     };
     
-    // Check if form is now valid
+    // Check if form is now valid by looking at all errors 
     const hasErrors = Object.values(currentValidation.errors).some(error => error !== null);
     currentValidation.isValid = !hasErrors;
     

@@ -28,6 +28,7 @@ export const useFormSubmission = (formState: FormState) => {
   const { 
     setFieldTouched,
     isFieldTouched,
+    validateOnBlur,
     getFieldError 
   } = useFieldTracking(submissionState, updateSubmissionState, validateField);
   
@@ -41,13 +42,13 @@ export const useFormSubmission = (formState: FormState) => {
     formState,
     validateFields,
     (updates) => {
-      // Handle validation updates
+      // Handle the case when updates include validationResult
       if ('validationResult' in updates) {
         const validationUpdate = updates.validationResult as ValidationResult;
         updateSubmissionState({
           ...updates,
-          validationResult: validationUpdate,
-          ...(updates.formSubmitted !== undefined ? { formSubmitted: updates.formSubmitted } : {})
+          formSubmitted: true,
+          validationResult: validationUpdate
         });
       } else {
         updateSubmissionState(updates);
@@ -70,6 +71,7 @@ export const useFormSubmission = (formState: FormState) => {
     validateFields,
     validateField,
     setFieldTouched,
+    validateOnBlur,
     getFieldError,
     isFieldTouched,
   };

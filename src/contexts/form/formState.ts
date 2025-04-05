@@ -143,8 +143,8 @@ export const useFormState = () => {
     locationState.resetLocations();
     productState.resetProductDetails();
     submissionState.setIsSubmitting(false);
-    submissionState.setShowResponseDialog(false); // Close dialog when resetting form
-    submissionState.setFormSubmitted(false); // Reset form submitted state
+    submissionState.setShowResponseDialog(false); 
+    submissionState.setFormSubmitted(false); // Critical: Reset form submitted state to hide validation messages
     setFormState(prev => ({
       ...prev,
       selectedService: "",

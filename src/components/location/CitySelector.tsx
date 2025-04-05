@@ -15,6 +15,7 @@ interface CitySelectorProps {
   type: "origin" | "destination" | "storage" | "transport";
   onChange: (value: string, hasStorage?: boolean) => void;  // Updated to accept an optional second parameter
   error?: string | null;
+  onBlur?: () => void; // Add onBlur prop
 }
 
 const CitySelector = ({
@@ -25,7 +26,8 @@ const CitySelector = ({
   isLoading,
   type,
   onChange,
-  error
+  error,
+  onBlur
 }: CitySelectorProps) => {
   const { selectedService } = useFormContext();
   
@@ -53,6 +55,9 @@ const CitySelector = ({
         value={value} 
         onValueChange={handleCitySelect}  // Now using our wrapper function
         disabled={!provinceValue || isLoading}
+        onOpenChange={(open) => {
+          if (!open && onBlur) onBlur();
+        }}
       >
         <SelectTrigger 
           id={id} 

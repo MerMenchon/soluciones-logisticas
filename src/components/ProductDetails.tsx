@@ -63,7 +63,7 @@ const ProductDetails = ({
 }: ProductDetailsProps) => {
   // Check if the product type is "Otro" to determine if description is required
   const isDescriptionRequired = productType === "Otro";
-  const { setFieldTouched, validateField } = useFormContext();
+  const { setFieldTouched, validateField, validateOnBlur } = useFormContext();
 
   // Handlers with field tracking and immediate validation
   const handleProductTypeChange = (type: string) => {
@@ -101,6 +101,14 @@ const ProductDetails = ({
     setFieldTouched("quantityUnit");
     if (validateField) validateField("quantityUnit");
   };
+  
+  // Blur handlers for validation
+  const handleProductTypeBlur = () => validateOnBlur("productType");
+  const handleDescriptionBlur = () => validateOnBlur("description");
+  const handlePresentationBlur = () => validateOnBlur("presentation");
+  const handleValueBlur = () => validateOnBlur("cargoValue");
+  const handleQuantityBlur = () => validateOnBlur("quantity");
+  const handleQuantityUnitBlur = () => validateOnBlur("quantityUnit");
 
   return (
     <div className="reference-form-section">
@@ -113,6 +121,7 @@ const ProductDetails = ({
           productType={productType} 
           onProductTypeChange={handleProductTypeChange}
           error={errors.productType}
+          onBlur={handleProductTypeBlur}
         />
 
         <PresentationSelector
@@ -121,6 +130,7 @@ const ProductDetails = ({
           clarification={clarification}
           onClarificationChange={onClarificationChange}
           error={errors.presentation}
+          onBlur={handlePresentationBlur}
         />
 
         <QuantityInput
@@ -132,12 +142,15 @@ const ProductDetails = ({
             quantity: errors.quantity,
             quantityUnit: errors.quantityUnit
           }}
+          onQuantityBlur={handleQuantityBlur}
+          onQuantityUnitBlur={handleQuantityUnitBlur}
         />
         
         <ValueInput
           value={value}
           onValueChange={handleValueChange}
           error={errors.value}
+          onBlur={handleValueBlur}
         />
 
         <DescriptionInput
@@ -145,6 +158,7 @@ const ProductDetails = ({
           onDescriptionChange={handleDescriptionChange}
           isRequired={isDescriptionRequired}
           error={errors.description}
+          onBlur={handleDescriptionBlur}
         />
       </div>
     </div>

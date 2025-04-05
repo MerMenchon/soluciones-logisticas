@@ -3,10 +3,19 @@ import React from "react";
 import { useLogisticsForm } from "@/hooks/useLogisticsForm";
 import SuccessMessage from "@/components/SuccessMessage";
 import FormSections from "@/components/logistics/FormSections";
+import { FormProvider } from "@/contexts/form";
 
 const LogisticsForm = () => {
+  return (
+    <FormProvider>
+      <LogisticsFormContent />
+    </FormProvider>
+  );
+};
+
+// Separate component that uses the form context
+const LogisticsFormContent = () => {
   const {
-    selectedService,
     handleFormSubmit,
     showResponseDialog,
     handleCloseResponseDialog,

@@ -7,6 +7,7 @@ interface DescriptionInputProps {
   onDescriptionChange: (description: string) => void;
   isRequired: boolean;
   error: string | null;
+  onBlur?: () => void; // Add onBlur prop
 }
 
 const DescriptionInput = ({ 
@@ -14,6 +15,7 @@ const DescriptionInput = ({
   onDescriptionChange,
   isRequired,
   error,
+  onBlur
 }: DescriptionInputProps) => {
   // Handle description input with 100 character limit
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,7 +25,7 @@ const DescriptionInput = ({
     }
   };
 
-  const hasError = isRequired && !description || error !== null;
+  const hasError = (isRequired && !description && error !== null) || error !== null;
 
   return (
     <div>
@@ -38,13 +40,14 @@ const DescriptionInput = ({
           : "Describa brevemente su producto"}
         value={description}
         onChange={handleDescriptionChange}
+        onBlur={onBlur}
         maxLength={100}
         className={`w-full ${hasError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
         required={isRequired}
       />
       {hasError && (
         <p className="text-sm text-red-500 mt-1">
-          {error || "La descripción del producto es obligatoria"}
+          {error}
         </p>
       )}
     </div>

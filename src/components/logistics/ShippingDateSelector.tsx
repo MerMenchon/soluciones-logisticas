@@ -12,7 +12,8 @@ interface ShippingDateSelectorProps {
   onDateSelect: (date: Date | undefined) => void;
   disabledDays: { before: Date };
   error?: string | null;
-  onOpen?: () => void; // Triggers when the popover opens to mark field as touched
+  onOpen?: () => void;
+  onBlur?: () => void;
 }
 
 const ShippingDateSelector = ({
@@ -20,8 +21,14 @@ const ShippingDateSelector = ({
   onDateSelect,
   disabledDays,
   error,
-  onOpen
+  onOpen,
+  onBlur
 }: ShippingDateSelectorProps) => {
+  // Function to handle date selection and close popover
+  const handleDateSelection = (date: Date | undefined) => {
+    onDateSelect(date);
+  };
+
   return (
     <div className="reference-form-section">
       <h2 className="reference-form-subtitle">
@@ -29,7 +36,14 @@ const ShippingDateSelector = ({
         <span>Fecha de inicio de la solicitud</span>
       </h2>
       <div className="space-y-4">
-        <Popover onOpenChange={(open) => open && onOpen && onOpen()}>
+        <Popover onOpenChange={(open) => {
+          if (open && onOpen) {
+            onOpen();
+          } else if (!open && onBlur) {
+            // Validar cuando se cierra el popover
+            onBlur();
+          }
+        }}>
           <PopoverTrigger asChild>
             <Button
               id="shippingDate"
@@ -48,7 +62,7 @@ const ShippingDateSelector = ({
             <CalendarComponent
               mode="single"
               selected={selectedDate}
-              onSelect={onDateSelect}
+              onSelect={handleDateSelection}
               disabled={disabledDays}
               initialFocus
               className={cn("p-3 pointer-events-auto")}

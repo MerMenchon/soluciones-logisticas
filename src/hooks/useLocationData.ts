@@ -2,7 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchProvinces } from "@/data/provinces";
 import { fetchCitiesForProvince } from "@/data/cities";
-import { fetchQuantityUnits, fetchCategories } from "@/data/products";
+import { fetchQuantityUnits, fetchCategories, fetchPresentations } from "@/data/products";
 
 // React Query hook for provinces
 export const useProvinces = () => {
@@ -46,5 +46,26 @@ export const useCategories = () => {
   return useQuery({
     queryKey: ["categories"],
     queryFn: fetchCategories,
+  });
+};
+
+// React Query hook for product types
+export const useProductTypes = () => {
+  return useQuery({
+    queryKey: ["productTypes"],
+    queryFn: async () => {
+      // Since we don't have a specific fetch function for product types,
+      // we'll use categories as product types for now
+      // This can be replaced with a specific API call later
+      return fetchCategories();
+    },
+  });
+};
+
+// React Query hook for presentations
+export const usePresentations = () => {
+  return useQuery({
+    queryKey: ["presentations"],
+    queryFn: fetchPresentations,
   });
 };
