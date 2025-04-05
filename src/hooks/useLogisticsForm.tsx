@@ -64,15 +64,19 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
   const handleDateSelect = (date: Date | undefined): void => {
     if (date) {
       setShippingTime(date.toISOString());
-      // Aseguramos marcar explícitamente el campo como tocado
+      // Mark field as touched
       setFieldTouched("shippingTime");
       
-      // También revalidamos el campo inmediatamente después de establecer el valor
-      setTimeout(() => validateField("shippingTime"), 0);
+      // Validate the field immediately
+      validateField("shippingTime");
+      
+      // Force a validation update immediately
+      const isValid = validateForm() === null;
+      setIsFormValid(isValid);
     }
   };
   
-  // Función para marcar el campo como tocado al abrir el calendario
+  // Function to mark the field as touched when opening the calendar
   const handleDatePopoverOpen = () => {
     setFieldTouched("shippingTime");
   };
