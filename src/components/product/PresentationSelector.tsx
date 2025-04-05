@@ -15,7 +15,6 @@ interface PresentationSelectorProps {
   clarification: string;
   onClarificationChange: (clarification: string) => void;
   error?: string | null;
-  onBlur?: () => void; // Add onBlur prop
 }
 
 const PresentationSelector = ({
@@ -23,8 +22,7 @@ const PresentationSelector = ({
   onPresentationChange,
   clarification,
   onClarificationChange,
-  error,
-  onBlur
+  error
 }: PresentationSelectorProps) => {
   const presentationOptions = [
     "Bolsas",
@@ -44,9 +42,6 @@ const PresentationSelector = ({
         <Select
           value={presentation}
           onValueChange={onPresentationChange}
-          onOpenChange={(open) => {
-            if (!open && onBlur) onBlur();
-          }}
         >
           <SelectTrigger 
             className={`w-full ${error ? 'border-red-500 focus:ring-red-500' : ''}`}
@@ -67,7 +62,6 @@ const PresentationSelector = ({
             placeholder="Especifique la presentación"
             value={clarification}
             onChange={(e) => onClarificationChange(e.target.value)}
-            onBlur={onBlur}
             className="mt-2"
           />
         )}

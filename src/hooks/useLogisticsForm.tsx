@@ -9,7 +9,6 @@ import { LogisticsFormHookReturn } from "@/types/logistics";
  * @returns {LogisticsFormHookReturn} An object containing form state, methods, and validation functionality
  */
 export const useLogisticsForm = (): LogisticsFormHookReturn => {
-  // This hook must be used within a FormProvider component
   const formContext = useFormContext();
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   
@@ -19,7 +18,6 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
     validateForm,
     validateFields,
     validateField,
-    validateOnBlur,
     handleSubmit,
     shippingTime,
     setShippingTime,
@@ -34,7 +32,6 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
   } = formContext;
 
   // Effect to validate the form when relevant values change
-  // This doesn't show the errors - it just tracks if the form is valid
   useEffect(() => {
     const isValid = validateForm() === null;
     setIsFormValid(isValid);
@@ -67,37 +64,23 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
   const handleDateSelect = (date: Date | undefined): void => {
     if (date) {
       setShippingTime(date.toISOString());
-      // Mark field as touched
+      // Aseguramos marcar explícitamente el campo como tocado
       setFieldTouched("shippingTime");
       
-      // Only validate if form has been submitted
-      if (formSubmitted) {
-        validateField("shippingTime");
-      }
+      // También revalidamos el campo inmediatamente después de establecer el valor
+      setTimeout(() => validateField("shippingTime"), 0);
     }
   };
   
-  // Function to mark the field as touched when opening the calendar
+  // Función para marcar el campo como tocado al abrir el calendario
   const handleDatePopoverOpen = () => {
     setFieldTouched("shippingTime");
   };
 
-  // Function to validate only when form has been submitted
-  const handleDateBlur = () => {
-    if (shippingTime && formSubmitted) {
-      validateOnBlur("shippingTime");
-    }
-  };
-  
-  // Create a generic field blur handler that only validates if form was submitted
-  const handleFieldBlur = (fieldName: string) => {
-    if (formSubmitted) {
-      validateOnBlur(fieldName);
-    }
-  };
-
   // Function to handle form submission and validate all fields
   const handleFormSubmit = (e: React.FormEvent): void => {
+    // Validate all fields before submitting
+    validateFields();
     handleSubmit(e);
   };
 
@@ -108,8 +91,6 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
     disabledDays,
     handleDateSelect,
     handleDatePopoverOpen,
-    handleDateBlur,
-    handleFieldBlur,
     handleFormSubmit,
     showResponseDialog,
     handleCloseResponseDialog,
@@ -117,7 +98,6 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
     setFieldTouched,
     getFieldError,
     isFieldTouched,
-    formSubmitted,
-    validateOnBlur
+    formSubmitted
   };
 };

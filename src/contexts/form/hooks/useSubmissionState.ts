@@ -17,13 +17,13 @@ export interface SubmissionState {
 export const useSubmissionState = () => {
   const [submissionState, setSubmissionState] = useState<SubmissionState>({
     isSubmitting: false,
-    formSubmitted: false, // Start with form not submitted
+    formSubmitted: false,
     showConfirmation: false,
     distanceValue: null,
     isWaitingForResponse: false,
     showResponseDialog: false,
-    validationResult: { isValid: true, errors: {} }, // Start with empty errors
-    touchedFields: {} // Start with no touched fields
+    validationResult: { isValid: true, errors: {} },
+    touchedFields: {}
   });
 
   const updateSubmissionState = (updates: Partial<SubmissionState>) => {

@@ -11,7 +11,6 @@ interface ProvinceSelectorProps {
   isLoading: boolean;
   onChange: (value: string) => void;
   error?: string | null;
-  onBlur?: () => void;
 }
 
 const ProvinceSelector = ({
@@ -20,29 +19,26 @@ const ProvinceSelector = ({
   provinces,
   isLoading,
   onChange,
-  error,
-  onBlur
+  error
 }: ProvinceSelectorProps) => {
-  const { validateField, setFieldTouched } = useFormContext();
+  const { validateField } = useFormContext();
   
+  // Enhanced onChange handler that also triggers validation
   const handleProvinceChange = (newValue: string) => {
-    // First, change the province
     onChange(newValue);
     
-    // Determine which field this is based on the id
-    const fieldNames: Record<string, string> = {
-      'storage-province': 'storageProvince',
-      'origin-province': 'originProvince',
-      'destination-province': 'destinationProvince'
-    };
-    
-    const fieldName = fieldNames[id];
-    if (fieldName) {
-      // Always mark the field as touched
-      setFieldTouched(fieldName);
+    // Determine which field this is based on the id and validate it
+    if (error) {
+      const fieldNames: Record<string, string> = {
+        'storage-province': 'storageProvince',
+        'origin-province': 'originProvince',
+        'destination-province': 'destinationProvince'
+      };
       
-      // Always validate immediately to clear any error messages
-      validateField(fieldName);
+      const fieldName = fieldNames[id] || '';
+      if (fieldName) {
+        setTimeout(() => validateField(fieldName), 0);
+      }
     }
   };
 
@@ -55,9 +51,6 @@ const ProvinceSelector = ({
         value={value} 
         onValueChange={handleProvinceChange}
         disabled={isLoading}
-        onOpenChange={(open) => {
-          if (!open && onBlur) onBlur();
-        }}
       >
         <SelectTrigger 
           id={id} 

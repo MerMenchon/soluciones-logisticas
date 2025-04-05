@@ -7,10 +7,9 @@ interface ValueInputProps {
   value: string;
   onValueChange: (value: string) => void;
   error: string | null;
-  onBlur?: () => void; // Add onBlur prop
 }
 
-const ValueInput = ({ value, onValueChange, error, onBlur }: ValueInputProps) => {
+const ValueInput = ({ value, onValueChange, error }: ValueInputProps) => {
   const { setFieldTouched } = useFormContext();
 
   // Handle numeric input validation
@@ -46,7 +45,6 @@ const ValueInput = ({ value, onValueChange, error, onBlur }: ValueInputProps) =>
                 placeholder="0.00"
                 value={value}
                 onChange={handleValueChange}
-                onBlur={onBlur}
                 className={`w-full pl-7 ${error ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                 required
               />

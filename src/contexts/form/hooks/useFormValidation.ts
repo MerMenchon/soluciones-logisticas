@@ -39,7 +39,7 @@ export const useFormValidation = (
     return result;
   };
 
-  // Improved field validation that properly updates the validation state
+  // Check if a field is touched before validating
   const validateFieldWrapper = (fieldName: string) => {
     // Get current validation state
     const currentValidation = { ...submissionState.validationResult };
@@ -53,7 +53,7 @@ export const useFormValidation = (
       [fieldName]: fieldError
     };
     
-    // Check if form is now valid by looking at all errors 
+    // Check if form is now valid
     const hasErrors = Object.values(currentValidation.errors).some(error => error !== null);
     currentValidation.isValid = !hasErrors;
     

@@ -23,23 +23,15 @@ export const useFormHandler = (
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Mark form as submitted to trigger validation display
+    updateSubmission({ formSubmitted: true });
+
     // Validate all fields and update validation state
     const validationResult = validateFields();
     
-    // Mark form as submitted to trigger validation display
-    updateSubmission({ 
-      formSubmitted: true,
-      validationResult
-    });
-
     if (!validationResult.isValid) {
       // Don't proceed with submission if there are validation errors
-      toast({
-        variant: "destructive",
-        title: "Error de validación",
-        description: "Por favor, complete todos los campos obligatorios.",
-        duration: 3000, // Auto-dismiss after 3 seconds
-      });
+      // All fields are now marked as touched
       return;
     }
 
@@ -73,13 +65,6 @@ export const useFormHandler = (
         webhookResponse: responseData 
       });
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Ha ocurrido un error al enviar el formulario.",
-        duration: 3000,
-      });
-      
       updateSubmission({ 
         isSubmitting: false,
         isWaitingForResponse: false,
@@ -124,10 +109,8 @@ export const useFormHandler = (
     toast({
       title: "Éxito",
       description: "Su consulta ha sido enviada correctamente!",
-      duration: 3000, // Auto-dismiss after 3 seconds
     });
 
-    // Reset form submitted state so no validation errors show after success
     updateSubmission({ 
       formSubmitted: false, 
       isSubmitting: false,
