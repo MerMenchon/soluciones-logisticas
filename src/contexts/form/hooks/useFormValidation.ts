@@ -39,7 +39,7 @@ export const useFormValidation = (
     return result;
   };
 
-  // Check if a field is touched before validating
+  // Improved field validation that properly updates the validation state
   const validateFieldWrapper = (fieldName: string) => {
     // Get current validation state
     const currentValidation = { ...submissionState.validationResult };

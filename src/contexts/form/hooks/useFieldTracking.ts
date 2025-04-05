@@ -28,10 +28,23 @@ export const useFieldTracking = (
     }
   };
   
-  // Method to validate field on blur
+  // Method to validate field on blur - updated to check and clear errors
   const validateOnBlur = (fieldName: string) => {
     if (validateField) {
-      validateField(fieldName);
+      const result = validateField(fieldName);
+      
+      // If this field no longer has an error, make sure UI updates immediately
+      if (!result.errors[fieldName]) {
+        updateSubmissionState({
+          validationResult: {
+            ...submissionState.validationResult,
+            errors: {
+              ...submissionState.validationResult.errors,
+              [fieldName]: null
+            }
+          }
+        });
+      }
     }
   };
   
@@ -40,11 +53,18 @@ export const useFieldTracking = (
     return !!submissionState.touchedFields[fieldName];
   };
   
-  // Method to get a field's error only if form was submitted and field still has error
+  // Method to get a field's error - updated to show errors based on field state
   const getFieldError = (fieldName: string): string | null => {
+    // Only show errors for fields that have been touched
+    if (submissionState.touchedFields[fieldName]) {
+      return submissionState.validationResult.errors[fieldName] || null;
+    }
+    
+    // If form has been submitted, show all errors
     if (submissionState.formSubmitted) {
       return submissionState.validationResult.errors[fieldName] || null;
     }
+    
     return null;
   };
 
