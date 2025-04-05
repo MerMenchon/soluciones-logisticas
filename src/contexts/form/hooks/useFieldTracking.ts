@@ -1,4 +1,3 @@
-
 import { TouchedFields, ValidationResult } from "../types";
 
 export const useFieldTracking = (
@@ -21,31 +20,17 @@ export const useFieldTracking = (
         [fieldName]: true
       }
     });
-    
-    // If the form has been submitted and there's an error for this field,
-    // we should validate it to clear the error if it's now valid
-    if (submissionState.formSubmitted && validateField && 
-        submissionState.validationResult.errors[fieldName]) {
-      // Immediately validate to update the UI
-      const result = validateField(fieldName);
-      
-      // Update the validation result
-      updateSubmissionState({
-        validationResult: result
-      });
-    }
   };
   
-  // Method to validate field on blur - clears error if field is now valid
+  // Method to validate field on blur - always validates to clear errors if field is now valid
   const validateOnBlur = (fieldName: string) => {
-    // Only validate if form has been submitted once
-    // This ensures we don't show errors while user is still filling the form
-    if (validateField && submissionState.formSubmitted) {
+    // Always validate fields on blur when they've been touched
+    // This ensures errors disappear when corrected, even if form hasn't been submitted
+    if (validateField && submissionState.touchedFields[fieldName]) {
       // Get the validation result for this field
       const result = validateField(fieldName);
       
       // Update the UI to reflect the current validation state
-      // This ensures errors disappear when the field is fixed
       updateSubmissionState({
         validationResult: result
       });
@@ -57,10 +42,10 @@ export const useFieldTracking = (
     return !!submissionState.touchedFields[fieldName];
   };
   
-  // Method to get a field's error - ONLY show errors after form submission
+  // Method to get a field's error - show errors for touched fields or after form submission
   const getFieldError = (fieldName: string): string | null => {
-    // Only show errors if form has been submitted
-    if (submissionState.formSubmitted) {
+    // Only show errors if form has been submitted OR the field has been touched
+    if (submissionState.formSubmitted || submissionState.touchedFields[fieldName]) {
       return submissionState.validationResult.errors[fieldName] || null;
     }
     
@@ -76,8 +61,8 @@ export const useFieldTracking = (
     // Then mark as touched
     setFieldTouched(fieldName);
     
-    // If form was submitted, validate immediately to clear any errors
-    if (submissionState.formSubmitted && validateField) {
+    // Always validate immediately to clear any errors when the field has been touched
+    if (validateField) {
       // We need a small timeout to allow the state to update with the new value
       setTimeout(() => validateField(fieldName), 0);
     }

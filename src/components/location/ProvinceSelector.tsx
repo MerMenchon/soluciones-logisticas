@@ -41,11 +41,9 @@ const ProvinceSelector = ({
       // Always mark the field as touched
       setFieldTouched(fieldName);
       
-      // Validate immediately to clear any error messages
-      // This works regardless of form submission state
-      setTimeout(() => {
-        validateField(fieldName);
-      }, 0);
+      // Always validate immediately to clear any error messages
+      // This works regardless of form submission state - remove the formSubmitted check
+      validateField(fieldName);
     }
   };
 

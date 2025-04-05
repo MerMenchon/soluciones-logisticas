@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useLocationSelect } from "@/hooks/useLocationSelect";
 import ProvinceSelector from "@/components/location/ProvinceSelector";
@@ -23,7 +22,7 @@ const LocationSelector = ({
   onEstimatedTimeChange,
   errors = { province: null, city: null, time: null }
 }: LocationSelectorProps) => {
-  const { setFieldTouched, validateField, formSubmitted } = useFormContext();
+  const { setFieldTouched, validateField } = useFormContext();
 
   const {
     cities,
@@ -63,17 +62,15 @@ const LocationSelector = ({
     }
     
     // Always validate immediately to clear errors
-    if (formSubmitted && validateField) {
-      setTimeout(() => validateField(fieldName), 0);
+    if (validateField) {
+      validateField(fieldName);
     }
   };
 
   // Handle province blur
   const handleProvinceBlur = () => {
     const fieldName = getFieldName('province');
-    if (formSubmitted) {
-      validateField(fieldName);
-    }
+    validateField(fieldName);
   };
 
   // Handle city change with field tracking and immediate validation
@@ -85,17 +82,15 @@ const LocationSelector = ({
     setFieldTouched(fieldName);
     
     // Validate immediately to clear errors
-    if (formSubmitted && validateField) {
-      setTimeout(() => validateField(fieldName), 0);
+    if (validateField) {
+      validateField(fieldName);
     }
   };
 
   // Handle city blur
   const handleCityBlur = () => {
     const fieldName = getFieldName('city');
-    if (formSubmitted) {
-      validateField(fieldName);
-    }
+    validateField(fieldName);
   };
 
   // Set default value for estimatedTime if it's empty
@@ -116,17 +111,15 @@ const LocationSelector = ({
       setFieldTouched("estimatedStorageTime");
       
       // Validate immediately to clear errors
-      if (formSubmitted && validateField) {
-        setTimeout(() => validateField("estimatedStorageTime"), 0);
+      if (validateField) {
+        validateField("estimatedStorageTime");
       }
     }
   };
 
   // Handle time blur
   const handleTimeBlur = () => {
-    if (formSubmitted) {
-      validateField("estimatedStorageTime");
-    }
+    validateField("estimatedStorageTime");
   };
 
   return (

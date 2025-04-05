@@ -9,23 +9,20 @@ const ServiceSection = () => {
     setSelectedService,
     getFieldError,
     setFieldTouched,
-    formSubmitted,
     validateField
   } = useLogisticsForm();
 
-  // Create a handler that first selects the service and then validates if form was submitted
+  // Create a handler that first selects the service and then validates immediately
   const handleServiceSelect = (service: string) => {
     setSelectedService(service);
     
     // Mark field as touched
     setFieldTouched("selectedService");
     
-    // Validate immediately to clear any errors, but only if the form has been submitted
-    if (formSubmitted && validateField) {
+    // Always validate immediately to clear any errors
+    if (validateField) {
       // Use setTimeout to ensure the state update happens first
-      setTimeout(() => {
-        validateField("selectedService");
-      }, 0);
+      validateField("selectedService");
     }
   };
 
