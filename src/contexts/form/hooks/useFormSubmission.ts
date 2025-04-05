@@ -41,13 +41,13 @@ export const useFormSubmission = (formState: FormState) => {
     formState,
     validateFields,
     (updates) => {
-      // Handle the case when updates include validationResult
+      // Handle validation updates
       if ('validationResult' in updates) {
         const validationUpdate = updates.validationResult as ValidationResult;
         updateSubmissionState({
           ...updates,
-          formSubmitted: true,
-          validationResult: validationUpdate
+          validationResult: validationUpdate,
+          ...(updates.formSubmitted !== undefined ? { formSubmitted: updates.formSubmitted } : {})
         });
       } else {
         updateSubmissionState(updates);

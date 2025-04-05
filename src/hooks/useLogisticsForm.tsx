@@ -61,25 +61,26 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
   // Disable past dates
   const disabledDays = { before: today };
   
+  // Handle date selection with validation
   const handleDateSelect = (date: Date | undefined): void => {
     if (date) {
       setShippingTime(date.toISOString());
-      // Aseguramos marcar explícitamente el campo como tocado
-      setFieldTouched("shippingTime");
       
-      // También revalidamos el campo inmediatamente después de establecer el valor
+      // After selecting a date, validate the field
       setTimeout(() => validateField("shippingTime"), 0);
     }
   };
   
-  // Función para marcar el campo como tocado al abrir el calendario
+  // Mark the field as touched when opening the datepicker
   const handleDatePopoverOpen = () => {
     setFieldTouched("shippingTime");
   };
 
   // Function to handle form submission and validate all fields
   const handleFormSubmit = (e: React.FormEvent): void => {
-    // Validate all fields before submitting
+    e.preventDefault();
+    
+    // Validate all fields before submitting, which will mark the form as submitted
     validateFields();
     handleSubmit(e);
   };

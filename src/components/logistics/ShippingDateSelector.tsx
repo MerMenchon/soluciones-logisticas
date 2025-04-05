@@ -12,7 +12,7 @@ interface ShippingDateSelectorProps {
   onDateSelect: (date: Date | undefined) => void;
   disabledDays: { before: Date };
   error?: string | null;
-  onOpen?: () => void; // Añadimos esta prop para marcar el campo como tocado al abrir
+  onOpen?: () => void; // Triggers when the popover opens to mark field as touched
 }
 
 const ShippingDateSelector = ({

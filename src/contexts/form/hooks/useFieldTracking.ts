@@ -22,8 +22,8 @@ export const useFieldTracking = (
       }
     });
     
-    // Only validate field if it's been touched AND form has been submitted once
-    if (validateField && submissionState.formSubmitted) {
+    // Validate the field if it's been touched
+    if (validateField) {
       validateField(fieldName);
     }
   };
@@ -33,9 +33,10 @@ export const useFieldTracking = (
     return !!submissionState.touchedFields[fieldName];
   };
   
-  // Method to get a field's error only if form was submitted and field still has error
+  // Method to get a field's error only if form was submitted or field was touched
   const getFieldError = (fieldName: string): string | null => {
-    if (submissionState.formSubmitted) {
+    // Only show errors if the form was submitted OR the field has been touched
+    if (submissionState.formSubmitted || submissionState.touchedFields[fieldName]) {
       return submissionState.validationResult.errors[fieldName] || null;
     }
     return null;

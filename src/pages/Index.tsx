@@ -2,6 +2,7 @@
 import React from "react";
 import { FormProvider } from "@/contexts/form";
 import LogisticsForm from "@/components/LogisticsForm";
+import { Toaster } from "@/components/ui/toaster";
 
 const Index = () => {
   return (
@@ -20,6 +21,7 @@ const Index = () => {
           <LogisticsForm />
         </FormProvider>
       </div>
+      <Toaster />
     </div>
   );
 };
