@@ -1,7 +1,8 @@
+
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { FormState, WebhookResponse } from "../types";
-import { validateForm, getFormData } from "../validation";
+import { validateForm, validateFormFields, ValidationResult } from "../validation";
 import { sendToWebhook } from "./useWebhook";
 import { prepareFormData } from "./useFormData";
 
@@ -13,6 +14,7 @@ interface SubmissionState {
   webhookResponse?: WebhookResponse;
   isWaitingForResponse: boolean;
   showResponseDialog: boolean;
+  validationResult: ValidationResult;
 }
 
 export const useFormSubmission = (formState: FormState) => {
@@ -24,6 +26,7 @@ export const useFormSubmission = (formState: FormState) => {
     distanceValue: null,
     isWaitingForResponse: false,
     showResponseDialog: false,
+    validationResult: { isValid: true, errors: {} }
   });
 
   const updateSubmissionState = (updates: Partial<SubmissionState>) => {
@@ -47,18 +50,22 @@ export const useFormSubmission = (formState: FormState) => {
     return validateForm(formState);
   };
 
+  // Field validation wrapper
+  const validateFieldsWrapper = () => {
+    const result = validateFormFields(formState);
+    updateSubmissionState({ validationResult: result });
+    return result;
+  };
+
   // Form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const validationError = validateFormWrapper();
-    if (validationError) {
-      // Commented out toast for validation error
-      // toast({
-      //   title: "Error",
-      //   description: validationError,
-      //   variant: "destructive",
-      // });
+    // Validate all fields and update validation state
+    const validationResult = validateFieldsWrapper();
+    
+    if (!validationResult.isValid) {
+      // Don't proceed with submission if there are validation errors
       return;
     }
 
@@ -169,5 +176,6 @@ export const useFormSubmission = (formState: FormState) => {
     cancelRequest,
     handleCloseResponseDialog,
     validateForm: validateFormWrapper,
+    validateFields: validateFieldsWrapper,
   };
 };

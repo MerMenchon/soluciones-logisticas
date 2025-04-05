@@ -20,6 +20,7 @@ const LocationSelector = ({
   onUseAsStorageChange,
   estimatedTime,
   onEstimatedTimeChange,
+  errors = { province: null, city: null, time: null }
 }: LocationSelectorProps) => {
   const {
     cities,
@@ -60,6 +61,7 @@ const LocationSelector = ({
         provinces={provinces}
         isLoading={isLoadingProvinces}
         onChange={onProvinceChange}
+        error={errors?.province}
       />
 
       <CitySelector
@@ -70,6 +72,7 @@ const LocationSelector = ({
         isLoading={isLoadingCities}
         type={type}
         onChange={handleCityChange}
+        error={errors?.city}
       />
 
       {(type === "storage" || (useAsStorage && cityValue)) && (
@@ -83,10 +86,13 @@ const LocationSelector = ({
               value={estimatedTime || ''}
               onChange={handleEstimatedTimeChange}
               placeholder="30"
-              className="w-32"
+              className={`w-32 ${errors?.time ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
             />
             <span className="text-sm text-muted-foreground whitespace-nowrap">días</span>
           </div>
+          {errors?.time && (
+            <p className="text-sm text-red-500">{errors.time}</p>
+          )}
         </div>
       )}
 

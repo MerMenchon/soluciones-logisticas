@@ -6,12 +6,14 @@ interface DescriptionInputProps {
   description: string;
   onDescriptionChange: (description: string) => void;
   isRequired: boolean;
+  error: string | null;
 }
 
 const DescriptionInput = ({ 
   description, 
   onDescriptionChange,
   isRequired,
+  error,
 }: DescriptionInputProps) => {
   // Handle description input with 100 character limit
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,6 +22,8 @@ const DescriptionInput = ({
       onDescriptionChange(newDescription);
     }
   };
+
+  const hasError = isRequired && !description || error !== null;
 
   return (
     <div>
@@ -35,12 +39,12 @@ const DescriptionInput = ({
         value={description}
         onChange={handleDescriptionChange}
         maxLength={100}
-        className={`w-full ${isRequired && !description ? 'border-red-500' : ''}`}
+        className={`w-full ${hasError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
         required={isRequired}
       />
-      {isRequired && !description && (
+      {hasError && (
         <p className="text-sm text-red-500 mt-1">
-          La descripción del producto es obligatoria
+          {error || "La descripción del producto es obligatoria"}
         </p>
       )}
     </div>

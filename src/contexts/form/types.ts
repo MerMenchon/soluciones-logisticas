@@ -9,6 +9,14 @@ export interface WebhookResponse {
   precio: string; // Changed from number to string to match API response
 }
 
+// Validation result interface
+export interface ValidationResult {
+  isValid: boolean;
+  errors: {
+    [key: string]: string | null;
+  };
+}
+
 // Form State interface
 export interface FormState {
   // Service state
@@ -48,6 +56,9 @@ export interface FormState {
   
   // Optional webhook response
   webhookResponse?: WebhookResponse;
+  
+  // Validation state
+  validationResult?: ValidationResult;
 }
 
 // FormContext type for providing form context
@@ -92,6 +103,7 @@ export interface FormContextType extends FormState {
   setShowConfirmation: (showConfirmation: boolean) => void;
   setDistanceValue: (distanceValue: string | null) => void;
   validateForm: () => string | null;
+  validateFields: () => ValidationResult;
 }
 
 // FormProviderProps interface

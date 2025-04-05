@@ -19,6 +19,13 @@ interface TransportRouteSectionProps {
   handleUseDestinationAsStorageChange: (checked: boolean) => void;
   estimatedStorageTime: string;
   setEstimatedStorageTime: (time: string) => void;
+  errors?: {
+    originProvince: string | null;
+    originCity: string | null;
+    destinationProvince: string | null;
+    destinationCity: string | null;
+    estimatedStorageTime: string | null;
+  };
 }
 
 const TransportRouteSection = ({
@@ -37,6 +44,13 @@ const TransportRouteSection = ({
   handleUseDestinationAsStorageChange,
   estimatedStorageTime,
   setEstimatedStorageTime,
+  errors = {
+    originProvince: null,
+    originCity: null,
+    destinationProvince: null,
+    destinationCity: null,
+    estimatedStorageTime: null
+  }
 }: TransportRouteSectionProps) => {
   return (
     <div className="reference-form-section">
@@ -66,6 +80,11 @@ const TransportRouteSection = ({
             }
             estimatedTime={useOriginAsStorage ? estimatedStorageTime : undefined}
             onEstimatedTimeChange={useOriginAsStorage ? setEstimatedStorageTime : undefined}
+            errors={{
+              province: errors.originProvince,
+              city: errors.originCity,
+              time: useOriginAsStorage ? errors.estimatedStorageTime : null
+            }}
           />
         </div>
         
@@ -89,6 +108,11 @@ const TransportRouteSection = ({
             }
             estimatedTime={useDestinationAsStorage ? estimatedStorageTime : undefined}
             onEstimatedTimeChange={useDestinationAsStorage ? setEstimatedStorageTime : undefined}
+            errors={{
+              province: errors.destinationProvince,
+              city: errors.destinationCity,
+              time: useDestinationAsStorage ? errors.estimatedStorageTime : null
+            }}
           />
         </div>
       </div>

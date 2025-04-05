@@ -8,11 +8,13 @@ export type ServiceType = "storage" | "transport" | "both";
 interface ServiceSelectorProps {
   selectedService: ServiceType | null;
   onSelectService: (service: ServiceType) => void;
+  error: string | null;
 }
 
 const ServiceSelector = ({
   selectedService,
   onSelectService,
+  error
 }: ServiceSelectorProps) => {
   return (
     <div className="reference-form-section">
@@ -21,7 +23,8 @@ const ServiceSelector = ({
         <div
           className={cn(
             "border border-gray-200 rounded-lg p-4 flex flex-col items-center justify-center hover:border-agri-primary hover:shadow-md cursor-pointer transition-all duration-300",
-            selectedService === "storage" && "border-agri-primary bg-agri-primary/10"
+            selectedService === "storage" && "border-agri-primary bg-agri-primary/10",
+            error && !selectedService && "border-red-500"
           )}
           onClick={() => onSelectService("storage")}
         >
@@ -35,7 +38,8 @@ const ServiceSelector = ({
         <div
           className={cn(
             "border border-gray-200 rounded-lg p-4 flex flex-col items-center justify-center hover:border-agri-primary hover:shadow-md cursor-pointer transition-all duration-300",
-            selectedService === "transport" && "border-agri-primary bg-agri-primary/10"
+            selectedService === "transport" && "border-agri-primary bg-agri-primary/10",
+            error && !selectedService && "border-red-500"
           )}
           onClick={() => onSelectService("transport")}
         >
@@ -49,7 +53,8 @@ const ServiceSelector = ({
         <div
           className={cn(
             "border border-gray-200 rounded-lg p-4 flex flex-col items-center justify-center hover:border-agri-primary hover:shadow-md cursor-pointer transition-all duration-300",
-            selectedService === "both" && "border-agri-primary bg-agri-primary/10"
+            selectedService === "both" && "border-agri-primary bg-agri-primary/10",
+            error && !selectedService && "border-red-500"
           )}
           onClick={() => onSelectService("both")}
         >
@@ -60,6 +65,9 @@ const ServiceSelector = ({
           </p>
         </div>
       </div>
+      {error && (
+        <p className="text-sm text-red-500 mt-2">{error}</p>
+      )}
     </div>
   );
 };

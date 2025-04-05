@@ -1,6 +1,13 @@
 
 import { FormState } from "./types";
 
+export type ValidationResult = {
+  isValid: boolean;
+  errors: {
+    [key: string]: string | null;
+  };
+};
+
 export const validateForm = (formState: FormState): string | null => {
   const {
     selectedService,
@@ -13,11 +20,11 @@ export const validateForm = (formState: FormState): string | null => {
     estimatedStorageTime,
     productType,
     description,
+    presentation,
     quantity,
     quantityUnit,
     cargoValue,
     shippingTime,
-    presentation
   } = formState;
 
   if (!selectedService) {
@@ -80,6 +87,53 @@ export const validateForm = (formState: FormState): string | null => {
   }
 
   return null;
+};
+
+// New function to validate individual fields and return field-specific errors
+export const validateFormFields = (formState: FormState): ValidationResult => {
+  const {
+    selectedService,
+    storageProvince,
+    storageCity,
+    originProvince,
+    originCity,
+    destinationProvince,
+    destinationCity,
+    estimatedStorageTime,
+    productType,
+    description,
+    presentation,
+    quantity,
+    quantityUnit,
+    cargoValue,
+    shippingTime,
+  } = formState;
+
+  const errors: { [key: string]: string | null } = {
+    selectedService: !selectedService ? "Debe seleccionar un servicio" : null,
+    storageProvince: selectedService === "storage" && !storageProvince ? "Debe seleccionar una provincia" : null,
+    storageCity: selectedService === "storage" && !storageCity ? "Debe seleccionar una ciudad" : null,
+    originProvince: (selectedService === "transport" || selectedService === "both") && !originProvince ? "Debe seleccionar una provincia de origen" : null,
+    originCity: (selectedService === "transport" || selectedService === "both") && !originCity ? "Debe seleccionar una ciudad de origen" : null,
+    destinationProvince: (selectedService === "transport" || selectedService === "both") && !destinationProvince ? "Debe seleccionar una provincia de destino" : null,
+    destinationCity: (selectedService === "transport" || selectedService === "both") && !destinationCity ? "Debe seleccionar una ciudad de destino" : null,
+    estimatedStorageTime: (selectedService === "storage" || selectedService === "both") && !estimatedStorageTime ? "Debe ingresar un tiempo estimado de almacenamiento" : null,
+    productType: !productType ? "Debe seleccionar tipo de producto" : null,
+    description: productType === "Otro" && !description.trim() ? "La descripción del producto es obligatoria" : null,
+    presentation: !presentation.trim() ? "La presentación del producto es obligatoria" : null,
+    quantity: !quantity || parseFloat(quantity) <= 0 ? "Debe ingresar una cantidad válida (mayor a cero)" : null,
+    quantityUnit: !quantityUnit ? "Debe seleccionar una unidad de medida" : null,
+    cargoValue: !cargoValue || parseFloat(cargoValue) <= 0 ? "Debe ingresar un valor válido (mayor a cero)" : null,
+    shippingTime: !shippingTime ? "Debe seleccionar una fecha de inicio" : null,
+  };
+
+  // Check if there are any errors
+  const hasErrors = Object.values(errors).some(error => error !== null);
+
+  return {
+    isValid: !hasErrors,
+    errors,
+  };
 };
 
 export const getFormData = (formState: FormState) => {

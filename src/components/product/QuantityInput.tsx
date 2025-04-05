@@ -9,6 +9,10 @@ interface QuantityInputProps {
   onQuantityChange: (quantity: string) => void;
   quantityUnit: string;
   onQuantityUnitChange: (unit: string) => void;
+  errors?: {
+    quantity: string | null;
+    quantityUnit: string | null;
+  };
 }
 
 const QuantityInput = ({
@@ -16,6 +20,7 @@ const QuantityInput = ({
   onQuantityChange,
   quantityUnit,
   onQuantityUnitChange,
+  errors = { quantity: null, quantityUnit: null }
 }: QuantityInputProps) => {
   // Use the React Query hook for quantity units
   const { data: quantityUnitOptions = [], isLoading: isLoadingQuantityUnits } = useQuantityUnits();
@@ -46,39 +51,49 @@ const QuantityInput = ({
       <label htmlFor="quantity" className="block text-sm font-medium text-agri-secondary mb-1">
         Cantidad *
       </label>
-      <div className="flex items-center gap-1">
-        <Input
-          id="quantity"
-          placeholder="0.00"
-          value={quantity}
-          onChange={handleQuantityChange}
-          className="w-32"
-          required
-        />
+      <div className="flex flex-col space-y-2">
+        <div className="flex items-center gap-1">
+          <Input
+            id="quantity"
+            placeholder="0.00"
+            value={quantity}
+            onChange={handleQuantityChange}
+            className={`w-32 ${errors.quantity ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+            required
+          />
+          
+          {isLoadingQuantityUnits ? (
+            <div className="text-sm text-muted-foreground py-2 ml-2">Cargando...</div>
+          ) : (
+            <ToggleGroup 
+              type="single" 
+              value={quantityUnit}
+              onValueChange={(value) => {
+                if (value) onQuantityUnitChange(value);
+              }}
+              className={`flex flex-wrap gap-1 ml-2 ${errors.quantityUnit ? 'border-red-500' : ''}`}
+            >
+              {quantityUnitOptions.map((unit) => (
+                <ToggleGroupItem 
+                  key={unit} 
+                  value={unit} 
+                  aria-label={unit}
+                  variant="bordered"
+                  className="rounded-md text-xs px-2 py-1 border border-agri-light"
+                >
+                  {unit}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          )}
+        </div>
         
-        {isLoadingQuantityUnits ? (
-          <div className="text-sm text-muted-foreground py-2 ml-2">Cargando...</div>
-        ) : (
-          <ToggleGroup 
-            type="single" 
-            value={quantityUnit}
-            onValueChange={(value) => {
-              if (value) onQuantityUnitChange(value);
-            }}
-            className="flex flex-wrap gap-1 ml-2"
-          >
-            {quantityUnitOptions.map((unit) => (
-              <ToggleGroupItem 
-                key={unit} 
-                value={unit} 
-                aria-label={unit}
-                variant="bordered"
-                className="rounded-md text-xs px-2 py-1 border border-agri-light"
-              >
-                {unit}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
+        {errors.quantity && (
+          <p className="text-sm text-red-500">{errors.quantity}</p>
+        )}
+        
+        {errors.quantityUnit && (
+          <p className="text-sm text-red-500">{errors.quantityUnit}</p>
         )}
       </div>
     </div>

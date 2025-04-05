@@ -24,6 +24,14 @@ interface ProductDetailsProps {
   onQuantityChange: (quantity: string) => void;
   quantityUnit: string;
   onQuantityUnitChange: (unit: string) => void;
+  errors?: {
+    productType: string | null;
+    description: string | null;
+    presentation: string | null;
+    quantity: string | null;
+    quantityUnit: string | null;
+    value: string | null;
+  };
 }
 
 const ProductDetails = ({
@@ -43,6 +51,14 @@ const ProductDetails = ({
   onQuantityChange,
   quantityUnit,
   onQuantityUnitChange,
+  errors = {
+    productType: null,
+    description: null,
+    presentation: null,
+    quantity: null,
+    quantityUnit: null,
+    value: null
+  }
 }: ProductDetailsProps) => {
   // Check if the product type is "Otro" to determine if description is required
   const isDescriptionRequired = productType === "Otro";
@@ -56,7 +72,8 @@ const ProductDetails = ({
       <div className="space-y-6">
         <ProductTypeSelector 
           productType={productType} 
-          onProductTypeChange={onProductTypeChange} 
+          onProductTypeChange={onProductTypeChange}
+          error={errors.productType}
         />
 
         <PresentationSelector
@@ -64,6 +81,7 @@ const ProductDetails = ({
           onPresentationChange={onPresentationChange}
           clarification={clarification}
           onClarificationChange={onClarificationChange}
+          error={errors.presentation}
         />
 
         <QuantityInput
@@ -71,17 +89,23 @@ const ProductDetails = ({
           onQuantityChange={onQuantityChange}
           quantityUnit={quantityUnit}
           onQuantityUnitChange={onQuantityUnitChange}
+          errors={{
+            quantity: errors.quantity,
+            quantityUnit: errors.quantityUnit
+          }}
         />
         
         <ValueInput
           value={value}
           onValueChange={onValueChange}
+          error={errors.value}
         />
 
         <DescriptionInput
           description={description}
           onDescriptionChange={onDescriptionChange}
           isRequired={isDescriptionRequired}
+          error={errors.description}
         />
       </div>
     </div>

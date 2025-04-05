@@ -54,11 +54,13 @@ const LogisticsForm = () => {
     setQuantityUnit,
     setAdditionalInfo,
     validateForm,
+    validateFields,
     estimatedStorageTime,
     setEstimatedStorageTime,
     showResponseDialog,
     handleCloseResponseDialog,
     isWaitingForResponse,
+    validationResult,
   } = useFormContext();
 
   // State for form validation
@@ -83,6 +85,7 @@ const LogisticsForm = () => {
     cargoValue,
     shippingTime,
     estimatedStorageTime,
+    presentation,
     validateForm
   ]);
 
@@ -99,6 +102,13 @@ const LogisticsForm = () => {
     }
   };
 
+  // Function to handle form submission and validate all fields
+  const handleFormSubmit = (e: React.FormEvent) => {
+    // Validate all fields before submitting
+    validateFields();
+    handleSubmit(e);
+  };
+
   return (
     <>
       {/* Response Dialog */}
@@ -107,10 +117,11 @@ const LogisticsForm = () => {
         onClose={handleCloseResponseDialog} 
       />
       
-      <form onSubmit={handleSubmit} className="reference-form space-y-8">
+      <form onSubmit={handleFormSubmit} className="reference-form space-y-8" noValidate>
         <ServiceSelector 
           selectedService={selectedService as ServiceType} 
           onSelectService={useFormContext().setSelectedService} 
+          error={validationResult?.errors?.selectedService || null}
         />
 
         {/* Date Selector */}
@@ -118,6 +129,7 @@ const LogisticsForm = () => {
           selectedDate={selectedDate}
           onDateSelect={handleDateSelect}
           disabledDays={disabledDays}
+          error={validationResult?.errors?.shippingTime || null}
         />
 
         {selectedService && (
@@ -131,6 +143,11 @@ const LogisticsForm = () => {
                 setStorageCity={setStorageCity}
                 estimatedStorageTime={estimatedStorageTime}
                 setEstimatedStorageTime={setEstimatedStorageTime}
+                errors={{
+                  province: validationResult?.errors?.storageProvince || null,
+                  city: validationResult?.errors?.storageCity || null,
+                  time: validationResult?.errors?.estimatedStorageTime || null
+                }}
               />
             )}
 
@@ -151,6 +168,13 @@ const LogisticsForm = () => {
                 handleUseDestinationAsStorageChange={handleUseDestinationAsStorageChange}
                 estimatedStorageTime={estimatedStorageTime}
                 setEstimatedStorageTime={setEstimatedStorageTime}
+                errors={{
+                  originProvince: validationResult?.errors?.originProvince || null,
+                  originCity: validationResult?.errors?.originCity || null,
+                  destinationProvince: validationResult?.errors?.destinationProvince || null,
+                  destinationCity: validationResult?.errors?.destinationCity || null,
+                  estimatedStorageTime: validationResult?.errors?.estimatedStorageTime || null
+                }}
               />
             )}
 
@@ -171,6 +195,14 @@ const LogisticsForm = () => {
               onQuantityChange={setQuantity}
               quantityUnit={quantityUnit}
               onQuantityUnitChange={setQuantityUnit}
+              errors={{
+                productType: validationResult?.errors?.productType || null,
+                description: validationResult?.errors?.description || null,
+                presentation: validationResult?.errors?.presentation || null,
+                quantity: validationResult?.errors?.quantity || null,
+                quantityUnit: validationResult?.errors?.quantityUnit || null,
+                value: validationResult?.errors?.cargoValue || null
+              }}
             />
             
             <ContactDetails

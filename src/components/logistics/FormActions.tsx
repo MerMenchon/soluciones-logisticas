@@ -25,8 +25,8 @@ const FormActions = ({ onReset, isSubmitting, isFormValid }: FormActionsProps) =
       
       <Button
         type="submit"
-        className="reference-form-button"
-        disabled={isSubmitting || !isFormValid}
+        className={`reference-form-button ${!isFormValid ? 'bg-opacity-70' : ''}`}
+        disabled={isSubmitting}
       >
         {isSubmitting ? (
           <>
