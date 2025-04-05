@@ -3,16 +3,18 @@ import { FormState, WebhookResponse } from "../types";
 import { prepareFormData } from "./useFormData";
 import { sendToWebhook } from "./useWebhook";
 import { useToast } from "@/hooks/use-toast";
+import { ValidationResult } from "../validation/types";
 
 export const useFormHandler = (
   formState: FormState,
-  validateFields: () => { isValid: boolean },
+  validateFields: () => ValidationResult,
   updateSubmission: (updates: Partial<{
     isSubmitting: boolean;
     isWaitingForResponse: boolean;
     showResponseDialog: boolean;
     formSubmitted: boolean;
     webhookResponse?: WebhookResponse;
+    validationResult: ValidationResult;
   }>) => void
 ) => {
   const { toast } = useToast();
