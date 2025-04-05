@@ -21,6 +21,7 @@ export const useLocationSelect = ({
   const [isLoadingProvinces, setIsLoadingProvinces] = useState(true);
   const [isLoadingCities, setIsLoadingCities] = useState(false);
   const [hasInitialCheck, setHasInitialCheck] = useState(false);
+  const [hasShownToast, setHasShownToast] = useState(false);
   const { toast } = useToast();
 
   // Fetch provinces on component mount
@@ -45,6 +46,13 @@ export const useLocationSelect = ({
     loadProvinces();
   }, [toast]);
 
+  // Reset hasShownToast when province changes
+  useEffect(() => {
+    if (provinceValue) {
+      setHasShownToast(false);
+    }
+  }, [provinceValue]);
+
   // Fetch cities when province changes
   useEffect(() => {
     const loadCities = async () => {
@@ -58,13 +66,16 @@ export const useLocationSelect = ({
           setCities(citiesData);
           
           // If this is a storage selector and no cities with storage are available, show a toast
-          if (type === "storage") {
+          if (type === "storage" && !hasShownToast) {
             const citiesWithStorage = citiesData.filter(city => city.hasStorage);
             if (citiesWithStorage.length === 0) {
               toast({
-                title: "Información",
+                title: "No hay almacenamiento",
                 description: "No hay ciudades con almacenamiento disponible en esta provincia.",
+                variant: "destructive",
+                duration: 3000,
               });
+              setHasShownToast(true);
             }
           }
         } catch (error) {
@@ -73,6 +84,7 @@ export const useLocationSelect = ({
             title: "Error",
             description: "No se pudieron cargar las ciudades. Intente nuevamente.",
             variant: "destructive",
+            duration: 3000,
           });
           setCities([]);
         } finally {
@@ -84,7 +96,7 @@ export const useLocationSelect = ({
     };
 
     loadCities();
-  }, [provinceValue, toast, type]);
+  }, [provinceValue, toast, type, hasShownToast]);
 
   // Check storage availability when city changes
   useEffect(() => {
