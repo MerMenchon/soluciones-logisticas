@@ -4,7 +4,7 @@ import { validateService } from "./serviceValidation";
 import { validateProduct } from "./productValidation";
 import { ValidationResult } from "./types";
 
-export { ValidationResult } from "./types";
+export type { ValidationResult } from "./types";
 export { getFormData } from "./formDataFormatter";
 
 // Main validation function that checks the entire form
