@@ -14,6 +14,8 @@ interface QuantityInputProps {
     quantity: string | null;
     quantityUnit: string | null;
   };
+  onQuantityBlur?: () => void; // Add onQuantityBlur prop
+  onQuantityUnitBlur?: () => void; // Add onQuantityUnitBlur prop
 }
 
 const QuantityInput = ({
@@ -21,7 +23,9 @@ const QuantityInput = ({
   onQuantityChange,
   quantityUnit,
   onQuantityUnitChange,
-  errors = { quantity: null, quantityUnit: null }
+  errors = { quantity: null, quantityUnit: null },
+  onQuantityBlur,
+  onQuantityUnitBlur
 }: QuantityInputProps) => {
   // Use the React Query hook for quantity units
   const { data: quantityUnitOptions = [], isLoading: isLoadingQuantityUnits } = useQuantityUnits();
@@ -56,6 +60,9 @@ const QuantityInput = ({
     if (value) {
       onQuantityUnitChange(value);
       setFieldTouched("quantityUnit");
+      if (onQuantityUnitBlur) {
+        setTimeout(onQuantityUnitBlur, 0);
+      }
     }
   };
 
@@ -71,6 +78,7 @@ const QuantityInput = ({
             placeholder="0.00"
             value={quantity}
             onChange={handleQuantityChange}
+            onBlur={onQuantityBlur}
             className={`w-32 ${errors.quantity ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
             required
           />

@@ -13,10 +13,11 @@ const ContactDetails = ({
   additionalInfo,
   onAdditionalInfoChange,
 }: ContactDetailsProps) => {
-  const { validateField, validateOnBlur } = useFormContext();
+  const { validateField, validateOnBlur, setFieldTouched } = useFormContext();
   
   const handleInfoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onAdditionalInfoChange(e.target.value);
+    setFieldTouched("additionalInfo");
     validateField("additionalInfo");  // Validate the field as it changes
   };
   

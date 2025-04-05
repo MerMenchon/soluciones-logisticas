@@ -116,6 +116,7 @@ export interface FormContextType extends FormState {
   validateForm: () => string | null;
   validateFields: () => ValidationResult;
   validateField: (fieldName: string) => ValidationResult;
+  validateOnBlur: (fieldName: string) => void; // Add this property to fix the TypeScript error
   
   // Field tracking methods
   setFieldTouched: (fieldName: string) => void;

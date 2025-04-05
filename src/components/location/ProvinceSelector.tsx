@@ -11,6 +11,7 @@ interface ProvinceSelectorProps {
   isLoading: boolean;
   onChange: (value: string) => void;
   error?: string | null;
+  onBlur?: () => void; // Add onBlur prop
 }
 
 const ProvinceSelector = ({
@@ -19,7 +20,8 @@ const ProvinceSelector = ({
   provinces,
   isLoading,
   onChange,
-  error
+  error,
+  onBlur
 }: ProvinceSelectorProps) => {
   const { validateField } = useFormContext();
   
@@ -51,6 +53,9 @@ const ProvinceSelector = ({
         value={value} 
         onValueChange={handleProvinceChange}
         disabled={isLoading}
+        onOpenChange={(open) => {
+          if (!open && onBlur) onBlur();
+        }}
       >
         <SelectTrigger 
           id={id} 
