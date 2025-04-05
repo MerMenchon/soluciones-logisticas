@@ -11,7 +11,7 @@ interface ProvinceSelectorProps {
   isLoading: boolean;
   onChange: (value: string) => void;
   error?: string | null;
-  onBlur?: () => void; // Add onBlur prop
+  onBlur?: () => void;
 }
 
 const ProvinceSelector = ({
@@ -25,11 +25,11 @@ const ProvinceSelector = ({
 }: ProvinceSelectorProps) => {
   const { validateField, setFieldTouched, formSubmitted } = useFormContext();
   
-  // Enhanced onChange handler that also triggers validation
   const handleProvinceChange = (newValue: string) => {
+    // First, change the province
     onChange(newValue);
     
-    // Determine which field this is based on the id and validate it
+    // Determine which field this is based on the id
     const fieldNames: Record<string, string> = {
       'storage-province': 'storageProvince',
       'origin-province': 'originProvince',
@@ -38,13 +38,14 @@ const ProvinceSelector = ({
     
     const fieldName = fieldNames[id];
     if (fieldName) {
+      // Always mark the field as touched
       setFieldTouched(fieldName);
       
-      // For province changes we want to validate immediately regardless of form submission state
-      // This helps clear error messages as soon as user selects a province
-      if (formSubmitted) {
-        setTimeout(() => validateField(fieldName), 0);
-      }
+      // Validate immediately to clear any error messages
+      // This works regardless of form submission state
+      setTimeout(() => {
+        validateField(fieldName);
+      }, 0);
     }
   };
 
