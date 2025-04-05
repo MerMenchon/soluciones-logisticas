@@ -45,12 +45,12 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
     formContext.destinationCity,
     formContext.productType,
     formContext.description,
+    formContext.presentation,
     formContext.quantity,
     formContext.quantityUnit,
     formContext.cargoValue,
     formContext.shippingTime,
     formContext.estimatedStorageTime,
-    formContext.presentation,
     validateForm
   ]);
 
