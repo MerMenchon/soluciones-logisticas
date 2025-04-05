@@ -23,7 +23,7 @@ const ProvinceSelector = ({
   error,
   onBlur
 }: ProvinceSelectorProps) => {
-  const { validateField, setFieldTouched, formSubmitted } = useFormContext();
+  const { validateField, setFieldTouched } = useFormContext();
   
   const handleProvinceChange = (newValue: string) => {
     // First, change the province
@@ -42,7 +42,6 @@ const ProvinceSelector = ({
       setFieldTouched(fieldName);
       
       // Always validate immediately to clear any error messages
-      // This works regardless of form submission state - remove the formSubmitted check
       validateField(fieldName);
     }
   };

@@ -25,7 +25,7 @@ const DescriptionInput = ({
     }
   };
 
-  const hasError = isRequired && !description || error !== null;
+  const hasError = (isRequired && !description && error !== null) || error !== null;
 
   return (
     <div>
@@ -47,7 +47,7 @@ const DescriptionInput = ({
       />
       {hasError && (
         <p className="text-sm text-red-500 mt-1">
-          {error || "La descripción del producto es obligatoria"}
+          {error}
         </p>
       )}
     </div>

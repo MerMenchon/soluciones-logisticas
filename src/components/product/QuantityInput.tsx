@@ -29,7 +29,7 @@ const QuantityInput = ({
 }: QuantityInputProps) => {
   // Use the React Query hook for quantity units
   const { data: quantityUnitOptions = [], isLoading: isLoadingQuantityUnits } = useQuantityUnits();
-  const { setFieldTouched, formSubmitted } = useFormContext();
+  const { setFieldTouched } = useFormContext();
 
   // Set default quantity unit when options are loaded and no value is selected
   useEffect(() => {
@@ -67,9 +67,9 @@ const QuantityInput = ({
     }
   };
 
-  // Only show errors when the form has been submitted
-  const displayQuantityError = formSubmitted ? errors.quantity : null;
-  const displayUnitError = formSubmitted ? errors.quantityUnit : null;
+  // Errors are now controlled by our improved logic in getFieldError
+  const displayQuantityError = errors.quantity;
+  const displayUnitError = errors.quantityUnit;
 
   return (
     <div>

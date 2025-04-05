@@ -1,3 +1,4 @@
+
 import { TouchedFields, ValidationResult } from "../types";
 
 export const useFieldTracking = (
@@ -24,8 +25,6 @@ export const useFieldTracking = (
   
   // Method to validate field on blur - always validates to clear errors if field is now valid
   const validateOnBlur = (fieldName: string) => {
-    // Always validate fields on blur when they've been touched
-    // This ensures errors disappear when corrected, even if form hasn't been submitted
     if (validateField && submissionState.touchedFields[fieldName]) {
       // Get the validation result for this field
       const result = validateField(fieldName);
@@ -42,12 +41,17 @@ export const useFieldTracking = (
     return !!submissionState.touchedFields[fieldName];
   };
   
-  // Method to get a field's error - show errors ONLY after form submission
-  // This is the key change - never show errors until explicit form submission
+  // Method to get a field's error
+  // Only show errors if:
+  // 1. Form was submitted, OR
+  // 2. Field has been touched AND has been validated (e.g., on blur)
   const getFieldError = (fieldName: string): string | null => {
-    // Only show errors if form has been submitted
-    if (submissionState.formSubmitted) {
-      return submissionState.validationResult.errors[fieldName] || null;
+    const error = submissionState.validationResult.errors[fieldName] || null;
+    const fieldTouched = submissionState.touchedFields[fieldName];
+    
+    // Show error if either form was submitted OR field was touched and has an error
+    if (submissionState.formSubmitted || (fieldTouched && error)) {
+      return error;
     }
     
     // Otherwise, don't show any errors
