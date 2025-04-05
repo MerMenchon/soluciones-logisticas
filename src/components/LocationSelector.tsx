@@ -23,7 +23,7 @@ const LocationSelector = ({
   onEstimatedTimeChange,
   errors = { province: null, city: null, time: null }
 }: LocationSelectorProps) => {
-  const { setFieldTouched, validateField, validateOnBlur } = useFormContext();
+  const { setFieldTouched, validateField, validateOnBlur, formSubmitted } = useFormContext();
 
   const {
     cities,
@@ -56,13 +56,24 @@ const LocationSelector = ({
     // Mark field as touched based on location type
     const fieldName = getFieldName('province');
     setFieldTouched(fieldName);
-    if (validateField) validateField(fieldName);
+    
+    // Clear city value when province changes
+    if (onCityChange) {
+      onCityChange("", false);
+    }
+    
+    // Validate immediately if form has been submitted
+    if (formSubmitted && validateField) {
+      validateField(fieldName);
+    }
   };
 
   // Handle province blur
   const handleProvinceBlur = () => {
     const fieldName = getFieldName('province');
-    validateOnBlur(fieldName);
+    if (formSubmitted) {
+      validateOnBlur(fieldName);
+    }
   };
 
   // Handle city change with field tracking and immediate validation
@@ -72,13 +83,19 @@ const LocationSelector = ({
     // Mark field as touched based on location type
     const fieldName = getFieldName('city');
     setFieldTouched(fieldName);
-    if (validateField) validateField(fieldName);
+    
+    // Validate immediately if form has been submitted
+    if (formSubmitted && validateField) {
+      validateField(fieldName);
+    }
   };
 
   // Handle city blur
   const handleCityBlur = () => {
     const fieldName = getFieldName('city');
-    validateOnBlur(fieldName);
+    if (formSubmitted) {
+      validateOnBlur(fieldName);
+    }
   };
 
   // Set default value for estimatedTime if it's empty
@@ -97,19 +114,25 @@ const LocationSelector = ({
       
       // Mark the estimated storage time field as touched
       setFieldTouched("estimatedStorageTime");
-      if (validateField) validateField("estimatedStorageTime");
+      
+      // Validate immediately if form has been submitted
+      if (formSubmitted && validateField) {
+        validateField("estimatedStorageTime");
+      }
     }
   };
 
   // Handle time blur
   const handleTimeBlur = () => {
-    validateOnBlur("estimatedStorageTime");
+    if (formSubmitted) {
+      validateOnBlur("estimatedStorageTime");
+    }
   };
 
   return (
     <div className="grid gap-4">
       <ProvinceSelector
-        id={`${type}-provincia`}
+        id={`${type}-province`}
         value={provinceValue}
         provinces={provinces}
         isLoading={isLoadingProvinces}

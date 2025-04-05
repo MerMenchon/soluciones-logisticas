@@ -1,3 +1,4 @@
+
 import { TouchedFields, ValidationResult } from "../types";
 
 export const useFieldTracking = (
@@ -20,6 +21,13 @@ export const useFieldTracking = (
         [fieldName]: true
       }
     });
+    
+    // If the form has been submitted and there's an error for this field,
+    // we should validate it to clear the error if it's now valid
+    if (submissionState.formSubmitted && validateField && 
+        submissionState.validationResult.errors[fieldName]) {
+      validateField(fieldName);
+    }
   };
   
   // Method to validate field on blur - clears error if field is now valid

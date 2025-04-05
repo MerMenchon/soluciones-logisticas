@@ -23,22 +23,24 @@ const ProvinceSelector = ({
   error,
   onBlur
 }: ProvinceSelectorProps) => {
-  const { validateField } = useFormContext();
+  const { validateField, setFieldTouched, formSubmitted } = useFormContext();
   
   // Enhanced onChange handler that also triggers validation
   const handleProvinceChange = (newValue: string) => {
     onChange(newValue);
     
     // Determine which field this is based on the id and validate it
-    if (error) {
-      const fieldNames: Record<string, string> = {
-        'storage-province': 'storageProvince',
-        'origin-province': 'originProvince',
-        'destination-province': 'destinationProvince'
-      };
-      
-      const fieldName = fieldNames[id] || '';
-      if (fieldName) {
+    const fieldNames: Record<string, string> = {
+      'storage-province': 'storageProvince',
+      'origin-province': 'originProvince',
+      'destination-province': 'destinationProvince'
+    };
+    
+    const fieldName = fieldNames[id];
+    if (fieldName) {
+      setFieldTouched(fieldName);
+      // Only validate if the form has been submitted
+      if (formSubmitted) {
         setTimeout(() => validateField(fieldName), 0);
       }
     }
