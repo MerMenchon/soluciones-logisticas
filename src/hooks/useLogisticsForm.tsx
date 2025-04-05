@@ -67,33 +67,23 @@ export const useLogisticsForm = (): LogisticsFormHookReturn => {
   const handleDateSelect = (date: Date | undefined): void => {
     if (date) {
       setShippingTime(date.toISOString());
-      // Mark field as touched
-      setFieldTouched("shippingTime");
-      
-      // Only validate if form has been submitted
-      if (formSubmitted) {
-        validateField("shippingTime");
-      }
+      // Don't mark field as touched to avoid showing validation messages
     }
   };
   
-  // Function to mark the field as touched when opening the calendar
+  // Don't mark fields as touched when interacting to avoid showing validation
   const handleDatePopoverOpen = () => {
-    setFieldTouched("shippingTime");
+    // We're removing the setFieldTouched call here
   };
 
-  // Function to validate only when form has been submitted
+  // Don't validate fields on blur to prevent showing error messages
   const handleDateBlur = () => {
-    if (shippingTime && formSubmitted) {
-      validateOnBlur("shippingTime");
-    }
+    // We're removing validation on blur
   };
   
-  // Create a generic field blur handler that only validates if form was submitted
+  // Create a generic field blur handler that doesn't validate to avoid showing errors
   const handleFieldBlur = (fieldName: string) => {
-    if (formSubmitted) {
-      validateOnBlur(fieldName);
-    }
+    // Remove validation on blur
   };
 
   // Function to handle form submission and validate all fields

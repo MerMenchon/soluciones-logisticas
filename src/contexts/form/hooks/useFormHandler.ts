@@ -33,13 +33,7 @@ export const useFormHandler = (
     });
 
     if (!validationResult.isValid) {
-      // Don't proceed with submission if there are validation errors
-      toast({
-        variant: "destructive",
-        title: "Error de validación",
-        description: "Por favor, complete todos los campos obligatorios.",
-        duration: 3000, // Auto-dismiss after 3 seconds
-      });
+      // Don't show toast for validation errors
       return;
     }
 

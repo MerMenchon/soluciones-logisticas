@@ -7,7 +7,7 @@ interface ValueInputProps {
   value: string;
   onValueChange: (value: string) => void;
   error: string | null;
-  onBlur?: () => void; // Add onBlur prop
+  onBlur?: () => void;
 }
 
 const ValueInput = ({ value, onValueChange, error, onBlur }: ValueInputProps) => {
@@ -22,9 +22,6 @@ const ValueInput = ({ value, onValueChange, error, onBlur }: ValueInputProps) =>
       // Check if value is greater than 0
       if (newValue === '' || parseFloat(newValue) > 0) {
         onValueChange(newValue);
-        
-        // Mark field as touched when user interacts
-        setFieldTouched("cargoValue");
       }
     }
   };
@@ -47,16 +44,14 @@ const ValueInput = ({ value, onValueChange, error, onBlur }: ValueInputProps) =>
                 value={value}
                 onChange={handleValueChange}
                 onBlur={onBlur}
-                className={`w-full pl-7 ${error ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                className="w-full pl-7"
                 required
               />
             </div>
           </div>
         </div>
         
-        {error && (
-          <p className="text-sm text-red-500">{error}</p>
-        )}
+        {/* No mostrar mensajes de error */}
       </div>
     </div>
   );

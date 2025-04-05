@@ -23,18 +23,8 @@ export const useFormValidation = (
     const result = validateFormFields(formState);
     updateSubmissionState({ validationResult: result });
     
-    // Mark all fields as touched when validating the entire form
-    const allTouched = Object.keys(result.errors).reduce((acc, fieldName) => {
-      acc[fieldName] = true;
-      return acc;
-    }, {} as TouchedFields);
-    
-    updateSubmissionState({
-      touchedFields: {
-        ...submissionState.touchedFields,
-        ...allTouched
-      }
-    });
+    // Do not mark fields as touched when validating for form validity checks
+    // This prevents error messages from showing
     
     return result;
   };

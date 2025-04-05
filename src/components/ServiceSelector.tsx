@@ -18,10 +18,7 @@ const ServiceSelector = ({ selectedService, onSelectService, error }: ServiceSel
   // Handle service selection
   const handleServiceSelect = (service: string) => {
     onSelectService(service);
-    // Mark the field as touched when user interacts
-    setFieldTouched("selectedService");
-    // Validate immediately on selection
-    validateOnBlur("selectedService");
+    // Don't validate to avoid showing error messages
   };
   
   const services = [
@@ -56,7 +53,6 @@ const ServiceSelector = ({ selectedService, onSelectService, error }: ServiceSel
               cursor-pointer transition-all duration-200
               hover:border-agri-primary hover:shadow-md 
               ${selectedService === service.id ? "border-agri-primary bg-agri-primary/5" : ""}
-              ${error ? "border-red-300" : ""}
             `}
             onClick={() => handleServiceSelect(service.id)}
           >
@@ -68,9 +64,7 @@ const ServiceSelector = ({ selectedService, onSelectService, error }: ServiceSel
           </Card>
         ))}
       </div>
-      {error && (
-        <p className="text-sm text-red-500 mt-2">{error}</p>
-      )}
+      {/* No mostrar mensajes de error */}
     </div>
   );
 };

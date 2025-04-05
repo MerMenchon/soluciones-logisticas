@@ -9,7 +9,7 @@ interface FormActionsProps {
   isFormValid: boolean;
 }
 
-const FormActions = ({ onReset, isSubmitting }: FormActionsProps) => {
+const FormActions = ({ onReset, isSubmitting, isFormValid }: FormActionsProps) => {
   return (
     <div className="flex flex-col sm:flex-row gap-4 justify-end mt-8">
       <Button
@@ -26,7 +26,7 @@ const FormActions = ({ onReset, isSubmitting }: FormActionsProps) => {
       <Button
         type="submit"
         className="reference-form-button"
-        disabled={isSubmitting}
+        disabled={isSubmitting || !isFormValid}
       >
         {isSubmitting ? (
           <>
