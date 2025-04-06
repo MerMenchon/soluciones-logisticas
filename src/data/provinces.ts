@@ -19,14 +19,14 @@ export const fetchProvinces = async (): Promise<Province[]> => {
     // Parse CSV to extract provinces
     const rows = csvText.split('\n');
     
-    // Find the column index for "PROVINCIA"
+    // Find the column index for "province"
     const headers = rows[0].split(',');
     const provinceColumnIndex = headers.findIndex(
-      header => header.trim().replace(/"/g, '').toUpperCase() === 'PROVINCIA'
+      header => header.trim().replace(/"/g, '').toLowerCase() === 'province'
     );
     
     if (provinceColumnIndex === -1) {
-      throw new Error("No se encontró la columna 'PROVINCIA' en la hoja");
+      throw new Error("No se encontró la columna 'province' en la hoja");
     }
     
     // Extract unique province names from the specified column

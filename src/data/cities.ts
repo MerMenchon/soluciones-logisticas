@@ -6,7 +6,7 @@ import { fetchProvinces } from "./provinces";
 export const fetchCitiesForProvince = async (provinceValue: string): Promise<City[]> => {
   try {
     const sheetId = "1bI2xqgZ9-ooLHCH8ublDX7mfg25sV-tw3fTEdm1hZp4";
-    const sheetName = "CIUDADES";
+    const sheetName = "LOCALIDADES";
     const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
     
     const response = await fetch(sheetUrl);
@@ -23,13 +23,13 @@ export const fetchCitiesForProvince = async (provinceValue: string): Promise<Cit
     // Find the column indices for province, city and storage availability
     const headers = rows[0].split(',');
     const provinceColumnIndex = headers.findIndex(
-      header => header.trim().replace(/"/g, '').toUpperCase() === 'PROVINCIA'
+      header => header.trim().replace(/"/g, '').toLowerCase() === 'province'
     );
     const cityColumnIndex = headers.findIndex(
-      header => header.trim().replace(/"/g, '').toUpperCase() === 'CIUDAD'
+      header => header.trim().replace(/"/g, '').toLowerCase() === 'city'
     );
     const storageColumnIndex = headers.findIndex(
-      header => header.trim().replace(/"/g, '').toUpperCase() === 'DEPOSITO'
+      header => header.trim().replace(/"/g, '').toLowerCase() === 'storage'
     );
     
     if (provinceColumnIndex === -1 || cityColumnIndex === -1) {
@@ -51,7 +51,9 @@ export const fetchCitiesForProvince = async (provinceValue: string): Promise<Cit
         const columns = row.split(',');
         const rowProvince = columns[provinceColumnIndex]?.replace(/"/g, '').trim();
         const cityName = columns[cityColumnIndex]?.replace(/"/g, '').trim();
-        const hasStorage = columns[storageColumnIndex]?.replace(/"/g, '').trim().toUpperCase() === 'SI';
+        const hasStorage = storageColumnIndex !== -1 ? 
+          columns[storageColumnIndex]?.replace(/"/g, '').trim().toLowerCase() === 'yes' : 
+          false;
         
         // Only include cities for the selected province
         if (rowProvince.toLowerCase() === provinceLabel.toLowerCase() && cityName) {
