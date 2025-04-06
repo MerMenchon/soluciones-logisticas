@@ -57,7 +57,7 @@ const LocationSelector = ({
       <ProvinceSelector
         id={`${type}-provincia`}
         value={provinceValue}
-        provinces={provinces}
+        provinces={provinces || []}
         isLoading={isLoadingProvinces}
         onChange={onProvinceChange}
       />
@@ -65,7 +65,7 @@ const LocationSelector = ({
       <CitySelector
         id={`${type}-ciudad`}
         value={cityValue}
-        cities={cities}
+        cities={cities || []}
         provinceValue={provinceValue}
         isLoading={isLoadingCities}
         type={type}

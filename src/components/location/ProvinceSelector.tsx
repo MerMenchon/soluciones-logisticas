@@ -14,7 +14,7 @@ interface ProvinceSelectorProps {
 const ProvinceSelector = ({
   id,
   value,
-  provinces,
+  provinces = [], // Provide default empty array
   isLoading,
   onChange,
 }: ProvinceSelectorProps) => {

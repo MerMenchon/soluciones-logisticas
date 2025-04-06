@@ -19,7 +19,7 @@ interface CitySelectorProps {
 const CitySelector = ({
   id,
   value,
-  cities,
+  cities = [], // Provide default empty array
   provinceValue,
   isLoading,
   type,
