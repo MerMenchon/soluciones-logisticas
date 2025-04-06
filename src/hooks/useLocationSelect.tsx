@@ -31,7 +31,7 @@ export const useLocationSelect = ({
       setIsLoadingProvinces(true);
       try {
         // Show loading toast for better UX with large dataset
-        const toastId = toast({
+        toast({
           title: "Cargando provincias",
           description: "Obteniendo datos de provincias...",
         });
@@ -47,7 +47,6 @@ export const useLocationSelect = ({
           
           // Update toast to success
           toast({
-            id: toastId,
             title: "Provincias cargadas",
             description: `${provincesData.length} provincias disponibles`,
             variant: "default",
@@ -79,14 +78,13 @@ export const useLocationSelect = ({
   // Fetch cities when province changes
   useEffect(() => {
     let isMounted = true;
-    let toastId: string | number | undefined;
     
     const loadCities = async () => {
       if (provinceValue) {
         setIsLoadingCities(true);
         try {
           // Show loading toast for better UX with large dataset
-          toastId = toast({
+          toast({
             title: "Cargando ciudades",
             description: `Obteniendo ciudades para ${provinceValue}...`,
           });
@@ -104,7 +102,6 @@ export const useLocationSelect = ({
             
             // Update toast to success
             toast({
-              id: toastId,
               title: "Ciudades cargadas",
               description: `${citiesData.length} ciudades disponibles en ${provinceValue}`,
               variant: "default",
@@ -125,7 +122,6 @@ export const useLocationSelect = ({
           console.error("Error loading cities:", error);
           if (isMounted) {
             toast({
-              id: toastId,
               title: "Error",
               description: "No se pudieron cargar las ciudades. Intente nuevamente.",
               variant: "destructive",
@@ -146,14 +142,6 @@ export const useLocationSelect = ({
     
     return () => {
       isMounted = false;
-      
-      // Clear the loading toast if component unmounts
-      if (toastId) {
-        toast({
-          id: toastId,
-          duration: 0, // Remove immediately
-        });
-      }
     };
   }, [provinceValue, toast, type]);
 
