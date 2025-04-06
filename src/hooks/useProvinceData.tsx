@@ -14,7 +14,7 @@ export const useProvinceData = () => {
     const loadProvinces = async () => {
       setIsLoadingProvinces(true);
       try {
-        // Show loading toast for better UX with large dataset
+        // Loading toast is still helpful for UX
         toast({
           title: "Cargando provincias",
           description: "Obteniendo datos de provincias...",
@@ -28,13 +28,7 @@ export const useProvinceData = () => {
         
         if (isMounted) {
           setProvinces(provincesData);
-          
-          // Update toast to success
-          toast({
-            title: "Provincias cargadas",
-            description: `${provincesData.length} provincias disponibles`,
-            variant: "default",
-          });
+          // Success toast removed as requested
         }
       } catch (error) {
         console.error("Error loading provinces:", error);

@@ -36,9 +36,8 @@ const CitySelector = ({
       setStatusMessage(`Cargando ciudades...`);
     } else if (cities.length === 0 && provinceValue) {
       setStatusMessage("No hay ciudades disponibles para esta provincia");
-    } else if (cities.length > 0) {
-      setStatusMessage(`${cities.length} ciudades disponibles`);
     } else {
+      // Remove count as requested
       setStatusMessage("");
     }
   }, [cities, isLoading, provinceValue]);

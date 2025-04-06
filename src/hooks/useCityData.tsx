@@ -19,7 +19,7 @@ export const useCityData = (
         setIsLoadingCities(true);
         
         try {
-          // Show loading toast for better UX with large dataset
+          // Loading toast is still helpful for UX so users know something is happening
           toast({
             title: "Cargando ciudades",
             description: `Obteniendo ciudades para ${provinceValue}...`,
@@ -33,13 +33,6 @@ export const useCityData = (
           
           if (isMounted) {
             setCities(citiesData);
-            
-            // Update toast to success
-            toast({
-              title: "Ciudades cargadas",
-              description: `${citiesData.length} ciudades disponibles en ${provinceValue}`,
-              variant: "default",
-            });
             
             // If this is a storage selector and no cities with storage are available, show a toast
             if (type === "storage") {
