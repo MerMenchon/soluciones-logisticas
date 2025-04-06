@@ -71,5 +71,6 @@ export const useFormSubmission = (formState: FormState) => {
     isFieldTouched,
     markFieldTouched,
     getFieldError,
+    resetFieldTracking, // Make sure to include this in the return object
   };
 };

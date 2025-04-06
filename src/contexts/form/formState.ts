@@ -130,23 +130,30 @@ export const useFormState = () => {
     locationState.resetLocations();
   };
 
-  // Form reset function
+  // Form reset function - Modified to reset everything properly like initial load
   const resetForm = () => {
+    // Reset service state
     serviceState.setSelectedService("");
+    
+    // Reset location states
     locationState.resetLocations();
+    
+    // Reset product details
     productState.resetProductDetails();
-    submissionState.setIsSubmitting(false);
-    submissionState.setShowResponseDialog(false);
-    setFormState(prev => ({
-      ...prev,
-      selectedService: "",
+    
+    // Reset submission state
+    submissionState.updateSubmissionState({
+      isSubmitting: false,
       formSubmitted: false,
       showConfirmation: false,
       distanceValue: null,
       webhookResponse: undefined,
       isWaitingForResponse: false,
-      showResponseDialog: false,
-    }));
+      showResponseDialog: false
+    });
+    
+    // Reset field tracking state
+    submissionState.resetFieldTracking();
   };
 
   return {
