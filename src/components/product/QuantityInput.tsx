@@ -1,9 +1,10 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { useQuantityUnits } from "@/hooks/useLocationData";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { FormState } from "@/contexts/form/types";
+import { useNumericInput } from "@/hooks/useNumericInput";
 
 interface QuantityInputProps {
   quantity: string;
@@ -24,8 +25,17 @@ const QuantityInput = ({
   getFieldError,
   markFieldTouched,
 }: QuantityInputProps) => {
-  const [localQuantity, setLocalQuantity] = useState(quantity);
-  const [hasInteracted, setHasInteracted] = useState(false);
+  const {
+    localValue: localQuantity,
+    hasInteracted,
+    handleValueChange: handleQuantityChange,
+    handleBlur
+  } = useNumericInput({
+    initialValue: quantity,
+    fieldName: 'quantity',
+    onValueChange: onQuantityChange,
+    markFieldTouched
+  });
 
   // Use the React Query hook for quantity units
   const { data: quantityUnitOptions = [], isLoading: isLoadingQuantityUnits } = useQuantityUnits();
@@ -36,26 +46,6 @@ const QuantityInput = ({
       onQuantityUnitChange(quantityUnitOptions[0]);
     }
   }, [quantityUnitOptions, quantityUnit, onQuantityUnitChange]);
-
-  // Handle quantity input validation
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newQuantity = e.target.value;
-    
-    // Allow decimals and empty values (for UX)
-    if (newQuantity === '' || /^\d*\.?\d*$/.test(newQuantity)) {
-      setLocalQuantity(newQuantity);
-    }
-  };
-
-  const handleBlur = () => {
-    setHasInteracted(true);
-    markFieldTouched && markFieldTouched('quantity');
-    
-    // Only update if quantity is valid
-    if (localQuantity === '' || (parseFloat(localQuantity) > 0)) {
-      onQuantityChange(localQuantity);
-    }
-  };
 
   // Check if the field is touched and has an error
   const touched = isFieldTouched ? isFieldTouched('quantity') : false;
@@ -113,4 +103,3 @@ const QuantityInput = ({
 };
 
 export default QuantityInput;
-

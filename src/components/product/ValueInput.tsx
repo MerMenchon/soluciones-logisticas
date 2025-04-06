@@ -1,7 +1,8 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { FormState } from "@/contexts/form/types";
+import { useNumericInput } from "@/hooks/useNumericInput";
 
 interface ValueInputProps {
   value: string;
@@ -18,28 +19,17 @@ const ValueInput = ({
   getFieldError,
   markFieldTouched,
 }: ValueInputProps) => {
-  const [localValue, setLocalValue] = useState(value);
-  const [hasInteracted, setHasInteracted] = useState(false);
-
-  // Handle numeric input validation
-  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    
-    // Allow decimals and empty values (for UX)
-    if (newValue === '' || /^\d*\.?\d*$/.test(newValue)) {
-      setLocalValue(newValue);
-    }
-  };
-
-  const handleBlur = () => {
-    setHasInteracted(true);
-    markFieldTouched && markFieldTouched('cargoValue');
-    
-    // Only update if value is valid
-    if (localValue === '' || (parseFloat(localValue) > 0)) {
-      onValueChange(localValue);
-    }
-  };
+  const {
+    localValue,
+    hasInteracted,
+    handleValueChange,
+    handleBlur
+  } = useNumericInput({
+    initialValue: value,
+    fieldName: 'cargoValue',
+    onValueChange,
+    markFieldTouched
+  });
 
   // Check if the field is touched and has an error
   const touched = isFieldTouched ? isFieldTouched('cargoValue') : false;
@@ -79,4 +69,3 @@ const ValueInput = ({
 };
 
 export default ValueInput;
-
