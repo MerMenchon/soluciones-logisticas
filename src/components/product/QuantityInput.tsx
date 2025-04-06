@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { useQuantityUnits } from "@/hooks/useLocationData";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -24,12 +24,14 @@ const QuantityInput = ({
   getFieldError,
   markFieldTouched,
 }: QuantityInputProps) => {
+  const [localQuantity, setLocalQuantity] = useState(quantity);
+  const [hasInteracted, setHasInteracted] = useState(false);
+
   // Use the React Query hook for quantity units
   const { data: quantityUnitOptions = [], isLoading: isLoadingQuantityUnits } = useQuantityUnits();
 
   // Set default quantity unit when options are loaded and no value is selected
   useEffect(() => {
-    // Set default quantity unit if options are available and no unit is selected yet
     if (quantityUnitOptions.length > 0 && (!quantityUnit || quantityUnit === "")) {
       onQuantityUnitChange(quantityUnitOptions[0]);
     }
@@ -41,17 +43,24 @@ const QuantityInput = ({
     
     // Allow decimals and empty values (for UX)
     if (newQuantity === '' || /^\d*\.?\d*$/.test(newQuantity)) {
-      // Check if value is greater than 0
-      if (newQuantity === '' || parseFloat(newQuantity) > 0) {
-        onQuantityChange(newQuantity);
-      }
+      setLocalQuantity(newQuantity);
+    }
+  };
+
+  const handleBlur = () => {
+    setHasInteracted(true);
+    markFieldTouched && markFieldTouched('quantity');
+    
+    // Only update if quantity is valid
+    if (localQuantity === '' || (parseFloat(localQuantity) > 0)) {
+      onQuantityChange(localQuantity);
     }
   };
 
   // Check if the field is touched and has an error
   const touched = isFieldTouched ? isFieldTouched('quantity') : false;
   const errorMessage = getFieldError ? getFieldError('quantity') : null;
-  const hasError = touched && errorMessage;
+  const hasError = touched && errorMessage && hasInteracted;
 
   return (
     <div>
@@ -62,9 +71,9 @@ const QuantityInput = ({
         <Input
           id="quantity"
           placeholder="0.00"
-          value={quantity}
+          value={localQuantity}
           onChange={handleQuantityChange}
-          onBlur={() => markFieldTouched && markFieldTouched('quantity')}
+          onBlur={handleBlur}
           className={`w-32 ${hasError ? 'border-red-500' : ''}`}
           required
         />
@@ -104,3 +113,4 @@ const QuantityInput = ({
 };
 
 export default QuantityInput;
+

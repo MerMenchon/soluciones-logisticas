@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { FormState } from "@/contexts/form/types";
 
@@ -18,23 +18,33 @@ const ValueInput = ({
   getFieldError,
   markFieldTouched,
 }: ValueInputProps) => {
+  const [localValue, setLocalValue] = useState(value);
+  const [hasInteracted, setHasInteracted] = useState(false);
+
   // Handle numeric input validation
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     
     // Allow decimals and empty values (for UX)
     if (newValue === '' || /^\d*\.?\d*$/.test(newValue)) {
-      // Check if value is greater than 0
-      if (newValue === '' || parseFloat(newValue) > 0) {
-        onValueChange(newValue);
-      }
+      setLocalValue(newValue);
+    }
+  };
+
+  const handleBlur = () => {
+    setHasInteracted(true);
+    markFieldTouched && markFieldTouched('cargoValue');
+    
+    // Only update if value is valid
+    if (localValue === '' || (parseFloat(localValue) > 0)) {
+      onValueChange(localValue);
     }
   };
 
   // Check if the field is touched and has an error
   const touched = isFieldTouched ? isFieldTouched('cargoValue') : false;
   const errorMessage = getFieldError ? getFieldError('cargoValue') : null;
-  const hasError = touched && errorMessage;
+  const hasError = touched && errorMessage && hasInteracted;
 
   return (
     <div>
@@ -50,9 +60,9 @@ const ValueInput = ({
             <Input
               id="value"
               placeholder="0.00"
-              value={value}
+              value={localValue}
               onChange={handleValueChange}
-              onBlur={() => markFieldTouched && markFieldTouched('cargoValue')}
+              onBlur={handleBlur}
               className={`w-full pl-7 ${hasError ? 'border-red-500' : ''}`}
               required
             />
@@ -69,3 +79,4 @@ const ValueInput = ({
 };
 
 export default ValueInput;
+
