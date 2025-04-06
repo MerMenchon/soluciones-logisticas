@@ -9,11 +9,15 @@ export const fetchCitiesForProvince = async (provinceValue: string): Promise<Cit
       return [];
     }
     
-    const sheetId = "1bI2xqgZ9-ooLHCH8ublDX7mfg25sV-tw3fTEdm1hZp4";
+    const sheetId = "1ZOcB_H1RWujAnvi9i53YP-Jmh7WDQ1eSsucghqsMTFk";
     const sheetName = "LOCALIDADES";
     
     // Create a cache key based on the sheet ID, name and province
     const cacheKey = `cities-${sheetId}-${sheetName}-${provinceValue}`;
+    
+    // Clear existing cache to force fresh data load with the new sheet ID
+    localStorage.removeItem(cacheKey);
+    
     const cachedData = localStorage.getItem(cacheKey);
     
     // Check if we have cached data that's less than 1 hour old
