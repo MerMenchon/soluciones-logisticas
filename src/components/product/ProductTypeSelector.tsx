@@ -1,6 +1,5 @@
 
 import React from "react";
-import { Package } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   Select,
@@ -10,15 +9,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState, useEffect } from "react";
+import { FormState } from "@/contexts/form/types";
 
 interface ProductTypeSelectorProps {
   productType: string;
   onProductTypeChange: (type: string) => void;
+  isFieldTouched?: (fieldName: keyof FormState) => boolean;
+  getFieldError?: (fieldName: string) => string | null;
+  markFieldTouched?: (fieldName: keyof FormState) => void;
 }
 
 const ProductTypeSelector = ({
   productType,
   onProductTypeChange,
+  isFieldTouched,
+  getFieldError,
+  markFieldTouched,
 }: ProductTypeSelectorProps) => {
   const [productOptions, setProductOptions] = useState<string[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
@@ -95,6 +101,11 @@ const ProductTypeSelector = ({
     fetchProductTypes();
   }, [toast]);
 
+  // Check if the field is touched and has an error
+  const touched = isFieldTouched ? isFieldTouched('productType') : false;
+  const errorMessage = getFieldError ? getFieldError('productType') : null;
+  const hasError = touched && errorMessage;
+
   return (
     <div>
       <label htmlFor="productType" className="block text-sm font-medium text-agri-secondary mb-1">
@@ -102,10 +113,13 @@ const ProductTypeSelector = ({
       </label>
       <Select 
         value={productType} 
-        onValueChange={onProductTypeChange}
+        onValueChange={(value) => {
+          onProductTypeChange(value);
+          markFieldTouched && markFieldTouched('productType');
+        }}
         disabled={isLoadingProducts}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className={`w-full ${hasError ? 'border-red-500' : ''}`}>
           <SelectValue placeholder={
             isLoadingProducts 
               ? "Cargando tipos de producto..." 
@@ -120,6 +134,11 @@ const ProductTypeSelector = ({
           ))}
         </SelectContent>
       </Select>
+      {hasError && (
+        <p className="text-sm text-red-500 mt-1">
+          {errorMessage}
+        </p>
+      )}
     </div>
   );
 };

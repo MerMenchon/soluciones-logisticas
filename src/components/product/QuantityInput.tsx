@@ -3,12 +3,16 @@ import React, { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { useQuantityUnits } from "@/hooks/useLocationData";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { FormState } from "@/contexts/form/types";
 
 interface QuantityInputProps {
   quantity: string;
   onQuantityChange: (quantity: string) => void;
   quantityUnit: string;
   onQuantityUnitChange: (unit: string) => void;
+  isFieldTouched?: (fieldName: keyof FormState) => boolean;
+  getFieldError?: (fieldName: string) => string | null;
+  markFieldTouched?: (fieldName: keyof FormState) => void;
 }
 
 const QuantityInput = ({
@@ -16,6 +20,9 @@ const QuantityInput = ({
   onQuantityChange,
   quantityUnit,
   onQuantityUnitChange,
+  isFieldTouched,
+  getFieldError,
+  markFieldTouched,
 }: QuantityInputProps) => {
   // Use the React Query hook for quantity units
   const { data: quantityUnitOptions = [], isLoading: isLoadingQuantityUnits } = useQuantityUnits();
@@ -41,6 +48,11 @@ const QuantityInput = ({
     }
   };
 
+  // Check if the field is touched and has an error
+  const touched = isFieldTouched ? isFieldTouched('quantity') : false;
+  const errorMessage = getFieldError ? getFieldError('quantity') : null;
+  const hasError = touched && errorMessage;
+
   return (
     <div>
       <label htmlFor="quantity" className="block text-sm font-medium text-agri-secondary mb-1">
@@ -52,7 +64,8 @@ const QuantityInput = ({
           placeholder="0.00"
           value={quantity}
           onChange={handleQuantityChange}
-          className="w-32"
+          onBlur={() => markFieldTouched && markFieldTouched('quantity')}
+          className={`w-32 ${hasError ? 'border-red-500' : ''}`}
           required
         />
         
@@ -81,6 +94,11 @@ const QuantityInput = ({
           </ToggleGroup>
         )}
       </div>
+      {hasError && (
+        <p className="text-sm text-red-500 mt-1">
+          {errorMessage}
+        </p>
+      )}
     </div>
   );
 };

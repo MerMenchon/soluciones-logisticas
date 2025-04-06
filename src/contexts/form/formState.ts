@@ -31,7 +31,7 @@ export const useFormState = () => {
     showConfirmation: false,
     distanceValue: null,
     isWaitingForResponse: false,
-    showResponseDialog: false, // New state
+    showResponseDialog: false,
 
     // Contact state
     additionalInfo: "",
@@ -120,7 +120,7 @@ export const useFormState = () => {
       distanceValue: submissionState.distanceValue,
       webhookResponse: submissionState.webhookResponse,
       isWaitingForResponse: submissionState.isWaitingForResponse,
-      showResponseDialog: submissionState.showResponseDialog, // Update dialog state
+      showResponseDialog: submissionState.showResponseDialog,
     }));
   }, [submissionState]);
 
@@ -136,7 +136,7 @@ export const useFormState = () => {
     locationState.resetLocations();
     productState.resetProductDetails();
     submissionState.setIsSubmitting(false);
-    submissionState.setShowResponseDialog(false); // Close dialog when resetting form
+    submissionState.setShowResponseDialog(false);
     setFormState(prev => ({
       ...prev,
       selectedService: "",

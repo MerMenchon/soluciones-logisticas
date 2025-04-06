@@ -79,6 +79,11 @@ export interface FormContextType extends FormState {
   // Contact methods
   setAdditionalInfo: (info: string) => void;
   
+  // Field tracking methods
+  isFieldTouched: (fieldName: keyof FormState) => boolean;
+  markFieldTouched: (fieldName: keyof FormState) => void;
+  getFieldError: (fieldName: string) => string | null;
+  
   // Dialog methods
   setShowResponseDialog: (show: boolean) => void;
   handleCloseResponseDialog: () => void;

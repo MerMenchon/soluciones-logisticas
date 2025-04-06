@@ -10,12 +10,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { FormState } from "@/contexts/form/types";
 
 interface PresentationSelectorProps {
   presentation: string;
   onPresentationChange: (presentation: string) => void;
   clarification: string;
   onClarificationChange: (clarification: string) => void;
+  isFieldTouched?: (fieldName: keyof FormState) => boolean;
+  getFieldError?: (fieldName: string) => string | null;
+  markFieldTouched?: (fieldName: keyof FormState) => void;
 }
 
 const PresentationSelector = ({
@@ -23,6 +27,9 @@ const PresentationSelector = ({
   onPresentationChange,
   clarification,
   onClarificationChange,
+  isFieldTouched,
+  getFieldError,
+  markFieldTouched,
 }: PresentationSelectorProps) => {
   const [presentationOptions, setPresentationOptions] = useState<string[]>([]);
   const [isLoadingPresentations, setIsLoadingPresentations] = useState(true);
@@ -57,20 +64,28 @@ const PresentationSelector = ({
     }
   };
 
+  // Check if the field is touched and has an error
+  const touched = isFieldTouched ? isFieldTouched('presentation') : false;
+  const errorMessage = getFieldError ? getFieldError('presentation') : null;
+  const hasError = touched && errorMessage;
+
   // Check if the selected presentation is "Otro"
   const showClarificationInput = presentation === "Otro";
 
   return (
     <div>
       <label htmlFor="presentation" className="block text-sm font-medium text-agri-secondary mb-1">
-        Presentación
+        Presentación *
       </label>
       <Select 
         value={presentation} 
-        onValueChange={onPresentationChange}
+        onValueChange={(value) => {
+          onPresentationChange(value);
+          markFieldTouched && markFieldTouched('presentation');
+        }}
         disabled={isLoadingPresentations}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className={`w-full ${hasError ? 'border-red-500' : ''}`}>
           <SelectValue placeholder={
             isLoadingPresentations 
               ? "Cargando tipos de presentación..." 
@@ -85,6 +100,11 @@ const PresentationSelector = ({
           ))}
         </SelectContent>
       </Select>
+      {hasError && (
+        <p className="text-sm text-red-500 mt-1">
+          {errorMessage}
+        </p>
+      )}
 
       {showClarificationInput && (
         <div className="mt-4">

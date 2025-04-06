@@ -59,6 +59,9 @@ const LogisticsForm = () => {
     showResponseDialog,
     handleCloseResponseDialog,
     isWaitingForResponse,
+    isFieldTouched,
+    markFieldTouched,
+    getFieldError,
   } = useFormContext();
 
   // State for form validation
@@ -96,6 +99,7 @@ const LogisticsForm = () => {
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
       setShippingTime(date.toISOString());
+      markFieldTouched('shippingTime');
     }
   };
 
@@ -118,6 +122,9 @@ const LogisticsForm = () => {
           selectedDate={selectedDate}
           onDateSelect={handleDateSelect}
           disabledDays={disabledDays}
+          isInvalid={isFieldTouched('shippingTime') && getFieldError('shippingTime') !== null}
+          errorMessage={getFieldError('shippingTime')}
+          onBlur={() => markFieldTouched('shippingTime')}
         />
 
         {selectedService && (
@@ -127,10 +134,22 @@ const LogisticsForm = () => {
                 selectedService={selectedService}
                 storageProvince={storageProvince}
                 storageCity={storageCity}
-                setStorageProvince={setStorageProvince}
-                setStorageCity={setStorageCity}
+                setStorageProvince={(value) => {
+                  setStorageProvince(value);
+                  markFieldTouched('storageProvince');
+                }}
+                setStorageCity={(value) => {
+                  setStorageCity(value); 
+                  markFieldTouched('storageCity');
+                }}
                 estimatedStorageTime={estimatedStorageTime}
-                setEstimatedStorageTime={setEstimatedStorageTime}
+                setEstimatedStorageTime={(value) => {
+                  setEstimatedStorageTime(value);
+                  markFieldTouched('estimatedStorageTime');
+                }}
+                isFieldTouched={isFieldTouched}
+                getFieldError={getFieldError}
+                markFieldTouched={markFieldTouched}
               />
             )}
 
@@ -138,39 +157,78 @@ const LogisticsForm = () => {
               <TransportRouteSection
                 originProvince={originProvince}
                 originCity={originCity}
-                setOriginProvince={setOriginProvince}
-                setOriginCity={setOriginCity}
+                setOriginProvince={(value) => {
+                  setOriginProvince(value);
+                  markFieldTouched('originProvince');
+                }}
+                setOriginCity={(value) => {
+                  setOriginCity(value);
+                  markFieldTouched('originCity');
+                }}
                 destinationProvince={destinationProvince}
                 destinationCity={destinationCity}
-                setDestinationProvince={setDestinationProvince}
-                setDestinationCity={setDestinationCity}
+                setDestinationProvince={(value) => {
+                  setDestinationProvince(value);
+                  markFieldTouched('destinationProvince');
+                }}
+                setDestinationCity={(value) => {
+                  setDestinationCity(value);
+                  markFieldTouched('destinationCity');
+                }}
                 selectedService={selectedService}
                 useOriginAsStorage={useOriginAsStorage}
                 handleUseOriginAsStorageChange={handleUseOriginAsStorageChange}
                 useDestinationAsStorage={useDestinationAsStorage}
                 handleUseDestinationAsStorageChange={handleUseDestinationAsStorageChange}
                 estimatedStorageTime={estimatedStorageTime}
-                setEstimatedStorageTime={setEstimatedStorageTime}
+                setEstimatedStorageTime={(value) => {
+                  setEstimatedStorageTime(value);
+                  markFieldTouched('estimatedStorageTime');
+                }}
+                isFieldTouched={isFieldTouched}
+                getFieldError={getFieldError}
+                markFieldTouched={markFieldTouched}
               />
             )}
 
             <ProductDetails 
               productType={productType}
-              onProductTypeChange={setProductType}
+              onProductTypeChange={(value) => {
+                setProductType(value);
+                markFieldTouched('productType');
+              }}
               value={cargoValue}
-              onValueChange={setCargoValue}
+              onValueChange={(value) => {
+                setCargoValue(value);
+                markFieldTouched('cargoValue');
+              }}
               shippingTime={shippingTime}
-              onShippingTimeChange={setShippingTime}
+              onShippingTimeChange={(value) => {
+                setShippingTime(value);
+                markFieldTouched('shippingTime');
+              }}
               description={description}
-              onDescriptionChange={setDescription}
+              onDescriptionChange={(value) => {
+                setDescription(value);
+                markFieldTouched('description');
+              }}
               presentation={presentation}
-              onPresentationChange={setPresentation}
+              onPresentationChange={(value) => {
+                setPresentation(value);
+                markFieldTouched('presentation');
+              }}
               clarification={clarification}
               onClarificationChange={setClarification}
               quantity={quantity}
-              onQuantityChange={setQuantity}
+              onQuantityChange={(value) => {
+                setQuantity(value);
+                markFieldTouched('quantity');
+              }}
               quantityUnit={quantityUnit}
               onQuantityUnitChange={setQuantityUnit}
+              isFieldTouched={isFieldTouched}
+              getFieldError={getFieldError}
+              markFieldTouched={markFieldTouched}
             />
             
             <ContactDetails

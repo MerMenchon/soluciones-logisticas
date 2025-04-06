@@ -1,13 +1,23 @@
 
 import React from "react";
 import { Input } from "@/components/ui/input";
+import { FormState } from "@/contexts/form/types";
 
 interface ValueInputProps {
   value: string;
   onValueChange: (value: string) => void;
+  isFieldTouched?: (fieldName: keyof FormState) => boolean;
+  getFieldError?: (fieldName: string) => string | null;
+  markFieldTouched?: (fieldName: keyof FormState) => void;
 }
 
-const ValueInput = ({ value, onValueChange }: ValueInputProps) => {
+const ValueInput = ({ 
+  value, 
+  onValueChange,
+  isFieldTouched,
+  getFieldError,
+  markFieldTouched,
+}: ValueInputProps) => {
   // Handle numeric input validation
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -20,6 +30,11 @@ const ValueInput = ({ value, onValueChange }: ValueInputProps) => {
       }
     }
   };
+
+  // Check if the field is touched and has an error
+  const touched = isFieldTouched ? isFieldTouched('cargoValue') : false;
+  const errorMessage = getFieldError ? getFieldError('cargoValue') : null;
+  const hasError = touched && errorMessage;
 
   return (
     <div>
@@ -37,10 +52,16 @@ const ValueInput = ({ value, onValueChange }: ValueInputProps) => {
               placeholder="0.00"
               value={value}
               onChange={handleValueChange}
-              className="w-full pl-7"
+              onBlur={() => markFieldTouched && markFieldTouched('cargoValue')}
+              className={`w-full pl-7 ${hasError ? 'border-red-500' : ''}`}
               required
             />
           </div>
+          {hasError && (
+            <p className="text-sm text-red-500 mt-1">
+              {errorMessage}
+            </p>
+          )}
         </div>
       </div>
     </div>
