@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Package } from "lucide-react";
 import ProductTypeSelector from "@/components/product/ProductTypeSelector";
@@ -57,25 +56,13 @@ const ProductDetails = ({
       </h2>
 
       <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <ProductTypeSelector 
-            productType={productType}
-            onProductTypeChange={onProductTypeChange}
-            isFieldTouched={isFieldTouched}
-            getFieldError={getFieldError}
-            markFieldTouched={markFieldTouched}
-          />
-
-          <PresentationSelector 
-            presentation={presentation}
-            onPresentationChange={onPresentationChange}
-            clarification={clarification}
-            onClarificationChange={onClarificationChange}
-            isFieldTouched={isFieldTouched}
-            getFieldError={getFieldError}
-            markFieldTouched={markFieldTouched}
-          />
-        </div>
+        <ProductTypeSelector 
+          productType={productType}
+          onProductTypeChange={onProductTypeChange}
+          isFieldTouched={isFieldTouched}
+          getFieldError={getFieldError}
+          markFieldTouched={markFieldTouched}
+        />
 
         {/* Show description field if product type is "Otro" */}
         {productType === "Otro" && (
@@ -89,7 +76,17 @@ const ProductDetails = ({
           />
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <PresentationSelector 
+          presentation={presentation}
+          onPresentationChange={onPresentationChange}
+          clarification={clarification}
+          onClarificationChange={onClarificationChange}
+          isFieldTouched={isFieldTouched}
+          getFieldError={getFieldError}
+          markFieldTouched={markFieldTouched}
+        />
+
+        <div className="grid grid-cols-1 gap-6">
           <QuantityInput 
             quantity={quantity}
             onQuantityChange={onQuantityChange}
