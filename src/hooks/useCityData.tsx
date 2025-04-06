@@ -19,12 +19,6 @@ export const useCityData = (
         setIsLoadingCities(true);
         
         try {
-          // Loading toast is still helpful for UX so users know something is happening
-          toast({
-            title: "Cargando ciudades",
-            description: `Obteniendo ciudades para ${provinceValue}...`,
-          });
-          
           const startTime = performance.now();
           const citiesData = await getCiudades(provinceValue);
           const endTime = performance.now();
@@ -34,7 +28,6 @@ export const useCityData = (
           if (isMounted) {
             setCities(citiesData);
             
-            // If this is a storage selector and no cities with storage are available, show a toast
             if (type === "storage") {
               const citiesWithStorage = citiesData.filter(city => city.hasStorage);
               if (citiesWithStorage.length === 0) {

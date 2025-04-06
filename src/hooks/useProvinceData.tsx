@@ -14,12 +14,6 @@ export const useProvinceData = () => {
     const loadProvinces = async () => {
       setIsLoadingProvinces(true);
       try {
-        // Loading toast is still helpful for UX
-        toast({
-          title: "Cargando provincias",
-          description: "Obteniendo datos de provincias...",
-        });
-        
         const startTime = performance.now();
         const provincesData = await getProvincias();
         const endTime = performance.now();
@@ -28,7 +22,6 @@ export const useProvinceData = () => {
         
         if (isMounted) {
           setProvinces(provincesData);
-          // Success toast removed as requested
         }
       } catch (error) {
         console.error("Error loading provinces:", error);
