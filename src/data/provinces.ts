@@ -4,7 +4,7 @@ import { Province } from "@/types/locations";
 // Fetch provinces from Google Sheets
 export const fetchProvinces = async (): Promise<Province[]> => {
   try {
-    const sheetId = "1VYDCQfaz3-7IrhPUGpAO4UBLMDR1mEyl6UCHU1hznwQ";
+    const sheetId = "1bI2xqgZ9-ooLHCH8ublDX7mfg25sV-tw3fTEdm1hZp4";
     const sheetName = "LOCALIDADES";
     const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
     
