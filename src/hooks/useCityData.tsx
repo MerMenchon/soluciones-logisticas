@@ -17,6 +17,7 @@ export const useCityData = (
     const loadCities = async () => {
       if (provinceValue) {
         setIsLoadingCities(true);
+        
         try {
           // Show loading toast for better UX with large dataset
           toast({
@@ -28,11 +29,9 @@ export const useCityData = (
           const citiesData = await getCiudades(provinceValue);
           const endTime = performance.now();
           
-          console.log(`Cities loaded in ${Math.round(endTime - startTime)}ms`);
+          console.log(`Cities loaded in ${Math.round(endTime - startTime)}ms - Found ${citiesData.length} cities`);
           
           if (isMounted) {
-            // Note: We now filter cities in the CitySelector component
-            // This allows us to show all cities but just mark which ones have storage
             setCities(citiesData);
             
             // Update toast to success

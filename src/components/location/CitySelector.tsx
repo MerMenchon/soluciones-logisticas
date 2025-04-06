@@ -27,10 +27,28 @@ const CitySelector = ({
 }: CitySelectorProps) => {
   const { selectedService } = useFormContext();
   
+  // Status message for rendering
+  const [statusMessage, setStatusMessage] = React.useState<string>("");
+  
+  // Update status message when cities or loading status changes
+  React.useEffect(() => {
+    if (isLoading) {
+      setStatusMessage(`Cargando ciudades...`);
+    } else if (cities.length === 0 && provinceValue) {
+      setStatusMessage("No hay ciudades disponibles para esta provincia");
+    } else if (cities.length > 0) {
+      setStatusMessage(`${cities.length} ciudades disponibles`);
+    } else {
+      setStatusMessage("");
+    }
+  }, [cities, isLoading, provinceValue]);
+  
   // Filter cities based on storage availability if this is a storage selector
-  const filteredCities = type === "storage" 
-    ? cities.filter(city => city.hasStorage)
-    : cities;
+  const filteredCities = React.useMemo(() => {
+    return type === "storage" 
+      ? cities.filter(city => city.hasStorage)
+      : cities;
+  }, [cities, type]);
   
   // Determine if we should show storage availability based on selected service type
   const shouldShowStorageInfo = 
@@ -40,6 +58,9 @@ const CitySelector = ({
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <Label htmlFor={id}>Ciudad</Label>
+        {statusMessage && (
+          <span className="text-xs text-muted-foreground">{statusMessage}</span>
+        )}
       </div>
       <Select 
         value={value} 
@@ -55,8 +76,8 @@ const CitySelector = ({
                 : "Seleccione ciudad"
           } />
         </SelectTrigger>
-        <SelectContent>
-          {filteredCities.length === 0 && !isLoading && (
+        <SelectContent className="max-h-80 overflow-y-auto">
+          {filteredCities.length === 0 && !isLoading && provinceValue && (
             <div className="px-2 py-4 text-center text-sm text-muted-foreground">
               {type === "storage" 
                 ? "No hay ciudades con almacenamiento disponible en esta provincia" 
