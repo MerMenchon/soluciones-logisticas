@@ -5,36 +5,28 @@ import { fetchProvinces } from "./provinces";
 // Fetch cities for a province from Google Sheets
 export const fetchCitiesForProvince = async (provinceValue: string): Promise<City[]> => {
   try {
+    if (!provinceValue) {
+      return [];
+    }
+    
     const sheetId = "1bI2xqgZ9-ooLHCH8ublDX7mfg25sV-tw3fTEdm1hZp4";
     const sheetName = "LOCALIDADES";
-    const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
     
-    const response = await fetch(sheetUrl);
+    // Create a cache key based on the sheet ID, name and province
+    const cacheKey = `cities-${sheetId}-${sheetName}-${provinceValue}`;
+    const cachedData = localStorage.getItem(cacheKey);
     
-    if (!response.ok) {
-      throw new Error("Error al cargar las ciudades");
+    // Check if we have cached data that's less than 1 hour old
+    if (cachedData) {
+      const { data, timestamp } = JSON.parse(cachedData);
+      const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
+      if (Date.now() - timestamp < oneHour) {
+        console.log(`Using cached cities data for ${provinceValue}`);
+        return data;
+      }
     }
     
-    const csvText = await response.text();
-    
-    // Parse CSV to extract cities
-    const rows = csvText.split('\n');
-    
-    // Find the column indices for province, city and storage availability
-    const headers = rows[0].split(',');
-    const provinceColumnIndex = headers.findIndex(
-      header => header.trim().replace(/"/g, '').toLowerCase() === 'province'
-    );
-    const cityColumnIndex = headers.findIndex(
-      header => header.trim().replace(/"/g, '').toLowerCase() === 'city'
-    );
-    const storageColumnIndex = headers.findIndex(
-      header => header.trim().replace(/"/g, '').toLowerCase() === 'storage'
-    );
-    
-    if (provinceColumnIndex === -1 || cityColumnIndex === -1) {
-      throw new Error("No se encontraron las columnas necesarias en la hoja");
-    }
+    console.log(`Fetching cities data for province: ${provinceValue}`);
     
     // Get the province label from the province value
     const provinces = await fetchProvinces();
@@ -44,28 +36,32 @@ export const fetchCitiesForProvince = async (provinceValue: string): Promise<Cit
       throw new Error(`No se encontró la provincia con valor ${provinceValue}`);
     }
     
-    // Extract cities for the selected province
-    const cities = rows
-      .slice(1) // Skip header row
-      .map(row => {
-        const columns = row.split(',');
-        const rowProvince = columns[provinceColumnIndex]?.replace(/"/g, '').trim();
-        const cityName = columns[cityColumnIndex]?.replace(/"/g, '').trim();
-        const hasStorage = storageColumnIndex !== -1 ? 
-          columns[storageColumnIndex]?.replace(/"/g, '').trim().toLowerCase() === 'yes' : 
-          false;
-        
-        // Only include cities for the selected province
-        if (rowProvince.toLowerCase() === provinceLabel.toLowerCase() && cityName) {
-          return {
-            value: cityName.toLowerCase().replace(/\s+/g, '-'),
-            label: cityName,
-            hasStorage
-          };
-        }
-        return null;
-      })
-      .filter(Boolean) as (City & { hasStorage: boolean })[];
+    // Build URL with query parameter to filter by province if possible
+    // Note: Google Sheets doesn't support direct filtering, so we'll filter on the client side
+    const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+    
+    const response = await fetch(sheetUrl, {
+      headers: {
+        "Content-Type": "text/csv",
+        // Add cache control headers
+        "Cache-Control": "max-age=3600"
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error("Error al cargar las ciudades");
+    }
+    
+    const csvText = await response.text();
+    
+    // Parse CSV more efficiently and filter by province
+    const cities = parseCitiesFromCSV(csvText, provinceLabel);
+    
+    // Cache the result
+    localStorage.setItem(cacheKey, JSON.stringify({
+      data: cities,
+      timestamp: Date.now()
+    }));
     
     return cities;
   } catch (error) {
@@ -73,6 +69,92 @@ export const fetchCitiesForProvince = async (provinceValue: string): Promise<Cit
     // Return empty array if fetch fails
     return [];
   }
+};
+
+// More efficient CSV parsing function for cities, filtering by province
+function parseCitiesFromCSV(csvText: string, provinceLabel: string): City[] {
+  // Split by newlines
+  const lines = csvText.split('\n');
+  if (lines.length <= 1) {
+    throw new Error("CSV data is empty or invalid");
+  }
+  
+  // Find the header row and locate the province, city and storage columns
+  const headerRow = lines[0];
+  const headers = headerRow.split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
+  
+  const provinceColumnIndex = headers.indexOf('province');
+  const cityColumnIndex = headers.indexOf('city');
+  const storageColumnIndex = headers.indexOf('storage');
+  
+  if (provinceColumnIndex === -1 || cityColumnIndex === -1) {
+    throw new Error("No se encontraron las columnas necesarias en la hoja");
+  }
+  
+  // Normalize the province label for comparison
+  const normalizedProvinceLabel = provinceLabel.toLowerCase();
+  
+  // Process in batches to avoid blocking the UI thread
+  const cities: (City & { hasStorage: boolean })[] = [];
+  const citySet = new Set<string>(); // To ensure unique city names
+  
+  const batchSize = 500;
+  for (let i = 1; i < lines.length; i += batchSize) {
+    const endIndex = Math.min(i + batchSize, lines.length);
+    
+    for (let j = i; j < endIndex; j++) {
+      const line = lines[j];
+      if (!line.trim()) continue; // Skip empty lines
+      
+      // More robust CSV parsing
+      let fields: string[] = [];
+      let inQuotes = false;
+      let currentField = '';
+      
+      for (let k = 0; k < line.length; k++) {
+        const char = line[k];
+        
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          fields.push(currentField.replace(/"/g, '').trim());
+          currentField = '';
+        } else {
+          currentField += char;
+        }
+      }
+      
+      // Add the last field
+      fields.push(currentField.replace(/"/g, '').trim());
+      
+      // Get province, city and storage values if the fields exist
+      if (fields.length > Math.max(provinceColumnIndex, cityColumnIndex)) {
+        const rowProvince = fields[provinceColumnIndex].toLowerCase();
+        const cityName = fields[cityColumnIndex];
+        
+        // Only process if province matches and city name is valid
+        if (rowProvince === normalizedProvinceLabel && cityName && !citySet.has(cityName)) {
+          const hasStorage = storageColumnIndex !== -1 && fields.length > storageColumnIndex ? 
+            fields[storageColumnIndex].toLowerCase() === 'yes' : 
+            false;
+          
+          cities.push({
+            value: cityName.toLowerCase().replace(/\s+/g, '-'),
+            label: cityName,
+            hasStorage
+          });
+          
+          citySet.add(cityName); // Mark as seen
+        }
+      }
+    }
+  }
+  
+  // Sort alphabetically
+  cities.sort((a, b) => a.label.localeCompare(b.label));
+  
+  console.log(`Parsed ${cities.length} unique cities for province ${provinceLabel}`);
+  return cities;
 };
 
 // Legacy function for backward compatibility
