@@ -1,8 +1,8 @@
 
 import React from "react";
 import { useLocationSelect } from "@/hooks/useLocationSelect";
-import SearchableProvinceSelector from "@/components/location/SearchableProvinceSelector";
-import SearchableCitySelector from "@/components/location/SearchableCitySelector";
+import ProvinceSelector from "@/components/location/ProvinceSelector";
+import CitySelector from "@/components/location/CitySelector";
 import StorageCheckbox from "@/components/location/StorageCheckbox";
 import StorageAlert from "@/components/location/StorageAlert";
 import { LocationSelectorProps } from "@/types/location";
@@ -54,7 +54,7 @@ const LocationSelector = ({
 
   return (
     <div className="grid gap-4">
-      <SearchableProvinceSelector
+      <ProvinceSelector
         id={`${type}-provincia`}
         value={provinceValue}
         provinces={provinces}
@@ -62,7 +62,7 @@ const LocationSelector = ({
         onChange={onProvinceChange}
       />
 
-      <SearchableCitySelector
+      <CitySelector
         id={`${type}-ciudad`}
         value={cityValue}
         cities={cities}
