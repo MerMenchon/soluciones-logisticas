@@ -2,16 +2,17 @@
 import React from "react";
 import { Truck, MapPin } from "lucide-react";
 import LocationSelector from "@/components/LocationSelector";
+import { FormState } from "@/contexts/form/types";
 
 interface TransportRouteSectionProps {
   originProvince: string;
   originCity: string;
   setOriginProvince: (province: string) => void;
-  setOriginCity: (city: string, hasStorage: boolean) => void;
+  setOriginCity: (city: string) => void;
   destinationProvince: string;
   destinationCity: string;
   setDestinationProvince: (province: string) => void;
-  setDestinationCity: (city: string, hasStorage: boolean) => void;
+  setDestinationCity: (city: string) => void;
   selectedService: string;
   useOriginAsStorage: boolean;
   handleUseOriginAsStorageChange: (checked: boolean) => void;
@@ -19,6 +20,9 @@ interface TransportRouteSectionProps {
   handleUseDestinationAsStorageChange: (checked: boolean) => void;
   estimatedStorageTime: string;
   setEstimatedStorageTime: (time: string) => void;
+  isFieldTouched: (fieldName: keyof FormState) => boolean;
+  getFieldError: (fieldName: string) => string | null;
+  markFieldTouched: (fieldName: keyof FormState) => void;
 }
 
 const TransportRouteSection = ({
@@ -37,6 +41,9 @@ const TransportRouteSection = ({
   handleUseDestinationAsStorageChange,
   estimatedStorageTime,
   setEstimatedStorageTime,
+  isFieldTouched,
+  getFieldError,
+  markFieldTouched,
 }: TransportRouteSectionProps) => {
   return (
     <div className="reference-form-section">

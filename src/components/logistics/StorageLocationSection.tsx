@@ -2,15 +2,19 @@
 import React from "react";
 import { Warehouse } from "lucide-react";
 import LocationSelector from "@/components/LocationSelector";
+import { FormState } from "@/contexts/form/types";
 
 interface StorageLocationSectionProps {
   selectedService: string;
   storageProvince: string;
   storageCity: string;
   setStorageProvince: (province: string) => void;
-  setStorageCity: (city: string, hasStorage: boolean) => void;
+  setStorageCity: (city: string) => void;
   estimatedStorageTime: string;
   setEstimatedStorageTime: (time: string) => void;
+  isFieldTouched: (fieldName: keyof FormState) => boolean;
+  getFieldError: (fieldName: string) => string | null;
+  markFieldTouched: (fieldName: keyof FormState) => void;
 }
 
 const StorageLocationSection = ({
@@ -21,6 +25,9 @@ const StorageLocationSection = ({
   setStorageCity,
   estimatedStorageTime,
   setEstimatedStorageTime,
+  isFieldTouched,
+  getFieldError,
+  markFieldTouched,
 }: StorageLocationSectionProps) => {
   return (
     <div className="reference-form-section">
