@@ -23,6 +23,7 @@ interface TransportRouteSectionProps {
   isFieldTouched: (fieldName: keyof FormState) => boolean;
   getFieldError: (fieldName: string) => string | null;
   markFieldTouched: (fieldName: keyof FormState) => void;
+  resetFieldError?: (fieldName: string) => void; // Add resetFieldError as optional
 }
 
 const TransportRouteSection = ({

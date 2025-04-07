@@ -15,6 +15,7 @@ interface StorageLocationSectionProps {
   isFieldTouched: (fieldName: keyof FormState) => boolean;
   getFieldError: (fieldName: string) => string | null;
   markFieldTouched: (fieldName: keyof FormState) => void;
+  resetFieldError?: (fieldName: string) => void; // Add resetFieldError as optional
 }
 
 const StorageLocationSection = ({
@@ -28,6 +29,7 @@ const StorageLocationSection = ({
   isFieldTouched,
   getFieldError,
   markFieldTouched,
+  resetFieldError,
 }: StorageLocationSectionProps) => {
   return (
     <div className="reference-form-section">

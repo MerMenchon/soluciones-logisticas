@@ -1,3 +1,4 @@
+
 // Define ServiceType for form state
 export type ServiceType = "storage" | "transport" | "both" | "";
 
@@ -86,6 +87,7 @@ export interface FormContextType extends FormState {
   isFieldTouched: (fieldName: keyof FormState) => boolean;
   markFieldTouched: (fieldName: keyof FormState) => void;
   getFieldError: (fieldName: string) => string | null;
+  resetFieldError: (fieldName: string) => void; // Add resetFieldError here
   
   // Dialog methods
   setShowResponseDialog: (show: boolean) => void;
