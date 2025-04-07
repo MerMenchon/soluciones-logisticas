@@ -65,6 +65,12 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
     return (
       <Dialog open={open} onOpenChange={onClose}>
         <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center">Procesando</DialogTitle>
+            <DialogDescription className="text-center">
+              Espere por favor...
+            </DialogDescription>
+          </DialogHeader>
           <LoadingMessage />
         </DialogContent>
       </Dialog>
@@ -142,7 +148,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
                 </div>
               )}
               
-              {webhookResponse?.costoTotalIndividual && (
+              {(webhookResponse?.costoTotalIndividual) && (
                 <div className="text-center mt-4 pt-4 border-t border-agri-primary/20">
                   <div className="text-xs text-muted-foreground mb-1">Costo por unidad:</div>
                   <div className="text-lg font-semibold text-agri-primary">

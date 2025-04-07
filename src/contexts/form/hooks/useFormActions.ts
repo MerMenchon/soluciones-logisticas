@@ -45,25 +45,27 @@ export const useFormActions = ({
       // Send to webhook and get response
       const webhookResponse = await sendToWebhook(formData);
       
-      console.log("Received webhook response:", webhookResponse);
+      console.log("Webhook response received:", webhookResponse);
 
-      if (!webhookResponse) {
-        throw new Error("No response received from webhook");
-      }
-
-      // Extract first item if it's an array (API returns array with one object)
-      const responseData = Array.isArray(webhookResponse) ? webhookResponse[0] : webhookResponse;
-
+      // Update submission state with webhook response
       updateSubmissionState({ 
         isSubmitting: false,
         isWaitingForResponse: false,
-        webhookResponse: responseData 
+        webhookResponse
       });
     } catch (error) {
+      console.error("Error handling webhook response:", error);
       updateSubmissionState({ 
         isSubmitting: false,
         isWaitingForResponse: false,
         showResponseDialog: false
+      });
+      
+      // Show error message
+      toast({
+        title: "Error",
+        description: "Hubo un problema al procesar su solicitud. Por favor intente de nuevo.",
+        variant: "destructive"
       });
     }
   };

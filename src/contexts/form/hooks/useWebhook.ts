@@ -29,8 +29,11 @@ export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => 
     }
 
     // Parse the response as JSON
-    const responseData = await response.json();
-    console.log("Webhook response received:", responseData);
+    const rawResponse = await response.json();
+    console.log("Webhook response received:", rawResponse);
+    
+    // Handle array responses (API returns array with one object sometimes)
+    const responseData = Array.isArray(rawResponse) ? rawResponse[0] : rawResponse;
     
     // Ensure all cost fields are handled as strings
     const formattedResponse: WebhookResponse = {
@@ -40,9 +43,10 @@ export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => 
       CostoTotalAlmacenamiento: responseData.CostoTotalAlmacenamiento?.toString(),
       CostoTotalTransporte: responseData.CostoTotalTransporte?.toString(),
       CostoTotal: responseData.CostoTotal?.toString(),
-      costoTotalIndividual: responseData.costoTotalIndividual?.toString()
+      costoTotalIndividual: responseData.CostoTotalIndividual?.toString() || responseData.costoTotalIndividual?.toString()
     };
     
+    console.log("Processed webhook response:", formattedResponse);
     return formattedResponse;
   } catch (error) {
     if (error.name === 'AbortError') {
