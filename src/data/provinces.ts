@@ -4,7 +4,7 @@ import { Province } from "@/types/locations";
 // Fetch provinces from Google Sheets with pagination
 export const fetchProvinces = async (): Promise<Province[]> => {
   try {
-    const sheetId = "1ZOcB_H1RWujAnvi9i53YP-Jmh7WDQ1eSsucghqsMTFk";
+    const sheetId = "1bI2xqgZ9-ooLHCH8ublDX7mfg25sV-tw3fTEdm1hZp4";
     const sheetName = "LOCALIDADES";
     
     // Create a cache key based on the sheet ID and name
