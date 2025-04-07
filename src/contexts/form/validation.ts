@@ -104,6 +104,7 @@ export const getFormData = (formState: FormState) => {
   } = formState;
 
   return {
+    "ID_customer": 100,
     "Servicio": selectedService,
     "Provincia de Almacenamiento": storageProvince || null,
     "Ciudad de Almacenamiento": storageCity || null,
