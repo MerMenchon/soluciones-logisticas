@@ -87,7 +87,11 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
                      webhookResponse?.CostoTotalAlmacenamiento || 
                      webhookResponse?.CostoTotalTransporte ||
                      webhookResponse?.costoTotalIndividual ||
+                     webhookResponse?.CostoTotalIndividual ||
                      webhookResponse?.precio;
+  
+  // Get the individual cost value from either capitalization version
+  const individualCost = webhookResponse?.CostoTotalIndividual || webhookResponse?.costoTotalIndividual;
   
   // Function to handle submit request
   const handleSubmitRequest = () => {
@@ -148,11 +152,11 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
                 </div>
               )}
               
-              {(webhookResponse?.costoTotalIndividual) && (
+              {individualCost && (
                 <div className="text-center mt-4 pt-4 border-t border-agri-primary/20">
                   <div className="text-xs text-muted-foreground mb-1">Costo por unidad:</div>
                   <div className="text-lg font-semibold text-agri-primary">
-                    ${formatCurrency(webhookResponse.costoTotalIndividual)}
+                    ${formatCurrency(individualCost)}
                   </div>
                 </div>
               )}

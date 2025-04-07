@@ -1,4 +1,3 @@
-
 // Define ServiceType for form state
 export type ServiceType = "storage" | "transport" | "both" | "";
 
@@ -11,6 +10,7 @@ export interface WebhookResponse {
   CostoTotalTransporte?: string;
   CostoTotal?: string;
   costoTotalIndividual?: string;
+  CostoTotalIndividual?: string; // Added to handle the upper case version
 }
 
 // Form State interface

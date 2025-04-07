@@ -43,6 +43,7 @@ export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => 
       CostoTotalAlmacenamiento: responseData.CostoTotalAlmacenamiento?.toString(),
       CostoTotalTransporte: responseData.CostoTotalTransporte?.toString(),
       CostoTotal: responseData.CostoTotal?.toString(),
+      // Handle both capitalization formats for CostoTotalIndividual
       costoTotalIndividual: responseData.CostoTotalIndividual?.toString() || responseData.costoTotalIndividual?.toString()
     };
     
