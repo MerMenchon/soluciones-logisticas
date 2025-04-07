@@ -83,9 +83,6 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
                      webhookResponse?.costoTotalIndividual ||
                      webhookResponse?.precio;
   
-  // Get total cost from new structure or fall back to old precio field
-  const totalCost = webhookResponse?.CostoTotal || webhookResponse?.precio;
-  
   // Function to handle submit request
   const handleSubmitRequest = () => {
     console.log("Enviar solicitud clicked");
@@ -114,11 +111,11 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
         {hasCostInfo && (
           <Card className="border-2 border-agri-primary/20 bg-agri-primary/5">
             <CardContent className="pt-6">
-              {totalCost && (
+              {webhookResponse?.CostoTotal && (
                 <div className="text-center mb-4">
                   <div className="text-sm text-muted-foreground mb-1">Costo Total:</div>
                   <div className="text-4xl font-bold text-agri-primary">
-                    ${formatCurrency(totalCost)}
+                    ${formatCurrency(webhookResponse.CostoTotal)}
                   </div>
                 </div>
               )}
