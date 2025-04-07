@@ -113,6 +113,14 @@ const ProductTypeSelector = ({
     if (markFieldTouched) markFieldTouched('productType');
   };
 
+  // Handle interaction with the select trigger
+  const handleSelectTriggerInteraction = () => {
+    // Reset any error when interacting with the select
+    if (resetFieldError) {
+      resetFieldError('productType');
+    }
+  };
+
   // Check if the field is touched and has an error
   const touched = isFieldTouched ? isFieldTouched('productType') : false;
   const errorMessage = getFieldError ? getFieldError('productType') : null;
@@ -132,15 +140,12 @@ const ProductTypeSelector = ({
           // Mark as interacted when opening the select dropdown
           setHasInteracted(true);
         }}
-        onPointerDownCapture={() => {
-          // Reset any error when interacting with the select
-          if (resetFieldError) {
-            resetFieldError('productType');
-          }
-        }}
         disabled={isLoadingProducts}
       >
-        <SelectTrigger className={`w-full ${hasError ? 'border-red-500' : ''}`}>
+        <SelectTrigger 
+          className={`w-full ${hasError ? 'border-red-500' : ''}`}
+          onPointerDown={handleSelectTriggerInteraction}
+        >
           <SelectValue placeholder={
             isLoadingProducts 
               ? "Cargando tipos de producto..." 

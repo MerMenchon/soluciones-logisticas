@@ -82,6 +82,14 @@ const PresentationSelector = ({
     }
   };
 
+  // Handle interaction with the select trigger
+  const handleSelectTriggerInteraction = () => {
+    // Reset any error when interacting with the select
+    if (resetFieldError) {
+      resetFieldError('presentation');
+    }
+  };
+
   // Check if the field is touched and has an error
   const touched = isFieldTouched ? isFieldTouched('presentation') : false;
   const errorMessage = getFieldError ? getFieldError('presentation') : null;
@@ -105,15 +113,12 @@ const PresentationSelector = ({
           // Only mark when a selection is actually made
           setHasInteracted(true);
         }}
-        onPointerDownCapture={() => {
-          // Reset any error when interacting with the select
-          if (resetFieldError) {
-            resetFieldError('presentation');
-          }
-        }}
         disabled={isLoadingPresentations}
       >
-        <SelectTrigger className={`w-full ${hasError ? 'border-red-500' : ''}`}>
+        <SelectTrigger 
+          className={`w-full ${hasError ? 'border-red-500' : ''}`}
+          onPointerDown={handleSelectTriggerInteraction}
+        >
           <SelectValue placeholder={
             isLoadingPresentations 
               ? "Cargando tipos de presentación..." 
