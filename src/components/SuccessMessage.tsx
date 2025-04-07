@@ -52,6 +52,11 @@ const LoadingMessage = () => {
   );
 };
 
+const formatCurrency = (value: string | undefined): string => {
+  if (!value) return '0';
+  return Number(value).toLocaleString('es-AR');
+};
+
 const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
   const { webhookResponse, isWaitingForResponse, resetForm } = useFormContext();
   
@@ -71,12 +76,15 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
     ? webhookResponse.titulo.replace(/^"(.+)"$/, '$1') 
     : "¡Consulta enviada!";
   
-  // Format price for display, handling it as a string
-  const formattedPrice = webhookResponse?.precio 
-    ? Number(webhookResponse.precio).toLocaleString('es-AR')
-    : '0';
+  // Check if we have cost information to display
+  const hasCostInfo = webhookResponse?.CostoTotal || 
+                     webhookResponse?.CostoTotalAlmacenamiento || 
+                     webhookResponse?.CostoTotalTransporte ||
+                     webhookResponse?.costoTotalIndividual ||
+                     webhookResponse?.precio;
   
-  const showPrice = webhookResponse?.precio && webhookResponse.precio !== "0";
+  // Get total cost from new structure or fall back to old precio field
+  const totalCost = webhookResponse?.CostoTotal || webhookResponse?.precio;
   
   // Function to handle submit request
   const handleSubmitRequest = () => {
@@ -103,13 +111,48 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
           </DialogDescription>
         </DialogHeader>
 
-        {showPrice && (
+        {hasCostInfo && (
           <Card className="border-2 border-agri-primary/20 bg-agri-primary/5">
-            <CardContent className="pt-6 text-center">
-              <div className="text-sm text-muted-foreground mb-1">Precio aproximado:</div>
-              <div className="text-4xl font-bold text-agri-primary">
-                ${formattedPrice}
-              </div>
+            <CardContent className="pt-6">
+              {totalCost && (
+                <div className="text-center mb-4">
+                  <div className="text-sm text-muted-foreground mb-1">Costo Total:</div>
+                  <div className="text-4xl font-bold text-agri-primary">
+                    ${formatCurrency(totalCost)}
+                  </div>
+                </div>
+              )}
+
+              {(webhookResponse?.CostoTotalAlmacenamiento || webhookResponse?.CostoTotalTransporte) && (
+                <div className="grid grid-cols-2 gap-4 mt-4">
+                  {webhookResponse?.CostoTotalAlmacenamiento && (
+                    <div className="text-center">
+                      <div className="text-xs text-muted-foreground mb-1">Almacenamiento:</div>
+                      <div className="text-lg font-semibold text-agri-primary">
+                        ${formatCurrency(webhookResponse.CostoTotalAlmacenamiento)}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {webhookResponse?.CostoTotalTransporte && (
+                    <div className="text-center">
+                      <div className="text-xs text-muted-foreground mb-1">Transporte:</div>
+                      <div className="text-lg font-semibold text-agri-primary">
+                        ${formatCurrency(webhookResponse.CostoTotalTransporte)}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {webhookResponse?.costoTotalIndividual && (
+                <div className="text-center mt-4 pt-4 border-t border-agri-primary/20">
+                  <div className="text-xs text-muted-foreground mb-1">Costo por unidad:</div>
+                  <div className="text-lg font-semibold text-agri-primary">
+                    ${formatCurrency(webhookResponse.costoTotalIndividual)}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}

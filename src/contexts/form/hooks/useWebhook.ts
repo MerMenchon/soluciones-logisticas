@@ -28,11 +28,22 @@ export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => 
       throw new Error(`Webhook response was not ok: ${response.status}`);
     }
 
-    // Parse the response as JSON and return it as is with precio as string
+    // Parse the response as JSON
     const responseData = await response.json();
     console.log("Webhook response received:", responseData);
     
-    return responseData;
+    // Ensure all cost fields are handled as strings
+    const formattedResponse: WebhookResponse = {
+      titulo: responseData.titulo || "¡Consulta recibida!",
+      mensaje: responseData.mensaje || "Gracias por su consulta. Pronto nos pondremos en contacto.",
+      precio: responseData.precio?.toString(),
+      CostoTotalAlmacenamiento: responseData.CostoTotalAlmacenamiento?.toString(),
+      CostoTotalTransporte: responseData.CostoTotalTransporte?.toString(),
+      CostoTotal: responseData.CostoTotal?.toString(),
+      costoTotalIndividual: responseData.costoTotalIndividual?.toString()
+    };
+    
+    return formattedResponse;
   } catch (error) {
     if (error.name === 'AbortError') {
       console.error('Request timed out after', WEBHOOK_TIMEOUT/1000, 'seconds');
