@@ -110,11 +110,14 @@ const ProductTypeSelector = ({
       resetFieldError('productType');
     }
     onProductTypeChange(value);
+    if (markFieldTouched) markFieldTouched('productType');
   };
 
   // Check if the field is touched and has an error
   const touched = isFieldTouched ? isFieldTouched('productType') : false;
   const errorMessage = getFieldError ? getFieldError('productType') : null;
+  
+  // Only show error after interacting and when the field is touched with an error
   const hasError = touched && errorMessage && hasInteracted;
 
   return (
@@ -126,8 +129,14 @@ const ProductTypeSelector = ({
         value={productType} 
         onValueChange={handleProductTypeChange}
         onOpenChange={() => {
-          if (markFieldTouched) markFieldTouched('productType');
+          // Mark as interacted when opening the select dropdown
           setHasInteracted(true);
+        }}
+        onPointerDownCapture={() => {
+          // Reset any error when interacting with the select
+          if (resetFieldError) {
+            resetFieldError('productType');
+          }
         }}
         disabled={isLoadingProducts}
       >
@@ -140,7 +149,10 @@ const ProductTypeSelector = ({
         </SelectTrigger>
         <SelectContent>
           {productOptions.map((option) => (
-            <SelectItem key={option} value={option}>
+            <SelectItem 
+              key={option} 
+              value={option}
+            >
               {option}
             </SelectItem>
           ))}

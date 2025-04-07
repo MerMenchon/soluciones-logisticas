@@ -35,9 +35,9 @@ export const useNumericInput = ({
   };
 
   const handleBlur = () => {
+    // Only mark as touched and validate on blur, not on focus
     setHasInteracted(true);
     
-    // Only mark as touched and validate on blur
     if (markFieldTouched) {
       markFieldTouched(fieldName);
     }

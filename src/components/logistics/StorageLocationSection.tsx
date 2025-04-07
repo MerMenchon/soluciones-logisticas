@@ -31,6 +31,14 @@ const StorageLocationSection = ({
   markFieldTouched,
   resetFieldError,
 }: StorageLocationSectionProps) => {
+  // Update the handler to use resetFieldError when value changes
+  const handleEstimatedTimeChange = (value: string) => {
+    if (resetFieldError) {
+      resetFieldError('estimatedStorageTime');
+    }
+    setEstimatedStorageTime(value);
+  };
+
   return (
     <div className="reference-form-section">
       <h2 className="reference-form-subtitle">
@@ -51,7 +59,7 @@ const StorageLocationSection = ({
           onCityChange={setStorageCity}
           label="Almacenamiento"
           estimatedTime={estimatedStorageTime}
-          onEstimatedTimeChange={setEstimatedStorageTime}
+          onEstimatedTimeChange={handleEstimatedTimeChange}
         />
       )}
     </div>

@@ -53,6 +53,8 @@ const QuantityInput = ({
   // Check if the field is touched and has an error
   const touched = isFieldTouched ? isFieldTouched('quantity') : false;
   const errorMessage = getFieldError ? getFieldError('quantity') : null;
+  
+  // Only show error after interacting (blur) and when the field is touched with an error
   const hasError = touched && errorMessage && hasInteracted;
 
   return (

@@ -85,6 +85,8 @@ const PresentationSelector = ({
   // Check if the field is touched and has an error
   const touched = isFieldTouched ? isFieldTouched('presentation') : false;
   const errorMessage = getFieldError ? getFieldError('presentation') : null;
+  
+  // Only show error after interacting and when the field is touched with an error
   const hasError = touched && errorMessage && hasInteracted;
 
   // Check if the selected presentation is "Otro"
@@ -99,8 +101,15 @@ const PresentationSelector = ({
         value={presentation} 
         onValueChange={handlePresentationChange}
         onOpenChange={() => {
-          if (markFieldTouched) markFieldTouched('presentation');
+          // Don't mark as touched when first opening the select
+          // Only mark when a selection is actually made
           setHasInteracted(true);
+        }}
+        onPointerDownCapture={() => {
+          // Reset any error when interacting with the select
+          if (resetFieldError) {
+            resetFieldError('presentation');
+          }
         }}
         disabled={isLoadingPresentations}
       >
@@ -113,7 +122,13 @@ const PresentationSelector = ({
         </SelectTrigger>
         <SelectContent>
           {presentationOptions.map((option) => (
-            <SelectItem key={option} value={option}>
+            <SelectItem 
+              key={option} 
+              value={option}
+              onSelect={() => {
+                if (markFieldTouched) markFieldTouched('presentation');
+              }}
+            >
               {option}
             </SelectItem>
           ))}
