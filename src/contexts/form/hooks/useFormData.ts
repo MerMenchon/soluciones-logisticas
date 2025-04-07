@@ -6,6 +6,7 @@ import { FormState } from "../types";
  */
 export const prepareFormData = (formState: FormState) => {
   return {
+    id_customer : 1234,
     submissionDate: new Date().toISOString(), // Add current date and time
     service: {
       type: formState.selectedService,
