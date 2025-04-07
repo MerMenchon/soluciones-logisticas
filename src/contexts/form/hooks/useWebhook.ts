@@ -35,7 +35,7 @@ export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => 
     // Handle array responses (API returns array with one object sometimes)
     const responseData = Array.isArray(rawResponse) ? rawResponse[0] : rawResponse;
     
-    // Ensure all cost fields are handled as strings
+    // Process all fields as strings (including messages like "Servicio no solicitado")
     const formattedResponse: WebhookResponse = {
       titulo: responseData.titulo || "¡Consulta recibida!",
       mensaje: responseData.mensaje || "Gracias por su consulta. Pronto nos pondremos en contacto.",
@@ -44,7 +44,8 @@ export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => 
       CostoTotalTransporte: responseData.CostoTotalTransporte?.toString(),
       CostoTotal: responseData.CostoTotal?.toString(),
       // Handle both capitalization formats for CostoTotalIndividual
-      costoTotalIndividual: responseData.CostoTotalIndividual?.toString() || responseData.costoTotalIndividual?.toString()
+      costoTotalIndividual: responseData.costoTotalIndividual?.toString(),
+      CostoTotalIndividual: responseData.CostoTotalIndividual?.toString()
     };
     
     console.log("Processed webhook response:", formattedResponse);

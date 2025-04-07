@@ -52,9 +52,18 @@ const LoadingMessage = () => {
   );
 };
 
-const formatCurrency = (value: string | undefined): string => {
+// This function checks if the value is a valid number to format, otherwise returns the string as-is
+const formatValue = (value: string | undefined): string => {
   if (!value) return '0';
-  return Number(value).toLocaleString('es-AR');
+  
+  // Check if it's a numeric string we can format
+  const numValue = parseFloat(value);
+  if (!isNaN(numValue)) {
+    return numValue.toLocaleString('es-AR');
+  }
+  
+  // If it's not a number, return the original string (like "Servicio no solicitado")
+  return value;
 };
 
 const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
@@ -93,6 +102,13 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
   // Get the individual cost value from either capitalization version
   const individualCost = webhookResponse?.CostoTotalIndividual || webhookResponse?.costoTotalIndividual;
   
+  // Function to determine if a value should be displayed with $ symbol 
+  // (only for numeric values, not for messages like "Servicio no solicitado")
+  const shouldShowCurrencySymbol = (value: string | undefined): boolean => {
+    if (!value) return false;
+    return !isNaN(parseFloat(value));
+  };
+  
   // Function to handle submit request
   const handleSubmitRequest = () => {
     console.log("Enviar solicitud clicked");
@@ -125,7 +141,8 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
                 <div className="text-center mb-4">
                   <div className="text-sm text-muted-foreground mb-1">Costo Total:</div>
                   <div className="text-4xl font-bold text-agri-primary">
-                    ${formatCurrency(webhookResponse.CostoTotal)}
+                    {shouldShowCurrencySymbol(webhookResponse.CostoTotal) ? '$' : ''}
+                    {formatValue(webhookResponse.CostoTotal)}
                   </div>
                 </div>
               )}
@@ -136,7 +153,8 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
                     <div className="text-center">
                       <div className="text-xs text-muted-foreground mb-1">Almacenamiento:</div>
                       <div className="text-lg font-semibold text-agri-primary">
-                        ${formatCurrency(webhookResponse.CostoTotalAlmacenamiento)}
+                        {shouldShowCurrencySymbol(webhookResponse.CostoTotalAlmacenamiento) ? '$' : ''}
+                        {formatValue(webhookResponse.CostoTotalAlmacenamiento)}
                       </div>
                     </div>
                   )}
@@ -145,7 +163,8 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
                     <div className="text-center">
                       <div className="text-xs text-muted-foreground mb-1">Transporte:</div>
                       <div className="text-lg font-semibold text-agri-primary">
-                        ${formatCurrency(webhookResponse.CostoTotalTransporte)}
+                        {shouldShowCurrencySymbol(webhookResponse.CostoTotalTransporte) ? '$' : ''}
+                        {formatValue(webhookResponse.CostoTotalTransporte)}
                       </div>
                     </div>
                   )}
@@ -156,7 +175,8 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
                 <div className="text-center mt-4 pt-4 border-t border-agri-primary/20">
                   <div className="text-xs text-muted-foreground mb-1">Costo por unidad:</div>
                   <div className="text-lg font-semibold text-agri-primary">
-                    ${formatCurrency(individualCost)}
+                    {shouldShowCurrencySymbol(individualCost) ? '$' : ''}
+                    {formatValue(individualCost)}
                   </div>
                 </div>
               )}
