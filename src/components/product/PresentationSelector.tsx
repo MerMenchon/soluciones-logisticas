@@ -74,15 +74,16 @@ const PresentationSelector = ({
     }
     onPresentationChange(value);
     
-    // Mark as touched and validate only after a selection is made
+    // Marcamos como touched pero no establecemos hasInteracted
     if (markFieldTouched) {
       markFieldTouched('presentation');
     }
-    setHasInteracted(true);
+    
+    // No hacemos setHasInteracted(true) aquí para evitar mostrar errores después de seleccionar
   };
   
   const handleBlur = () => {
-    // Only mark as touched and validate on blur
+    // Solo marcamos como touched y validamos en blur
     if (markFieldTouched) {
       markFieldTouched('presentation');
     }
@@ -93,8 +94,8 @@ const PresentationSelector = ({
   const touched = isFieldTouched ? isFieldTouched('presentation') : false;
   const errorMessage = getFieldError ? getFieldError('presentation') : null;
   
-  // Only show error after interacting and when the field is touched with an error
-  const hasError = touched && errorMessage && hasInteracted;
+  // Solo mostrar error después de interactuar y cuando el campo tiene un error
+  const hasError = touched && errorMessage && hasInteracted && !presentation;
 
   // Check if the selected presentation is "Otro"
   const showClarificationInput = presentation === "Otro";
@@ -108,8 +109,7 @@ const PresentationSelector = ({
         value={presentation} 
         onValueChange={handlePresentationChange}
         onOpenChange={() => {
-          // Don't mark as touched when opening the select
-          // The interaction is set to true only on selection or blur
+          // No marcamos como touched al abrir el select
         }}
         disabled={isLoadingPresentations}
       >

@@ -6,7 +6,6 @@ export const useFieldValidation = () => {
   const validateField = (fieldName: keyof FormState, formState: FormState): string | null => {
     switch(fieldName) {
       case 'selectedService':
-        
         return formState.selectedService ? null : "Debe seleccionar un servicio";
       case 'storageProvince':
         if (formState.selectedService === "storage" || formState.selectedService === "both") {

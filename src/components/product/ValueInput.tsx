@@ -38,7 +38,7 @@ const ValueInput = ({
   const touched = isFieldTouched ? isFieldTouched('cargoValue') : false;
   const errorMessage = getFieldError ? getFieldError('cargoValue') : null;
   
-  // Only show error after interacting (blur) and when the field is touched with an error
+  // Solo mostrar error después de interactuar (blur) y cuando el campo tiene un error
   const hasError = touched && errorMessage && hasInteracted;
 
   return (

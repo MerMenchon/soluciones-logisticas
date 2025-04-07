@@ -111,15 +111,16 @@ const ProductTypeSelector = ({
     }
     onProductTypeChange(value);
     
-    // Mark as touched and validate only after a selection is made
+    // Al seleccionar un valor válido, ya no debemos mostrar error
     if (markFieldTouched) {
       markFieldTouched('productType');
     }
-    setHasInteracted(true);
+    
+    // No hacemos setHasInteracted(true) aquí para evitar mostrar errores después de seleccionar
   };
   
   const handleBlur = () => {
-    // Only mark as touched and validate on blur
+    // Solo marcamos como touched en blur
     if (markFieldTouched) {
       markFieldTouched('productType');
     }
@@ -130,8 +131,8 @@ const ProductTypeSelector = ({
   const touched = isFieldTouched ? isFieldTouched('productType') : false;
   const errorMessage = getFieldError ? getFieldError('productType') : null;
   
-  // Only show error after interacting and when the field is touched with an error
-  const hasError = touched && errorMessage && hasInteracted;
+  // Solo mostrar error después de interactuar y cuando el campo tiene un error
+  const hasError = touched && errorMessage && hasInteracted && !productType;
 
   return (
     <div>
@@ -142,8 +143,7 @@ const ProductTypeSelector = ({
         value={productType} 
         onValueChange={handleProductTypeChange}
         onOpenChange={() => {
-          // Don't mark as touched when opening the select dropdown
-          // The interaction is set to true only on selection or blur
+          // No marcamos como touched al abrir el select
         }}
         disabled={isLoadingProducts}
       >
