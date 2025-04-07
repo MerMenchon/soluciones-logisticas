@@ -111,16 +111,14 @@ const ProductTypeSelector = ({
     }
     onProductTypeChange(value);
     
-    // Al seleccionar un valor válido, ya no debemos mostrar error
+    // Importante: No marcamos hasInteracted=true aquí para evitar mostrar errores
     if (markFieldTouched) {
       markFieldTouched('productType');
     }
-    
-    // No hacemos setHasInteracted(true) aquí para evitar mostrar errores después de seleccionar
   };
   
   const handleBlur = () => {
-    // Solo marcamos como touched en blur
+    // Solo marcamos como touched y establecemos hasInteracted en blur
     if (markFieldTouched) {
       markFieldTouched('productType');
     }
@@ -131,7 +129,7 @@ const ProductTypeSelector = ({
   const touched = isFieldTouched ? isFieldTouched('productType') : false;
   const errorMessage = getFieldError ? getFieldError('productType') : null;
   
-  // Solo mostrar error después de interactuar y cuando el campo tiene un error
+  // CLAVE: Verificar que no haya selección (productType vacío) para mostrar el error
   const hasError = touched && errorMessage && hasInteracted && !productType;
 
   return (
@@ -143,7 +141,7 @@ const ProductTypeSelector = ({
         value={productType} 
         onValueChange={handleProductTypeChange}
         onOpenChange={() => {
-          // No marcamos como touched al abrir el select
+          // No action needed on open
         }}
         disabled={isLoadingProducts}
       >
