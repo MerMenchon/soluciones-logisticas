@@ -20,6 +20,7 @@ interface PresentationSelectorProps {
   isFieldTouched?: (fieldName: keyof FormState) => boolean;
   getFieldError?: (fieldName: string) => string | null;
   markFieldTouched?: (fieldName: keyof FormState) => void;
+  resetFieldError?: (fieldName: string) => void;
 }
 
 const PresentationSelector = ({
@@ -30,9 +31,11 @@ const PresentationSelector = ({
   isFieldTouched,
   getFieldError,
   markFieldTouched,
+  resetFieldError
 }: PresentationSelectorProps) => {
   const [presentationOptions, setPresentationOptions] = useState<string[]>([]);
   const [isLoadingPresentations, setIsLoadingPresentations] = useState(true);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const { toast } = useToast();
   
   useEffect(() => {
@@ -63,11 +66,26 @@ const PresentationSelector = ({
       onClarificationChange(newClarification);
     }
   };
+  
+  // Handle presentation change
+  const handlePresentationChange = (value: string) => {
+    if (resetFieldError) {
+      resetFieldError('presentation');
+    }
+    onPresentationChange(value);
+  };
+  
+  const handleBlur = () => {
+    setHasInteracted(true);
+    if (markFieldTouched) {
+      markFieldTouched('presentation');
+    }
+  };
 
   // Check if the field is touched and has an error
   const touched = isFieldTouched ? isFieldTouched('presentation') : false;
   const errorMessage = getFieldError ? getFieldError('presentation') : null;
-  const hasError = touched && errorMessage;
+  const hasError = touched && errorMessage && hasInteracted;
 
   // Check if the selected presentation is "Otro"
   const showClarificationInput = presentation === "Otro";
@@ -79,9 +97,10 @@ const PresentationSelector = ({
       </label>
       <Select 
         value={presentation} 
-        onValueChange={(value) => {
-          onPresentationChange(value);
-          markFieldTouched && markFieldTouched('presentation');
+        onValueChange={handlePresentationChange}
+        onOpenChange={() => {
+          if (markFieldTouched) markFieldTouched('presentation');
+          setHasInteracted(true);
         }}
         disabled={isLoadingPresentations}
       >

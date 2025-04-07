@@ -1,10 +1,10 @@
 import React from "react";
 import { Package } from "lucide-react";
 import ProductTypeSelector from "@/components/product/ProductTypeSelector";
+import DescriptionInput from "@/components/product/DescriptionInput";
 import PresentationSelector from "@/components/product/PresentationSelector";
 import QuantityInput from "@/components/product/QuantityInput";
 import ValueInput from "@/components/product/ValueInput";
-import DescriptionInput from "@/components/product/DescriptionInput";
 import { FormState } from "@/contexts/form/types";
 
 interface ProductDetailsProps {
@@ -13,7 +13,7 @@ interface ProductDetailsProps {
   value: string;
   onValueChange: (value: string) => void;
   shippingTime: string;
-  onShippingTimeChange: (time: string) => void;
+  onShippingTimeChange: (value: string) => void;
   description: string;
   onDescriptionChange: (description: string) => void;
   presentation: string;
@@ -27,6 +27,7 @@ interface ProductDetailsProps {
   isFieldTouched?: (fieldName: keyof FormState) => boolean;
   getFieldError?: (fieldName: string) => string | null;
   markFieldTouched?: (fieldName: keyof FormState) => void;
+  resetFieldError?: (fieldName: string) => void;
 }
 
 const ProductDetails = ({
@@ -34,6 +35,8 @@ const ProductDetails = ({
   onProductTypeChange,
   value,
   onValueChange,
+  shippingTime,
+  onShippingTimeChange,
   description,
   onDescriptionChange,
   presentation,
@@ -47,32 +50,36 @@ const ProductDetails = ({
   isFieldTouched,
   getFieldError,
   markFieldTouched,
+  resetFieldError // Add new prop
 }: ProductDetailsProps) => {
+  // Determine if the description input should be shown based on the product type
+  const showDescription = productType === "Otro";
+
   return (
     <div className="reference-form-section">
       <h2 className="reference-form-subtitle">
         <Package className="w-5 h-5 inline-block mr-2" />
-        <span>Información del producto</span>
+        <span>Detalles del producto</span>
       </h2>
-
-      <div className="space-y-6">
-        <ProductTypeSelector 
+      <div className="space-y-4">
+        <ProductTypeSelector
           productType={productType}
           onProductTypeChange={onProductTypeChange}
           isFieldTouched={isFieldTouched}
           getFieldError={getFieldError}
           markFieldTouched={markFieldTouched}
+          resetFieldError={resetFieldError}
         />
 
-        {/* Show description field if product type is "Otro" */}
-        {productType === "Otro" && (
-          <DescriptionInput 
+        {showDescription && (
+          <DescriptionInput
             description={description}
             onDescriptionChange={onDescriptionChange}
-            isRequired={true}
+            isRequired={productType === "Otro"}
             isFieldTouched={isFieldTouched}
             getFieldError={getFieldError}
             markFieldTouched={markFieldTouched}
+            resetFieldError={resetFieldError}
           />
         )}
 
@@ -84,27 +91,28 @@ const ProductDetails = ({
           isFieldTouched={isFieldTouched}
           getFieldError={getFieldError}
           markFieldTouched={markFieldTouched}
+          resetFieldError={resetFieldError}
         />
 
-        <div className="grid grid-cols-1 gap-6">
-          <QuantityInput 
-            quantity={quantity}
-            onQuantityChange={onQuantityChange}
-            quantityUnit={quantityUnit}
-            onQuantityUnitChange={onQuantityUnitChange}
-            isFieldTouched={isFieldTouched}
-            getFieldError={getFieldError}
-            markFieldTouched={markFieldTouched}
-          />
+        <QuantityInput
+          quantity={quantity}
+          onQuantityChange={onQuantityChange}
+          quantityUnit={quantityUnit}
+          onQuantityUnitChange={onQuantityUnitChange}
+          isFieldTouched={isFieldTouched}
+          getFieldError={getFieldError}
+          markFieldTouched={markFieldTouched}
+          resetFieldError={resetFieldError}
+        />
 
-          <ValueInput 
-            value={value}
-            onValueChange={onValueChange}
-            isFieldTouched={isFieldTouched}
-            getFieldError={getFieldError}
-            markFieldTouched={markFieldTouched}
-          />
-        </div>
+        <ValueInput
+          value={value}
+          onValueChange={onValueChange}
+          isFieldTouched={isFieldTouched}
+          getFieldError={getFieldError}
+          markFieldTouched={markFieldTouched}
+          resetFieldError={resetFieldError}
+        />
       </div>
     </div>
   );

@@ -17,6 +17,7 @@ interface ProductTypeSelectorProps {
   isFieldTouched?: (fieldName: keyof FormState) => boolean;
   getFieldError?: (fieldName: string) => string | null;
   markFieldTouched?: (fieldName: keyof FormState) => void;
+  resetFieldError?: (fieldName: string) => void;
 }
 
 const ProductTypeSelector = ({
@@ -25,9 +26,11 @@ const ProductTypeSelector = ({
   isFieldTouched,
   getFieldError,
   markFieldTouched,
+  resetFieldError
 }: ProductTypeSelectorProps) => {
   const [productOptions, setProductOptions] = useState<string[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -101,10 +104,18 @@ const ProductTypeSelector = ({
     fetchProductTypes();
   }, [toast]);
 
+  // Handle product type change
+  const handleProductTypeChange = (value: string) => {
+    if (resetFieldError) {
+      resetFieldError('productType');
+    }
+    onProductTypeChange(value);
+  };
+
   // Check if the field is touched and has an error
   const touched = isFieldTouched ? isFieldTouched('productType') : false;
   const errorMessage = getFieldError ? getFieldError('productType') : null;
-  const hasError = touched && errorMessage;
+  const hasError = touched && errorMessage && hasInteracted;
 
   return (
     <div>
@@ -113,9 +124,10 @@ const ProductTypeSelector = ({
       </label>
       <Select 
         value={productType} 
-        onValueChange={(value) => {
-          onProductTypeChange(value);
-          markFieldTouched && markFieldTouched('productType');
+        onValueChange={handleProductTypeChange}
+        onOpenChange={() => {
+          if (markFieldTouched) markFieldTouched('productType');
+          setHasInteracted(true);
         }}
         disabled={isLoadingProducts}
       >

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { FormState } from "@/contexts/form/types";
 
@@ -10,6 +10,7 @@ interface DescriptionInputProps {
   isFieldTouched?: (fieldName: keyof FormState) => boolean;
   getFieldError?: (fieldName: string) => string | null;
   markFieldTouched?: (fieldName: keyof FormState) => void;
+  resetFieldError?: (fieldName: string) => void;
 }
 
 const DescriptionInput = ({ 
@@ -19,19 +20,33 @@ const DescriptionInput = ({
   isFieldTouched,
   getFieldError,
   markFieldTouched,
+  resetFieldError
 }: DescriptionInputProps) => {
+  const [hasInteracted, setHasInteracted] = useState(false);
+  
   // Handle description input with 100 character limit
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDescription = e.target.value;
     if (newDescription.length <= 100) {
       onDescriptionChange(newDescription);
+      // Reset any validation errors while typing
+      if (resetFieldError) {
+        resetFieldError('description');
+      }
+    }
+  };
+  
+  const handleBlur = () => {
+    setHasInteracted(true);
+    if (markFieldTouched) {
+      markFieldTouched('description');
     }
   };
 
   // Check if the field is touched and has an error
   const touched = isFieldTouched ? isFieldTouched('description') : false;
   const errorMessage = getFieldError ? getFieldError('description') : null;
-  const hasError = touched && errorMessage;
+  const hasError = touched && errorMessage && hasInteracted;
 
   return (
     <div>
@@ -46,7 +61,7 @@ const DescriptionInput = ({
           : "Describa brevemente su producto"}
         value={description}
         onChange={handleDescriptionChange}
-        onBlur={() => markFieldTouched && markFieldTouched('description')}
+        onBlur={handleBlur}
         maxLength={100}
         className={`w-full ${hasError ? 'border-red-500' : ''}`}
         required={isRequired}

@@ -16,6 +16,7 @@ export const useFormSubmission = (formState: FormState) => {
     markFieldTouched,
     getFieldError,
     setFieldError,
+    resetFieldError,
     resetFieldTracking
   } = useFieldTracking();
 
@@ -71,6 +72,7 @@ export const useFormSubmission = (formState: FormState) => {
     isFieldTouched,
     markFieldTouched,
     getFieldError,
+    resetFieldError, // Add the new resetFieldError function
     resetFieldTracking, // Make sure to include this in the return object
   };
 };

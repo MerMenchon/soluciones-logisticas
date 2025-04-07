@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import ServiceSelector from "@/components/ServiceSelector";
 import ProductDetails from "@/components/ProductDetails";
@@ -62,6 +61,7 @@ const LogisticsForm = () => {
     isFieldTouched,
     markFieldTouched,
     getFieldError,
+    resetFieldError,
   } = useFormContext();
 
   // State for form validation
@@ -150,6 +150,7 @@ const LogisticsForm = () => {
                 isFieldTouched={isFieldTouched}
                 getFieldError={getFieldError}
                 markFieldTouched={markFieldTouched}
+                resetFieldError={resetFieldError}
               />
             )}
 
@@ -188,6 +189,7 @@ const LogisticsForm = () => {
                 isFieldTouched={isFieldTouched}
                 getFieldError={getFieldError}
                 markFieldTouched={markFieldTouched}
+                resetFieldError={resetFieldError}
               />
             )}
 
@@ -229,6 +231,7 @@ const LogisticsForm = () => {
               isFieldTouched={isFieldTouched}
               getFieldError={getFieldError}
               markFieldTouched={markFieldTouched}
+              resetFieldError={resetFieldError}
             />
             
             <ContactDetails

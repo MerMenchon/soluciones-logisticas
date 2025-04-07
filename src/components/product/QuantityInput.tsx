@@ -14,6 +14,7 @@ interface QuantityInputProps {
   isFieldTouched?: (fieldName: keyof FormState) => boolean;
   getFieldError?: (fieldName: string) => string | null;
   markFieldTouched?: (fieldName: keyof FormState) => void;
+  resetFieldError?: (fieldName: string) => void;
 }
 
 const QuantityInput = ({
@@ -24,6 +25,7 @@ const QuantityInput = ({
   isFieldTouched,
   getFieldError,
   markFieldTouched,
+  resetFieldError
 }: QuantityInputProps) => {
   const {
     localValue: localQuantity,
@@ -34,7 +36,8 @@ const QuantityInput = ({
     initialValue: quantity,
     fieldName: 'quantity',
     onValueChange: onQuantityChange,
-    markFieldTouched
+    markFieldTouched,
+    resetFieldError
   });
 
   // Use the React Query hook for quantity units

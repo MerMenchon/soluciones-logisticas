@@ -68,6 +68,14 @@ export const useFieldTracking = () => {
     return fieldErrors[fieldName] || null;
   };
   
+  // Reset field errors (useful when typing)
+  const resetFieldError = (fieldName: string) => {
+    setFieldErrors(prev => ({
+      ...prev,
+      [fieldName]: null
+    }));
+  };
+  
   // Reset all field tracking
   const resetFieldTracking = () => {
     setTouchedFields({});
@@ -81,6 +89,7 @@ export const useFieldTracking = () => {
     markAllFieldsTouched,
     fieldErrors,
     setFieldError,
+    resetFieldError,
     getFieldError,
     resetFieldTracking
   };

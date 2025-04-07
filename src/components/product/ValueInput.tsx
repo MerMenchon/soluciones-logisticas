@@ -10,6 +10,7 @@ interface ValueInputProps {
   isFieldTouched?: (fieldName: keyof FormState) => boolean;
   getFieldError?: (fieldName: string) => string | null;
   markFieldTouched?: (fieldName: keyof FormState) => void;
+  resetFieldError?: (fieldName: string) => void;
 }
 
 const ValueInput = ({ 
@@ -18,6 +19,7 @@ const ValueInput = ({
   isFieldTouched,
   getFieldError,
   markFieldTouched,
+  resetFieldError
 }: ValueInputProps) => {
   const {
     localValue,
@@ -28,7 +30,8 @@ const ValueInput = ({
     initialValue: value,
     fieldName: 'cargoValue',
     onValueChange,
-    markFieldTouched
+    markFieldTouched,
+    resetFieldError
   });
 
   // Check if the field is touched and has an error
