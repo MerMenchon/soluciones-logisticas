@@ -73,21 +73,20 @@ const PresentationSelector = ({
       resetFieldError('presentation');
     }
     onPresentationChange(value);
-  };
-  
-  const handleBlur = () => {
-    setHasInteracted(true);
+    
+    // Mark as touched and validate only after a selection is made
     if (markFieldTouched) {
       markFieldTouched('presentation');
     }
+    setHasInteracted(true);
   };
-
-  // Handle interaction with the select trigger
-  const handleSelectTriggerInteraction = () => {
-    // Reset any error when interacting with the select
-    if (resetFieldError) {
-      resetFieldError('presentation');
+  
+  const handleBlur = () => {
+    // Only mark as touched and validate on blur
+    if (markFieldTouched) {
+      markFieldTouched('presentation');
     }
+    setHasInteracted(true);
   };
 
   // Check if the field is touched and has an error
@@ -109,15 +108,14 @@ const PresentationSelector = ({
         value={presentation} 
         onValueChange={handlePresentationChange}
         onOpenChange={() => {
-          // Don't mark as touched when first opening the select
-          // Only mark when a selection is actually made
-          setHasInteracted(true);
+          // Don't mark as touched when opening the select
+          // The interaction is set to true only on selection or blur
         }}
         disabled={isLoadingPresentations}
       >
         <SelectTrigger 
           className={`w-full ${hasError ? 'border-red-500' : ''}`}
-          onPointerDown={handleSelectTriggerInteraction}
+          onBlur={handleBlur}
         >
           <SelectValue placeholder={
             isLoadingPresentations 
@@ -130,9 +128,6 @@ const PresentationSelector = ({
             <SelectItem 
               key={option} 
               value={option}
-              onSelect={() => {
-                if (markFieldTouched) markFieldTouched('presentation');
-              }}
             >
               {option}
             </SelectItem>

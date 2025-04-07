@@ -110,15 +110,20 @@ const ProductTypeSelector = ({
       resetFieldError('productType');
     }
     onProductTypeChange(value);
-    if (markFieldTouched) markFieldTouched('productType');
-  };
-
-  // Handle interaction with the select trigger
-  const handleSelectTriggerInteraction = () => {
-    // Reset any error when interacting with the select
-    if (resetFieldError) {
-      resetFieldError('productType');
+    
+    // Mark as touched and validate only after a selection is made
+    if (markFieldTouched) {
+      markFieldTouched('productType');
     }
+    setHasInteracted(true);
+  };
+  
+  const handleBlur = () => {
+    // Only mark as touched and validate on blur
+    if (markFieldTouched) {
+      markFieldTouched('productType');
+    }
+    setHasInteracted(true);
   };
 
   // Check if the field is touched and has an error
@@ -137,14 +142,14 @@ const ProductTypeSelector = ({
         value={productType} 
         onValueChange={handleProductTypeChange}
         onOpenChange={() => {
-          // Mark as interacted when opening the select dropdown
-          setHasInteracted(true);
+          // Don't mark as touched when opening the select dropdown
+          // The interaction is set to true only on selection or blur
         }}
         disabled={isLoadingProducts}
       >
         <SelectTrigger 
           className={`w-full ${hasError ? 'border-red-500' : ''}`}
-          onPointerDown={handleSelectTriggerInteraction}
+          onBlur={handleBlur}
         >
           <SelectValue placeholder={
             isLoadingProducts 

@@ -57,6 +57,13 @@ const QuantityInput = ({
   // Only show error after interacting (blur) and when the field is touched with an error
   const hasError = touched && errorMessage && hasInteracted;
 
+  // Handle unit change with validation
+  const handleUnitChange = (value: string) => {
+    if (value) {
+      onQuantityUnitChange(value);
+    }
+  };
+
   return (
     <div>
       <label htmlFor="quantity" className="block text-sm font-medium text-agri-secondary mb-1">
@@ -79,9 +86,7 @@ const QuantityInput = ({
           <ToggleGroup 
             type="single" 
             value={quantityUnit}
-            onValueChange={(value) => {
-              if (value) onQuantityUnitChange(value);
-            }}
+            onValueChange={handleUnitChange}
             className="flex flex-wrap gap-1 ml-2"
           >
             {quantityUnitOptions.map((unit) => (
