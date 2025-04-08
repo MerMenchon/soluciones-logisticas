@@ -8,6 +8,7 @@ import { translateServiceType } from "../validation";
 export const prepareFormData = (formState: FormState) => {
   return {
     submissionDate: new Date().toISOString(), // Add current date and time
+    userId: 123456, // Add the user ID as requested
     service: {
       type: translateServiceType(formState.selectedService),
     },
