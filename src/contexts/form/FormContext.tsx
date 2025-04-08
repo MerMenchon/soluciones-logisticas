@@ -3,12 +3,12 @@ import React, { createContext, useContext, ReactNode } from "react";
 import { FormContextType, FormProviderProps } from "./types";
 import { useFormState } from "./formState";
 
-// Create the context
-const FormContext = createContext<FormContextType | undefined>(undefined);
+// Create the context with a more specific name to avoid conflicts
+const CustomFormContext = createContext<FormContextType | undefined>(undefined);
 
-// Hook for using the form context
+// Hook for using the form context with a more specific name
 export const useFormContext = () => {
-  const context = useContext(FormContext);
+  const context = useContext(CustomFormContext);
   if (!context) {
     throw new Error("useFormContext must be used within a FormProvider");
   }
@@ -24,11 +24,11 @@ export const FormProvider: FormProviderComponent = ({ children }) => {
   const formState = useFormState();
   
   return (
-    <FormContext.Provider value={formState}>
+    <CustomFormContext.Provider value={formState}>
       {children}
-    </FormContext.Provider>
+    </CustomFormContext.Provider>
   );
 };
 
 // Fix: Add _context property for direct access when needed
-FormProvider._context = FormContext;
+FormProvider._context = CustomFormContext;
