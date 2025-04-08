@@ -74,6 +74,7 @@ const TransportRouteSection = ({
             }
             estimatedTime={useOriginAsStorage ? estimatedStorageTime : undefined}
             onEstimatedTimeChange={useOriginAsStorage ? setEstimatedStorageTime : undefined}
+            disableStorageOption={useDestinationAsStorage}
           />
         </div>
         
@@ -97,6 +98,7 @@ const TransportRouteSection = ({
             }
             estimatedTime={useDestinationAsStorage ? estimatedStorageTime : undefined}
             onEstimatedTimeChange={useDestinationAsStorage ? setEstimatedStorageTime : undefined}
+            disableStorageOption={useOriginAsStorage}
           />
         </div>
       </div>

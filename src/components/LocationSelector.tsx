@@ -20,6 +20,7 @@ const LocationSelector = ({
   onUseAsStorageChange,
   estimatedTime,
   onEstimatedTimeChange,
+  disableStorageOption = false,
 }: LocationSelectorProps) => {
   const {
     cities,
@@ -97,6 +98,7 @@ const LocationSelector = ({
           hasStorage={hasStorage}
           cityValue={cityValue}
           onChange={onUseAsStorageChange}
+          disabled={disableStorageOption} // Add the disabled prop
         />
       )}
 

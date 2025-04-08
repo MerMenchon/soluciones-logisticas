@@ -53,10 +53,12 @@ export const useFormLocation = (initialState: Partial<LocationState> = {}) => {
   const setEstimatedStorageTime = (time: string) => 
     updateLocationState({ estimatedStorageTime: time });
 
-  // Boolean handlers
+  // Boolean handlers with mutual exclusivity
   const handleUseOriginAsStorageChange = (checked: boolean) => {
     updateLocationState({ 
       useOriginAsStorage: checked,
+      // If we're enabling origin as storage, disable destination as storage
+      useDestinationAsStorage: checked ? false : locationState.useDestinationAsStorage,
       storageProvince: checked ? locationState.originProvince : locationState.storageProvince,
       storageCity: checked ? locationState.originCity : locationState.storageCity
     });
@@ -65,6 +67,8 @@ export const useFormLocation = (initialState: Partial<LocationState> = {}) => {
   const handleUseDestinationAsStorageChange = (checked: boolean) => {
     updateLocationState({ 
       useDestinationAsStorage: checked,
+      // If we're enabling destination as storage, disable origin as storage
+      useOriginAsStorage: checked ? false : locationState.useOriginAsStorage,
       storageProvince: checked ? locationState.destinationProvince : locationState.storageProvince,
       storageCity: checked ? locationState.destinationCity : locationState.storageCity
     });

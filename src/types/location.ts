@@ -10,6 +10,7 @@ export interface LocationSelectorProps {
   onUseAsStorageChange?: (value: boolean) => void;
   estimatedTime?: string;
   onEstimatedTimeChange?: (value: string) => void;
+  disableStorageOption?: boolean;
 }
 
 export interface UseLocationSelectHookParams {
