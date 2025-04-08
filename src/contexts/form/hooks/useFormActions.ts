@@ -77,7 +77,9 @@ export const useFormActions = ({
 
   // Confirm request and submit form
   const confirmRequest = async () => {
-    submitForm();
+    // The actual submission is now handled in the SuccessMessage component
+    // This is kept for backward compatibility
+    console.log("Confirm request called");
   };
 
   // Cancel request
@@ -89,31 +91,14 @@ export const useFormActions = ({
     });
   };
 
-  // Submit form logic
-  const submitForm = async () => {
-    updateSubmissionState({ 
-      isSubmitting: true,
-      isWaitingForResponse: true,
-      showResponseDialog: true
-    });
-
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    // Here you would typically send the form data to your server
-    const formData = getFormData(formState);
-    console.log("Form data submitted:", formData);
-
-    // Show success message
-    toast({
-      title: "Éxito",
-      description: "Su consulta ha sido enviada correctamente!",
-    });
-
-    updateSubmissionState({ 
-      formSubmitted: false, 
+  // Reset form function
+  const resetForm = () => {
+    // Reset submission state
+    updateSubmissionState({
       isSubmitting: false,
-      isWaitingForResponse: false
+      isWaitingForResponse: false,
+      showResponseDialog: false,
+      webhookResponse: undefined
     });
     
     // Reset field tracking
@@ -125,6 +110,6 @@ export const useFormActions = ({
     confirmRequest,
     cancelRequest,
     handleCloseResponseDialog,
-    submitForm
+    resetForm
   };
 };

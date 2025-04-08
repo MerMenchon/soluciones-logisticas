@@ -2,6 +2,7 @@
 import { WebhookResponse } from "../types";
 
 const WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook/recepcionFormulario";
+const CONFIRMATION_WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/confirmacion";
 const WEBHOOK_TIMEOUT = 30000; // 30 seconds timeout
 
 export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => {
@@ -45,7 +46,10 @@ export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => 
       CostoTotal: responseData.CostoTotal?.toString(),
       // Handle both capitalization formats for CostoTotalIndividual
       costoTotalIndividual: responseData.costoTotalIndividual?.toString(),
-      CostoTotalIndividual: responseData.CostoTotalIndividual?.toString()
+      CostoTotalIndividual: responseData.CostoTotalIndividual?.toString(),
+      // New fields
+      id: responseData.id?.toString(),
+      submissionDate: responseData.submissionDate
     };
     
     console.log("Processed webhook response:", formattedResponse);
@@ -57,6 +61,62 @@ export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => 
     }
     
     console.error('Error sending data to webhook:', error);
+    throw error;
+  }
+};
+
+// New function to send confirmation
+export const sendConfirmation = async (
+  id: string | undefined, 
+  submissionDate: string | undefined, 
+  confirmacion: boolean
+): Promise<void> => {
+  try {
+    if (!id || !submissionDate) {
+      throw new Error('Missing required id or submissionDate for confirmation');
+    }
+
+    console.log("Sending confirmation to webhook:", { 
+      id, 
+      submissionDate, 
+      confirmacion 
+    });
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), WEBHOOK_TIMEOUT);
+    
+    const response = await fetch(CONFIRMATION_WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      signal: controller.signal,
+      body: JSON.stringify({
+        id,
+        submissionDate,
+        confirmacion
+      }),
+    });
+    
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error(`Confirmation webhook response was not ok: ${response.status}`);
+    }
+
+    console.log("Confirmation sent successfully");
+    
+    // Optional: process response if needed
+    const responseData = await response.json();
+    console.log("Confirmation response:", responseData);
+    
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      console.error('Confirmation request timed out after', WEBHOOK_TIMEOUT/1000, 'seconds');
+      throw new Error(`Confirmation request timed out after ${WEBHOOK_TIMEOUT/1000} seconds`);
+    }
+    
+    console.error('Error sending confirmation to webhook:', error);
     throw error;
   }
 };

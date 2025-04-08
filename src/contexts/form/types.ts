@@ -11,6 +11,8 @@ export interface WebhookResponse {
   CostoTotal?: string;
   costoTotalIndividual?: string;
   CostoTotalIndividual?: string; // Added to handle the upper case version
+  id?: string; // Added for confirmation flow
+  submissionDate?: string; // Added for confirmation flow
 }
 
 // Form State interface

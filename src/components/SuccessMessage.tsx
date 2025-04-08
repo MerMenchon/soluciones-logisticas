@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { CheckCircle, Loader, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFormContext } from "@/contexts/form";
+import { sendConfirmation } from "@/contexts/form/hooks/useWebhook";
+import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -67,6 +69,7 @@ const formatValue = (value: string | undefined): string => {
 };
 
 const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
+  const { toast } = useToast();
   const { webhookResponse, isWaitingForResponse, resetForm } = useFormContext();
   
   // Display loading message while waiting for response
@@ -109,17 +112,54 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
     return !isNaN(parseFloat(value));
   };
   
-  // Function to handle submit request
-  const handleSubmitRequest = () => {
+  // Function to handle submit request (send confirmation with true)
+  const handleSubmitRequest = async () => {
     console.log("Enviar solicitud clicked");
-    // Here you would implement the actual submission logic
-    onClose();
+    try {
+      // Send confirmation with confirmacion: true
+      await sendConfirmation(
+        webhookResponse?.id,
+        webhookResponse?.submissionDate,
+        true
+      );
+      
+      toast({
+        title: "Solicitud enviada",
+        description: "Su solicitud ha sido enviada exitosamente."
+      });
+      
+      // Close dialog
+      onClose();
+      
+    } catch (error) {
+      console.error("Error sending confirmation:", error);
+      toast({
+        title: "Error",
+        description: "Hubo un problema al enviar su solicitud. Por favor intente de nuevo.",
+        variant: "destructive"
+      });
+    }
   };
   
-  // Handle returning to the form
-  const handleClose = () => {
+  // Handle closing dialog (optionally send confirmation with false)
+  const handleClose = async () => {
     console.log("Closing dialog");
-    onClose();
+    try {
+      // Send confirmation with confirmacion: false
+      await sendConfirmation(
+        webhookResponse?.id,
+        webhookResponse?.submissionDate,
+        false
+      );
+      
+      // Close dialog
+      onClose();
+      
+    } catch (error) {
+      console.error("Error sending cancel confirmation:", error);
+      // Still close the dialog even if there's an error
+      onClose();
+    }
   };
 
   return (
