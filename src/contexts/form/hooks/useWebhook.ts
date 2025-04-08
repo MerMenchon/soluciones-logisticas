@@ -2,7 +2,7 @@
 import { WebhookResponse } from "../types";
 
 const WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook/recepcionFormulario";
-const CONFIRMATION_WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook-test/confirmacion";
+const CONFIRMATION_WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook/confirmacion";
 const WEBHOOK_TIMEOUT = 30000; // 30 seconds timeout
 
 export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => {
@@ -65,7 +65,7 @@ export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => 
   }
 };
 
-// New function to send confirmation
+// Function to send confirmation with the corrected webhook URL
 export const sendConfirmation = async (
   id: string | undefined, 
   submissionDate: string | undefined, 
