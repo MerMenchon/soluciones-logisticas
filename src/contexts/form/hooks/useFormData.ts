@@ -1,5 +1,6 @@
 
 import { FormState } from "../types";
+import { translateServiceType } from "../validation";
 
 /**
  * Prepares form data for submission
@@ -8,7 +9,7 @@ export const prepareFormData = (formState: FormState) => {
   return {
     submissionDate: new Date().toISOString(), // Add current date and time
     service: {
-      type: formState.selectedService,
+      type: translateServiceType(formState.selectedService),
     },
     locations: {
       storage: {

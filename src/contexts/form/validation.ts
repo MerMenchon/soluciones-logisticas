@@ -1,5 +1,19 @@
 
-import { FormState } from "./types";
+import { FormState, ServiceType } from "./types";
+
+// Helper function to translate service type for external data
+export const translateServiceType = (serviceType: ServiceType): string => {
+  switch (serviceType) {
+    case "storage":
+      return "almacenamiento";
+    case "transport":
+      return "transporte";
+    case "both":
+      return "transporte y almacenamiento";
+    default:
+      return "";
+  }
+};
 
 export const validateForm = (formState: FormState): string | null => {
   const {
@@ -105,7 +119,7 @@ export const getFormData = (formState: FormState) => {
 
   return {
     "ID_customer": 100,
-    "Servicio": selectedService,
+    "Servicio": translateServiceType(selectedService),
     "Provincia de Almacenamiento": storageProvince || null,
     "Ciudad de Almacenamiento": storageCity || null,
     "Tiempo Estimado de Almacenamiento (días)": estimatedStorageTime ? parseInt(estimatedStorageTime) : null,
