@@ -9,6 +9,7 @@ interface StorageCheckboxProps {
   hasStorage: boolean;
   cityValue: string;
   onChange?: (checked: boolean) => void;
+  disabled?: boolean; // Add the disabled prop to the interface
 }
 
 const StorageCheckbox = ({
@@ -17,6 +18,7 @@ const StorageCheckbox = ({
   hasStorage,
   cityValue,
   onChange,
+  disabled = false, // Default to false
 }: StorageCheckboxProps) => {
   if (!onChange) return null;
   
@@ -26,18 +28,23 @@ const StorageCheckbox = ({
         id={id} 
         checked={checked}
         onCheckedChange={onChange}
-        disabled={!hasStorage}
+        disabled={!hasStorage || disabled} // Update to consider both hasStorage and disabled
       />
       <div className="grid gap-1.5 leading-none">
         <Label 
           htmlFor={id}
-          className={!hasStorage ? "text-muted-foreground" : ""}
+          className={(!hasStorage || disabled) ? "text-muted-foreground" : ""}
         >
           Usar como ubicación de almacenamiento
         </Label>
         {!hasStorage && cityValue && (
           <p className="text-xs text-muted-foreground">
             No hay servicio de almacenamiento disponible en esta ciudad
+          </p>
+        )}
+        {disabled && hasStorage && cityValue && (
+          <p className="text-xs text-muted-foreground">
+            Ya hay otra ubicación seleccionada para almacenamiento
           </p>
         )}
       </div>
