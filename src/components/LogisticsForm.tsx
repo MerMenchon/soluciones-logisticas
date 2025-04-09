@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import ServiceSelector from "@/components/ServiceSelector";
 import ProductDetails from "@/components/ProductDetails";
@@ -130,31 +129,7 @@ const LogisticsForm = () => {
 
         {selectedService && (
           <>
-            {(selectedService === "storage" || selectedService === "both") && (
-              <StorageLocationSection
-                selectedService={selectedService}
-                storageProvince={storageProvince}
-                storageCity={storageCity}
-                setStorageProvince={(value) => {
-                  setStorageProvince(value);
-                  markFieldTouched('storageProvince');
-                }}
-                setStorageCity={(value) => {
-                  setStorageCity(value); 
-                  markFieldTouched('storageCity');
-                }}
-                estimatedStorageTime={estimatedStorageTime}
-                setEstimatedStorageTime={(value) => {
-                  setEstimatedStorageTime(value);
-                  markFieldTouched('estimatedStorageTime');
-                }}
-                isFieldTouched={isFieldTouched}
-                getFieldError={getFieldError}
-                markFieldTouched={markFieldTouched}
-                resetFieldError={resetFieldError}
-              />
-            )}
-
+            {/* Reordered sections - show TransportRouteSection first when "both" is selected */}
             {(selectedService === "transport" || selectedService === "both") && (
               <TransportRouteSection
                 originProvince={originProvince}
@@ -191,6 +166,40 @@ const LogisticsForm = () => {
                 getFieldError={getFieldError}
                 markFieldTouched={markFieldTouched}
                 resetFieldError={resetFieldError}
+              />
+            )}
+
+            {(selectedService === "storage" || selectedService === "both") && (
+              <StorageLocationSection
+                selectedService={selectedService}
+                storageProvince={storageProvince}
+                storageCity={storageCity}
+                setStorageProvince={(value) => {
+                  setStorageProvince(value);
+                  markFieldTouched('storageProvince');
+                }}
+                setStorageCity={(value) => {
+                  setStorageCity(value); 
+                  markFieldTouched('storageCity');
+                }}
+                estimatedStorageTime={estimatedStorageTime}
+                setEstimatedStorageTime={(value) => {
+                  setEstimatedStorageTime(value);
+                  markFieldTouched('estimatedStorageTime');
+                }}
+                isFieldTouched={isFieldTouched}
+                getFieldError={getFieldError}
+                markFieldTouched={markFieldTouched}
+                resetFieldError={resetFieldError}
+                // Pass these props for the "both" service option
+                useOriginAsStorage={useOriginAsStorage}
+                useDestinationAsStorage={useDestinationAsStorage}
+                originProvince={originProvince}
+                originCity={originCity}
+                destinationProvince={destinationProvince}
+                destinationCity={destinationCity}
+                handleUseOriginAsStorageChange={handleUseOriginAsStorageChange}
+                handleUseDestinationAsStorageChange={handleUseDestinationAsStorageChange}
               />
             )}
 

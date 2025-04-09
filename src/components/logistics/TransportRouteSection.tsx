@@ -23,7 +23,7 @@ interface TransportRouteSectionProps {
   isFieldTouched: (fieldName: keyof FormState) => boolean;
   getFieldError: (fieldName: string) => string | null;
   markFieldTouched: (fieldName: keyof FormState) => void;
-  resetFieldError?: (fieldName: string) => void; // Add resetFieldError as optional
+  resetFieldError?: (fieldName: string) => void;
 }
 
 const TransportRouteSection = ({
@@ -45,6 +45,7 @@ const TransportRouteSection = ({
   isFieldTouched,
   getFieldError,
   markFieldTouched,
+  resetFieldError,
 }: TransportRouteSectionProps) => {
   return (
     <div className="reference-form-section">
@@ -66,14 +67,15 @@ const TransportRouteSection = ({
             onProvinceChange={setOriginProvince}
             onCityChange={setOriginCity}
             label="Origen"
-            useAsStorage={useOriginAsStorage}
+            // Only show storage option when service is "transport", not when "both"
+            useAsStorage={selectedService === "transport" ? useOriginAsStorage : undefined}
             onUseAsStorageChange={
-              selectedService === "both" 
+              selectedService === "transport" 
                 ? handleUseOriginAsStorageChange 
                 : undefined
             }
-            estimatedTime={useOriginAsStorage ? estimatedStorageTime : undefined}
-            onEstimatedTimeChange={useOriginAsStorage ? setEstimatedStorageTime : undefined}
+            estimatedTime={selectedService === "transport" && useOriginAsStorage ? estimatedStorageTime : undefined}
+            onEstimatedTimeChange={selectedService === "transport" && useOriginAsStorage ? setEstimatedStorageTime : undefined}
             disableStorageOption={useDestinationAsStorage}
           />
         </div>
@@ -90,14 +92,15 @@ const TransportRouteSection = ({
             onProvinceChange={setDestinationProvince}
             onCityChange={setDestinationCity}
             label="Destino"
-            useAsStorage={useDestinationAsStorage}
+            // Only show storage option when service is "transport", not when "both"
+            useAsStorage={selectedService === "transport" ? useDestinationAsStorage : undefined}
             onUseAsStorageChange={
-              selectedService === "both"
+              selectedService === "transport"
                 ? handleUseDestinationAsStorageChange
                 : undefined
             }
-            estimatedTime={useDestinationAsStorage ? estimatedStorageTime : undefined}
-            onEstimatedTimeChange={useDestinationAsStorage ? setEstimatedStorageTime : undefined}
+            estimatedTime={selectedService === "transport" && useDestinationAsStorage ? estimatedStorageTime : undefined}
+            onEstimatedTimeChange={selectedService === "transport" && useDestinationAsStorage ? setEstimatedStorageTime : undefined}
             disableStorageOption={useOriginAsStorage}
           />
         </div>
