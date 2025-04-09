@@ -32,6 +32,7 @@ export const useFormState = () => {
     distanceValue: null,
     isWaitingForResponse: false,
     showResponseDialog: false,
+    showSuccessConfirmation: false, // Add the new state here
 
     // Contact state
     additionalInfo: "",
@@ -121,6 +122,7 @@ export const useFormState = () => {
       webhookResponse: submissionState.webhookResponse,
       isWaitingForResponse: submissionState.isWaitingForResponse,
       showResponseDialog: submissionState.showResponseDialog,
+      showSuccessConfirmation: submissionState.showSuccessConfirmation, // Add the new state here
     }));
   }, [submissionState]);
 
@@ -149,7 +151,8 @@ export const useFormState = () => {
       distanceValue: null,
       webhookResponse: undefined,
       isWaitingForResponse: false,
-      showResponseDialog: false
+      showResponseDialog: false,
+      showSuccessConfirmation: false // Add the new state here
     });
     
     // Reset field tracking state

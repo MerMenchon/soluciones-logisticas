@@ -10,6 +10,7 @@ export interface SubmissionState {
   webhookResponse?: WebhookResponse;
   isWaitingForResponse: boolean;
   showResponseDialog: boolean;
+  showSuccessConfirmation: boolean;  // New state for success confirmation
 }
 
 export const useSubmissionState = (initialState?: Partial<SubmissionState>) => {
@@ -20,6 +21,7 @@ export const useSubmissionState = (initialState?: Partial<SubmissionState>) => {
     distanceValue: null,
     isWaitingForResponse: false,
     showResponseDialog: false,
+    showSuccessConfirmation: false,  // Initialize new state
     ...initialState
   });
 
@@ -38,6 +40,9 @@ export const useSubmissionState = (initialState?: Partial<SubmissionState>) => {
     
   const setShowResponseDialog = (showResponseDialog: boolean) =>
     updateSubmissionState({ showResponseDialog });
+    
+  const setShowSuccessConfirmation = (showSuccessConfirmation: boolean) =>
+    updateSubmissionState({ showSuccessConfirmation });
 
   return {
     ...submissionState,
@@ -46,5 +51,6 @@ export const useSubmissionState = (initialState?: Partial<SubmissionState>) => {
     setShowConfirmation,
     setDistanceValue,
     setShowResponseDialog,
+    setShowSuccessConfirmation,
   };
 };

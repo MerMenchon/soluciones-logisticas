@@ -1,3 +1,4 @@
+
 // Define ServiceType for form state
 export type ServiceType = "storage" | "transport" | "both" | "";
 
@@ -37,7 +38,8 @@ export interface FormState {
   showConfirmation: boolean;
   distanceValue: string | null;
   isWaitingForResponse: boolean;
-  showResponseDialog: boolean; // New state for controlling dialog visibility
+  showResponseDialog: boolean;
+  showSuccessConfirmation: boolean; // New state for showing success confirmation
 
   // Contact state
   additionalInfo: string;
@@ -89,10 +91,11 @@ export interface FormContextType extends FormState {
   isFieldTouched: (fieldName: keyof FormState) => boolean;
   markFieldTouched: (fieldName: keyof FormState) => void;
   getFieldError: (fieldName: string) => string | null;
-  resetFieldError: (fieldName: string) => void; // Add resetFieldError here
+  resetFieldError: (fieldName: string) => void;
   
   // Dialog methods
   setShowResponseDialog: (show: boolean) => void;
+  setShowSuccessConfirmation: (show: boolean) => void; // New method
   handleCloseResponseDialog: () => void;
   
   // Form action methods

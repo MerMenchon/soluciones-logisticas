@@ -44,6 +44,39 @@ const LoadingMessage = () => {
   );
 };
 
+const ConfirmationMessage = () => {
+  return (
+    <div className="min-h-[40vh] flex flex-col items-center justify-center py-8">
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="text-green-500 mb-6"
+      >
+        <CheckCircle size={60} strokeWidth={1.5} />
+      </motion.div>
+      
+      <motion.h2
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+        className="text-2xl font-semibold text-agri-primary mb-3 text-center"
+      >
+        ¡Solicitud enviada con éxito!
+      </motion.h2>
+      
+      <motion.p
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+        className="text-center text-muted-foreground"
+      >
+        Nos pondremos en contacto con usted a la brevedad.
+      </motion.p>
+    </div>
+  );
+};
+
 // This function checks if the value is a valid number to format, otherwise returns the string as-is
 const formatValue = (value: string | undefined): string => {
   if (!value) return '0';
@@ -60,7 +93,7 @@ const formatValue = (value: string | undefined): string => {
 
 const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
   const { toast } = useToast();
-  const { webhookResponse, isWaitingForResponse, resetForm } = useFormContext();
+  const { webhookResponse, isWaitingForResponse, resetForm, showSuccessConfirmation } = useFormContext();
   
   // Display loading message while waiting for response
   if (isWaitingForResponse) {
@@ -68,13 +101,39 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
       <Dialog 
         open={open} 
         onOpenChange={onClose}
-        modal={true} // Ensure dialog takes full control
+        modal={true}
       >
         <DialogContent 
           className="sm:max-w-md" 
-          hideCloseButton // Custom prop to remove close button
+          hideCloseButton
         >
           <LoadingMessage />
+        </DialogContent>
+      </Dialog>
+    );
+  }
+  
+  // Display confirmation message after form is successfully submitted
+  if (showSuccessConfirmation) {
+    return (
+      <Dialog 
+        open={open} 
+        onOpenChange={onClose}
+        modal={true}
+      >
+        <DialogContent 
+          className="sm:max-w-md"
+        >
+          <ConfirmationMessage />
+          
+          <DialogFooter className="mt-6">
+            <Button
+              onClick={onClose}
+              className="w-full bg-agri-primary hover:bg-agri-dark text-white"
+            >
+              Cerrar
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     );
@@ -114,13 +173,11 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
         true
       );
       
-      toast({
-        title: "Solicitud enviada",
-        description: "Su solicitud ha sido enviada exitosamente."
+      // Update state to show confirmation message
+      useFormContext().updateSubmissionState({
+        showResponseDialog: false,
+        showSuccessConfirmation: true
       });
-      
-      // Close dialog
-      onClose();
       
     } catch (error) {
       console.error("Error sending confirmation:", error);
@@ -129,6 +186,9 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
         description: "Hubo un problema al enviar su solicitud. Por favor intente de nuevo.",
         variant: "destructive"
       });
+      
+      // Close dialog
+      onClose();
     }
   };
   

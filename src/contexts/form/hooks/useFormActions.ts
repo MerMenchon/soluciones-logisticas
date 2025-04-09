@@ -33,7 +33,8 @@ export const useFormActions = ({
     updateSubmissionState({ 
       isSubmitting: true,
       isWaitingForResponse: true,
-      showResponseDialog: true
+      showResponseDialog: true,
+      showSuccessConfirmation: false
     });
 
     try {
@@ -58,7 +59,8 @@ export const useFormActions = ({
       updateSubmissionState({ 
         isSubmitting: false,
         isWaitingForResponse: false,
-        showResponseDialog: false
+        showResponseDialog: false,
+        showSuccessConfirmation: false
       });
       
       // Show error message
@@ -72,7 +74,10 @@ export const useFormActions = ({
 
   // Dialog close handler
   const handleCloseResponseDialog = () => {
-    updateSubmissionState({ showResponseDialog: false });
+    updateSubmissionState({ 
+      showResponseDialog: false,
+      showSuccessConfirmation: false 
+    });
   };
 
   // Confirm request and submit form
@@ -87,7 +92,8 @@ export const useFormActions = ({
     updateSubmissionState({ 
       isSubmitting: false,
       isWaitingForResponse: false,
-      showResponseDialog: false
+      showResponseDialog: false,
+      showSuccessConfirmation: false
     });
   };
 
@@ -98,7 +104,8 @@ export const useFormActions = ({
       isSubmitting: false,
       isWaitingForResponse: false,
       showResponseDialog: false,
-      webhookResponse: undefined
+      webhookResponse: undefined,
+      showSuccessConfirmation: false
     });
     
     // Reset field tracking
