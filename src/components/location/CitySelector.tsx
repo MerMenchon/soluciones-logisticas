@@ -1,10 +1,12 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Location } from "@/data/locations";
 import { useFormContext } from "@/contexts/form";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Search, X } from "lucide-react";
 
 interface CitySelectorProps {
   id: string;
@@ -28,10 +30,13 @@ const CitySelector = ({
   const { selectedService } = useFormContext();
   
   // Status message for rendering
-  const [statusMessage, setStatusMessage] = React.useState<string>("");
+  const [statusMessage, setStatusMessage] = useState<string>("");
+  
+  // Search state
+  const [searchQuery, setSearchQuery] = useState<string>("");
   
   // Update status message when cities or loading status changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (isLoading) {
       setStatusMessage(`Cargando ciudades...`);
     } else if (cities.length === 0 && provinceValue) {
@@ -44,14 +49,26 @@ const CitySelector = ({
   
   // Filter cities based on storage availability if this is a storage selector
   const filteredCities = React.useMemo(() => {
-    return type === "storage" 
+    let cityList = type === "storage" 
       ? cities.filter(city => city.hasStorage)
       : cities;
-  }, [cities, type]);
+      
+    // Apply search filter if search query exists
+    if (searchQuery.trim() !== "") {
+      cityList = cityList.filter(city => 
+        city.ciudad.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    return cityList;
+  }, [cities, type, searchQuery]);
   
   // Determine if we should show storage availability based on selected service type
   const shouldShowStorageInfo = 
     selectedService === "both" && (type === "origin" || type === "destination");
+    
+  // Clear search
+  const clearSearch = () => setSearchQuery("");
 
   return (
     <div className="space-y-2">
@@ -76,13 +93,36 @@ const CitySelector = ({
           } />
         </SelectTrigger>
         <SelectContent className="max-h-80 overflow-y-auto">
-          {filteredCities.length === 0 && !isLoading && provinceValue && (
+          <div className="px-3 pt-2 pb-2 sticky top-0 bg-background z-10 border-b">
+            <div className="relative">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar ciudad..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-8 h-9"
+              />
+              {searchQuery && (
+                <button 
+                  onClick={clearSearch}
+                  className="absolute right-2 top-2.5 text-muted-foreground"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          </div>
+          
+          {filteredCities.length === 0 && !isLoading && (
             <div className="px-2 py-4 text-center text-sm text-muted-foreground">
-              {type === "storage" 
-                ? "No hay ciudades con almacenamiento disponible en esta provincia" 
-                : "No hay ciudades disponibles para esta provincia"}
+              {searchQuery 
+                ? `No se encontraron ciudades para "${searchQuery}"` 
+                : type === "storage" 
+                  ? "No hay ciudades con almacenamiento disponible en esta provincia" 
+                  : "No hay ciudades disponibles para esta provincia"}
             </div>
           )}
+          
           {filteredCities.map((city) => (
             <SelectItem key={city.ciudad} value={city.ciudad} className="flex justify-between">
               <div className="flex items-center justify-between w-full">
