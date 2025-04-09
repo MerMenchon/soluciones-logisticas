@@ -90,7 +90,7 @@ function parseCitiesFromCSV(csvText: string, provinceLabel: string): City[] {
   
   const provinceColumnIndex = headers.indexOf('province');
   const cityColumnIndex = headers.indexOf('city');
-  const storageColumnIndex = headers.indexOf('storage');
+  const storageColumnIndex = headers.indexOf('deposito');
   
   if (provinceColumnIndex === -1 || cityColumnIndex === -1) {
     console.error(`Required columns not found. Province: ${provinceColumnIndex}, City: ${cityColumnIndex}`);
@@ -144,9 +144,9 @@ function parseCitiesFromCSV(csvText: string, provinceLabel: string): City[] {
         // Only process if province matches and city name is valid
         if (rowProvince === normalizedProvinceLabel && cityName && !citySet.has(cityName)) {
           const hasStorage = storageColumnIndex !== -1 && fields.length > storageColumnIndex ? 
-            fields[storageColumnIndex].toLowerCase() === 'yes' || 
             fields[storageColumnIndex].toLowerCase() === 'si' || 
-            fields[storageColumnIndex].toLowerCase() === 'sí' : 
+            fields[storageColumnIndex].toLowerCase() === 'sí' || 
+            fields[storageColumnIndex].toLowerCase() === 'yes' : 
             false;
           
           cities.push({
