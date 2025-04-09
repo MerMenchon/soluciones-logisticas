@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, Loader, ArrowLeft } from "lucide-react";
@@ -41,15 +40,6 @@ const LoadingMessage = () => {
       >
         Procesando su consulta
       </motion.h2>
-      
-      <motion.p
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.5 }}
-        className="text-lg text-muted-foreground text-center max-w-md"
-      >
-        Por favor espere mientras recibimos la respuesta...
-      </motion.p>
     </div>
   );
 };
@@ -75,14 +65,15 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
   // Display loading message while waiting for response
   if (isWaitingForResponse) {
     return (
-      <Dialog open={open} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-center">Procesando</DialogTitle>
-            <DialogDescription className="text-center">
-              Espere por favor...
-            </DialogDescription>
-          </DialogHeader>
+      <Dialog 
+        open={open} 
+        onOpenChange={onClose}
+        modal={true} // Ensure dialog takes full control
+      >
+        <DialogContent 
+          className="sm:max-w-md" 
+          hideCloseButton // Custom prop to remove close button
+        >
           <LoadingMessage />
         </DialogContent>
       </Dialog>
