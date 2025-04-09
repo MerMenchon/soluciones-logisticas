@@ -28,8 +28,11 @@ const ShippingDateSelector = ({
     <div className="reference-form-section">
       <h2 className="reference-form-subtitle">
         <Calendar className="w-5 h-5 inline-block mr-2" />
-        <span>Fecha de inicio de la solicitud</span>
+        <span>Fecha del servicio</span>
       </h2>
+      <p className="text-sm text-muted-foreground mb-4">
+        ¿A partir de qué fecha lo solicitás?
+      </p>
       <div className="space-y-4">
         <Popover>
           <PopoverTrigger asChild>

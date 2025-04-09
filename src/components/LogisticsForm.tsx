@@ -105,7 +105,6 @@ const LogisticsForm = () => {
 
   return (
     <>
-      {/* Response Dialog */}
       <SuccessMessage 
         open={showResponseDialog || isWaitingForResponse} 
         onClose={handleCloseResponseDialog} 
@@ -115,16 +114,6 @@ const LogisticsForm = () => {
         <ServiceSelector 
           selectedService={selectedService as ServiceType} 
           onSelectService={useFormContext().setSelectedService} 
-        />
-
-        {/* Date Selector */}
-        <ShippingDateSelector
-          selectedDate={selectedDate}
-          onDateSelect={handleDateSelect}
-          disabledDays={disabledDays}
-          isInvalid={isFieldTouched('shippingTime') && getFieldError('shippingTime') !== null}
-          errorMessage={getFieldError('shippingTime')}
-          onBlur={() => markFieldTouched('shippingTime')}
         />
 
         {selectedService && (
@@ -202,6 +191,16 @@ const LogisticsForm = () => {
                 handleUseDestinationAsStorageChange={handleUseDestinationAsStorageChange}
               />
             )}
+
+            {/* Move shipping date AFTER storage location */}
+            <ShippingDateSelector
+              selectedDate={selectedDate}
+              onDateSelect={handleDateSelect}
+              disabledDays={disabledDays}
+              isInvalid={isFieldTouched('shippingTime') && getFieldError('shippingTime') !== null}
+              errorMessage={getFieldError('shippingTime')}
+              onBlur={() => markFieldTouched('shippingTime')}
+            />
 
             <ProductDetails 
               productType={productType}
