@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ServiceSelector from "@/components/ServiceSelector";
 import ProductDetails from "@/components/ProductDetails";
 import ContactDetails from "@/components/ContactDetails";
-import { useFormContext } from "@/contexts/form"; // This import is correct but there might be a naming conflict
+import { useFormContext } from "@/contexts/form";
 import ShippingDateSelector from "@/components/logistics/ShippingDateSelector";
 import StorageLocationSection from "@/components/logistics/StorageLocationSection";
 import TransportRouteSection from "@/components/logistics/TransportRouteSection";
@@ -192,16 +192,6 @@ const LogisticsForm = () => {
               />
             )}
 
-            {/* Move shipping date AFTER storage location */}
-            <ShippingDateSelector
-              selectedDate={selectedDate}
-              onDateSelect={handleDateSelect}
-              disabledDays={disabledDays}
-              isInvalid={isFieldTouched('shippingTime') && getFieldError('shippingTime') !== null}
-              errorMessage={getFieldError('shippingTime')}
-              onBlur={() => markFieldTouched('shippingTime')}
-            />
-
             <ProductDetails 
               productType={productType}
               onProductTypeChange={(value) => {
@@ -241,6 +231,15 @@ const LogisticsForm = () => {
               getFieldError={getFieldError}
               markFieldTouched={markFieldTouched}
               resetFieldError={resetFieldError}
+            />
+
+            <ShippingDateSelector
+              selectedDate={selectedDate}
+              onDateSelect={handleDateSelect}
+              disabledDays={disabledDays}
+              isInvalid={isFieldTouched('shippingTime') && getFieldError('shippingTime') !== null}
+              errorMessage={getFieldError('shippingTime')}
+              onBlur={() => markFieldTouched('shippingTime')}
             />
             
             <ContactDetails
