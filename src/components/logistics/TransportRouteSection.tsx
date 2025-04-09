@@ -67,15 +67,15 @@ const TransportRouteSection = ({
             onProvinceChange={setOriginProvince}
             onCityChange={setOriginCity}
             label="Origen"
-            // Only show storage option when service is "transport", not when "both"
-            useAsStorage={selectedService === "transport" ? useOriginAsStorage : undefined}
+            // Remove storage options for "transport" service
+            useAsStorage={selectedService === "both" ? useOriginAsStorage : undefined}
             onUseAsStorageChange={
-              selectedService === "transport" 
+              selectedService === "both" 
                 ? handleUseOriginAsStorageChange 
                 : undefined
             }
-            estimatedTime={selectedService === "transport" && useOriginAsStorage ? estimatedStorageTime : undefined}
-            onEstimatedTimeChange={selectedService === "transport" && useOriginAsStorage ? setEstimatedStorageTime : undefined}
+            estimatedTime={selectedService === "both" && useOriginAsStorage ? estimatedStorageTime : undefined}
+            onEstimatedTimeChange={selectedService === "both" && useOriginAsStorage ? setEstimatedStorageTime : undefined}
             disableStorageOption={useDestinationAsStorage}
           />
         </div>
@@ -92,15 +92,15 @@ const TransportRouteSection = ({
             onProvinceChange={setDestinationProvince}
             onCityChange={setDestinationCity}
             label="Destino"
-            // Only show storage option when service is "transport", not when "both"
-            useAsStorage={selectedService === "transport" ? useDestinationAsStorage : undefined}
+            // Remove storage options for "transport" service
+            useAsStorage={selectedService === "both" ? useDestinationAsStorage : undefined}
             onUseAsStorageChange={
-              selectedService === "transport"
+              selectedService === "both"
                 ? handleUseDestinationAsStorageChange
                 : undefined
             }
-            estimatedTime={selectedService === "transport" && useDestinationAsStorage ? estimatedStorageTime : undefined}
-            onEstimatedTimeChange={selectedService === "transport" && useDestinationAsStorage ? setEstimatedStorageTime : undefined}
+            estimatedTime={selectedService === "both" && useDestinationAsStorage ? estimatedStorageTime : undefined}
+            onEstimatedTimeChange={selectedService === "both" && useDestinationAsStorage ? setEstimatedStorageTime : undefined}
             disableStorageOption={useOriginAsStorage}
           />
         </div>
