@@ -283,7 +283,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
                 <div className="text-center mb-4">
                   <div className="text-sm text-muted-foreground mb-1">Costo Total:</div>
                   <div className="text-4xl font-bold text-agri-primary">
-                    {shouldShowCurrencySymbol(webhookResponse?.CostoTotal) ? '$' : ''}
+                    {shouldShowCurrencySymbol(webhookResponse?.CostoTotal) ? 'USD' : ''}
                     {formatValue(webhookResponse?.CostoTotal)}
                   </div>
                 </div>
@@ -294,7 +294,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
                   <div className="text-center">
                     <div className="text-xs text-muted-foreground mb-1">Almacenamiento:</div>
                     <div className="text-lg font-semibold text-agri-primary">
-                      {shouldShowCurrencySymbol(webhookResponse?.CostoTotalAlmacenamiento) ? '$' : ''}
+                      {shouldShowCurrencySymbol(webhookResponse?.CostoTotalAlmacenamiento) ? 'USD' : ''}
                       {formatValue(webhookResponse?.CostoTotalAlmacenamiento)}
                     </div>
                   </div>
@@ -304,7 +304,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
                   <div className="text-center">
                     <div className="text-xs text-muted-foreground mb-1">Transporte:</div>
                     <div className="text-lg font-semibold text-agri-primary">
-                      {shouldShowCurrencySymbol(webhookResponse?.CostoTotalTransporte) ? '$' : ''}
+                      {shouldShowCurrencySymbol(webhookResponse?.CostoTotalTransporte) ? 'USD' : ''}
                       {formatValue(webhookResponse?.CostoTotalTransporte)}
                     </div>
                   </div>
@@ -315,7 +315,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
                 <div className="text-center mt-4 pt-4 border-t border-agri-primary/20">
                   <div className="text-xs text-muted-foreground mb-1">Costo por unidad:</div>
                   <div className="text-lg font-semibold text-agri-primary">
-                    {shouldShowCurrencySymbol(individualCost) ? '$' : ''}
+                    {shouldShowCurrencySymbol(individualCost) ? 'USD' : ''}
                     {formatValue(individualCost)}
                   </div>
                 </div>
