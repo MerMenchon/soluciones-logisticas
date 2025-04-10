@@ -3,6 +3,7 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { FormState } from "@/contexts/form/types";
 import { useNumericInput } from "@/hooks/useNumericInput";
+import { cn } from "@/lib/utils";
 
 interface ValueInputProps {
   value: string;
@@ -58,7 +59,7 @@ const ValueInput = ({
               value={localValue}
               onChange={handleValueChange}
               onBlur={handleBlur}
-              className={w-full pl-7 ${hasError ? 'border-red-500' : ''}}
+              className={cn("w-full pl-7", hasError ? "border-red-500" : "")}
               required
             />
           </div>
