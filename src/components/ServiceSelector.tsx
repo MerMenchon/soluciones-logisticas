@@ -56,7 +56,7 @@ const ServiceSelector = ({
           <PackageCheck className="text-agri-primary w-10 h-10 mb-2" />
           <span className="font-medium">Transporte y Almacenamiento</span>
           <p className="text-sm text-gray-500 mt-2 text-center">
-            Servicios combinados para su mercadería
+            Servicios combinados para tu mercadería
           </p>
         </div>
       </div>
