@@ -103,11 +103,11 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
     }
     
     // Clean up the timeout when the component unmounts or when dependencies change
-    // return () => {
-    //   if (timeoutId) {
-    //     clearTimeout(timeoutId);
-    //   }
-   // };
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+   };
   }, [showSuccessConfirmation, open, onClose]);
   
   // Display loading message while waiting for response
@@ -133,7 +133,6 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
     return (
       <Dialog 
         open={open} 
-        onOpenChange={onClose}
         modal={true}
       >
         <DialogContent 
