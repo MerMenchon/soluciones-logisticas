@@ -9,7 +9,7 @@ interface StorageCheckboxProps {
   hasStorage: boolean;
   cityValue: string;
   onChange?: (checked: boolean) => void;
-  disabled?: boolean; // Add the disabled prop to the interface
+  disabled?: boolean;
 }
 
 const StorageCheckbox = ({
@@ -18,7 +18,7 @@ const StorageCheckbox = ({
   hasStorage,
   cityValue,
   onChange,
-  disabled = false, // Default to false
+  disabled = false,
 }: StorageCheckboxProps) => {
   if (!onChange) return null;
   
@@ -28,7 +28,7 @@ const StorageCheckbox = ({
         id={id} 
         checked={checked}
         onCheckedChange={onChange}
-        disabled={!hasStorage || disabled} // Update to consider both hasStorage and disabled
+        disabled={!hasStorage || disabled}
       />
       <div className="grid gap-1.5 leading-none">
         <Label 
