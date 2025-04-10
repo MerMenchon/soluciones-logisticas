@@ -98,36 +98,59 @@ const StorageLocationSection = ({
             Seleccione dónde desea almacenar su mercadería:
           </div>
           
-          {noStorageAvailable ? (
-            <Alert className="bg-muted/50 border">
+          <RadioGroup 
+            value={useOriginAsStorage ? "origin" : useDestinationAsStorage ? "destination" : ""}
+            onValueChange={handleStorageLocationChange}
+            className="space-y-4"
+          >
+            {/* Always show origin option, but disable if no storage available */}
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem 
+                value="origin" 
+                id="storage-origin" 
+                disabled={!originCity || !hasOriginStorage}
+              />
+              <Label 
+                htmlFor="storage-origin" 
+                className={(!originCity || !hasOriginStorage) ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer"}
+              >
+                Almacenar en origen: {originCity ? `${originCity}, ${originProvince}` : "Seleccione una ciudad de origen"}
+                {originCity && !hasOriginStorage && (
+                  <span className="block text-xs text-muted-foreground">
+                    No hay depósito disponible en esta ubicación
+                  </span>
+                )}
+              </Label>
+            </div>
+            
+            {/* Always show destination option, but disable if no storage available */}
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem 
+                value="destination" 
+                id="storage-destination" 
+                disabled={!destinationCity || !hasDestinationStorage}
+              />
+              <Label 
+                htmlFor="storage-destination" 
+                className={(!destinationCity || !hasDestinationStorage) ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer"}
+              >
+                Almacenar en destino: {destinationCity ? `${destinationCity}, ${destinationProvince}` : "Seleccione una ciudad de destino"}
+                {destinationCity && !hasDestinationStorage && (
+                  <span className="block text-xs text-muted-foreground">
+                    No hay depósito disponible en esta ubicación
+                  </span>
+                )}
+              </Label>
+            </div>
+          </RadioGroup>
+          
+          {/* Show alert when both origin and destination have no storage */}
+          {noStorageAvailable && (
+            <Alert className="bg-muted/50 border mt-4">
               <AlertDescription>
                 Debe elegir alguna ciudad con depósito en origen o destino.
               </AlertDescription>
             </Alert>
-          ) : (
-            <RadioGroup 
-              value={useOriginAsStorage ? "origin" : useDestinationAsStorage ? "destination" : ""}
-              onValueChange={handleStorageLocationChange}
-              className="space-y-4"
-            >
-              {originCity && hasOriginStorage && (
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="origin" id="storage-origin" />
-                  <Label htmlFor="storage-origin" className="cursor-pointer">
-                    Almacenar en origen: {originCity}, {originProvince}
-                  </Label>
-                </div>
-              )}
-              
-              {destinationCity && hasDestinationStorage && (
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="destination" id="storage-destination" />
-                  <Label htmlFor="storage-destination" className="cursor-pointer">
-                    Almacenar en destino: {destinationCity}, {destinationProvince}
-                  </Label>
-                </div>
-              )}
-            </RadioGroup>
           )}
           
           {/* Storage time input - only show when a location is selected */}
