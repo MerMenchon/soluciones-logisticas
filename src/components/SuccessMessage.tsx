@@ -58,14 +58,7 @@ const ConfirmationMessage = () => {
         ¡Solicitud enviada con éxito!
       </motion.h2>
       
-      <motion.p
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.3, duration: 1.5 }}
-        className="text-center text-muted-foreground"
-      >
-        Nos pondremos en contacto con usted a la brevedad.
-      </motion.p>
+   
     </div>
   );
 };
