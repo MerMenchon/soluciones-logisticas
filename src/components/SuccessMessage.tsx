@@ -263,7 +263,10 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
         if (!isOpen) onClose();
       }}
     >
-      <DialogContent className="sm:max-w-md">
+      <DialogContent 
+        className="sm:max-w-md" 
+        hideCloseButton={true} // Hide close button for response dialog
+      >
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold text-agri-primary">
             {cleanTitle}
