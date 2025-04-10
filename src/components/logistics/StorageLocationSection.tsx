@@ -1,12 +1,14 @@
 
-import React, { memo, useMemo } from "react";
+import React, { memo } from "react";
 import { Warehouse } from "lucide-react";
 import LocationSelector from "@/components/LocationSelector";
 import { FormState } from "@/contexts/form/types";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useStorageAvailability } from "@/hooks/useStorageAvailability";
+import { RadioGroup } from "@/components/ui/radio-group";
+import { useStorageOptions } from "@/hooks/useStorageOptions";
+import StorageOriginOption from "@/components/logistics/storage/StorageOriginOption";
+import StorageDestinationOption from "@/components/logistics/storage/StorageDestinationOption";
+import StorageTimeInput from "@/components/logistics/storage/StorageTimeInput";
+import StorageAlert from "@/components/logistics/storage/StorageAlert";
 
 interface StorageLocationSectionProps {
   selectedService: string;
@@ -53,16 +55,28 @@ const StorageLocationSection = ({
   handleUseOriginAsStorageChange,
   handleUseDestinationAsStorageChange,
 }: StorageLocationSectionProps) => {
-  // Check storage availability for origin and destination
-  const { hasStorage: hasOriginStorage, hasInitialCheck: originChecked, isChecking: isCheckingOrigin } = useStorageAvailability(
-    originProvince,
-    originCity
-  );
   
-  const { hasStorage: hasDestinationStorage, hasInitialCheck: destinationChecked, isChecking: isCheckingDestination } = useStorageAvailability(
+  // Get storage options and availability information from custom hook
+  const {
+    hasOriginStorage,
+    hasDestinationStorage,
+    originChecked,
+    destinationChecked,
+    isCheckingOrigin,
+    isCheckingDestination,
+    canUseOriginStorage,
+    canUseDestinationStorage,
+    storageLocation,
+    noStorageAvailable
+  } = useStorageOptions({
+    selectedService,
+    originProvince,
+    originCity,
     destinationProvince,
-    destinationCity
-  );
+    destinationCity,
+    useOriginAsStorage,
+    useDestinationAsStorage
+  });
   
   // Update the handler to use resetFieldError when value changes
   const handleEstimatedTimeChange = (value: string) => {
@@ -71,9 +85,6 @@ const StorageLocationSection = ({
     }
     setEstimatedStorageTime(value);
   };
-
-  // Determine the current storage location selection
-  const storageLocation = useOriginAsStorage ? "origin" : useDestinationAsStorage ? "destination" : "";
 
   // Set storage location based on selection
   const handleStorageLocationChange = (value: string) => {
@@ -89,34 +100,6 @@ const StorageLocationSection = ({
       }
     }
   };
-
-  // Determine if we show the "no storage available" message
-  const noStorageAvailable = useMemo(() => {
-    // Only show the message if both cities are selected and checked for storage
-    return selectedService === "both" && 
-           originCity && destinationCity && 
-           originChecked && destinationChecked &&
-           !hasOriginStorage && !hasDestinationStorage;
-  }, [selectedService, originCity, destinationCity, hasOriginStorage, hasDestinationStorage, originChecked, destinationChecked]);
-
-  // Log changes to storage availability for debugging
-  React.useEffect(() => {
-    if (originCity && originProvince && originChecked) {
-      console.log(`Origin storage (${originCity}, ${originProvince}): ${hasOriginStorage}`);
-      console.log(`useOriginAsStorage: ${useOriginAsStorage}`);
-    }
-  }, [originCity, originProvince, hasOriginStorage, originChecked, useOriginAsStorage]);
-
-  React.useEffect(() => {
-    if (destinationCity && destinationProvince && destinationChecked) {
-      console.log(`Destination storage (${destinationCity}, ${destinationProvince}): ${hasDestinationStorage}`);
-      console.log(`useDestinationAsStorage: ${useDestinationAsStorage}`);
-    }
-  }, [destinationCity, destinationProvince, hasDestinationStorage, destinationChecked, useDestinationAsStorage]);
-
-  // Determine if options should be enabled based on storage availability
-  const canUseOriginStorage = originCity && hasOriginStorage && originChecked;
-  const canUseDestinationStorage = destinationCity && hasDestinationStorage && destinationChecked;
 
   return (
     <div className="reference-form-section">
@@ -137,101 +120,39 @@ const StorageLocationSection = ({
             className="space-y-4"
           >
             {/* Origin storage option */}
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem 
-                value="origin" 
-                id="storage-origin" 
-                disabled={!canUseOriginStorage}
-                checked={useOriginAsStorage}
-              />
-              <Label 
-                htmlFor="storage-origin" 
-                className={!canUseOriginStorage ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer"}
-              >
-                Almacenar en origen: {originCity ? `${originCity}, ${originProvince}` : "Seleccione una ciudad de origen"}
-                {originCity && isCheckingOrigin && (
-                  <span className="block text-xs text-muted-foreground">
-                    Verificando disponibilidad...
-                  </span>
-                )}
-                {originCity && originChecked && !hasOriginStorage && !isCheckingOrigin && (
-                  <span className="block text-xs text-muted-foreground">
-                    No hay depósito disponible en esta ubicación
-                  </span>
-                )}
-                {originCity && originChecked && hasOriginStorage && (
-                  <span className="block text-xs text-green-600">
-                    Depósito disponible
-                  </span>
-                )}
-              </Label>
-            </div>
+            <StorageOriginOption
+              originCity={originCity}
+              originProvince={originProvince}
+              canUseOriginStorage={canUseOriginStorage}
+              useOriginAsStorage={useOriginAsStorage}
+              isCheckingOrigin={isCheckingOrigin}
+              hasOriginStorage={hasOriginStorage}
+              originChecked={originChecked}
+            />
             
             {/* Destination storage option */}
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem 
-                value="destination" 
-                id="storage-destination" 
-                disabled={!canUseDestinationStorage}
-                checked={useDestinationAsStorage}
-              />
-              <Label 
-                htmlFor="storage-destination" 
-                className={!canUseDestinationStorage ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer"}
-              >
-                Almacenar en destino: {destinationCity ? `${destinationCity}, ${destinationProvince}` : "Seleccione una ciudad de destino"}
-                {destinationCity && isCheckingDestination && (
-                  <span className="block text-xs text-muted-foreground">
-                    Verificando disponibilidad...
-                  </span>
-                )}
-                {destinationCity && destinationChecked && !hasDestinationStorage && !isCheckingDestination && (
-                  <span className="block text-xs text-muted-foreground">
-                    No hay depósito disponible en esta ubicación
-                  </span>
-                )}
-                {destinationCity && destinationChecked && hasDestinationStorage && (
-                  <span className="block text-xs text-green-600">
-                    Depósito disponible
-                  </span>
-                )}
-              </Label>
-            </div>
+            <StorageDestinationOption
+              destinationCity={destinationCity}
+              destinationProvince={destinationProvince}
+              canUseDestinationStorage={canUseDestinationStorage}
+              useDestinationAsStorage={useDestinationAsStorage}
+              isCheckingDestination={isCheckingDestination}
+              hasDestinationStorage={hasDestinationStorage}
+              destinationChecked={destinationChecked}
+            />
           </RadioGroup>
           
           {/* Show alert when both origin and destination have no storage */}
-          {noStorageAvailable && (
-            <Alert className="bg-muted/50 border mt-4">
-              <AlertDescription>
-                Debe elegir alguna ciudad con depósito en origen o destino para continuar.
-              </AlertDescription>
-            </Alert>
-          )}
+          <StorageAlert show={noStorageAvailable} />
           
           {/* Storage time input - only show when a location is selected */}
           {(useOriginAsStorage || useDestinationAsStorage) && (
-            <div className="mt-4 p-4 border rounded-md bg-muted/10">
-              <Label htmlFor="estimated-storage-time" className="block mb-2">
-                Tiempo estimado de almacenamiento (en días)
-              </Label>
-              <div className="flex items-center gap-2">
-                <input
-                  id="estimated-storage-time"
-                  type="number"
-                  min="1"
-                  value={estimatedStorageTime}
-                  onChange={(e) => handleEstimatedTimeChange(e.target.value)}
-                  className="w-32 h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  placeholder="30"
-                />
-                <span className="text-sm text-muted-foreground">días</span>
-              </div>
-              {isFieldTouched('estimatedStorageTime') && getFieldError('estimatedStorageTime') && (
-                <p className="text-sm text-destructive mt-1">
-                  {getFieldError('estimatedStorageTime')}
-                </p>
-              )}
-            </div>
+            <StorageTimeInput
+              estimatedStorageTime={estimatedStorageTime}
+              onEstimatedTimeChange={handleEstimatedTimeChange}
+              isFieldTouched={isFieldTouched}
+              getFieldError={getFieldError}
+            />
           )}
         </div>
       ) : (
