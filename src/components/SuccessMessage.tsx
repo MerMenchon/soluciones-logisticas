@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, Loader, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -89,6 +89,26 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
     setShowResponseDialog, 
     setShowSuccessConfirmation 
   } = formContext;
+  
+  // Add effect to close the confirmation dialog after a delay
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
+    if (showSuccessConfirmation && open) {
+      // Set a timeout to close the dialog after 5 seconds (5000ms)
+      // You can adjust this value to make the message display longer
+      timeoutId = setTimeout(() => {
+        onClose();
+      }, 5000); // 5 seconds
+    }
+    
+    // Clean up the timeout when the component unmounts or when dependencies change
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [showSuccessConfirmation, open, onClose]);
   
   // Display loading message while waiting for response
   if (isWaitingForResponse) {
