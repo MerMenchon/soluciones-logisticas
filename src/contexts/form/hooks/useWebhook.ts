@@ -1,5 +1,4 @@
-
-import { WebhookResponse } from "../types";
+import { WebhookResponse, WebhookResponseData } from "../types";
 
 const WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook/recepcionFormulario";
 const CONFIRMATION_WEBHOOK_URL = "https://bipolos.app.n8n.cloud/webhook/confirmacion";
@@ -36,6 +35,14 @@ export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => 
     // Handle array responses (API returns array with one object sometimes)
     const responseData = Array.isArray(rawResponse) ? rawResponse[0] : rawResponse;
     
+    // Extract data object if it exists
+    const dataObject: WebhookResponseData | undefined = responseData.data ? {
+      lugarAlmacenamientoTiempo: responseData.data.lugarAlmacenamientoTiempo?.toString(),
+      rutaTransporte: responseData.data.rutaTransporte?.toString(),
+      InformacionProducto: responseData.data.InformacionProducto?.toString(),
+      fechaInicioEstimada: responseData.data.fechaInicioEstimada?.toString(),
+    } : undefined;
+    
     // Process all fields as strings (including messages like "Servicio no solicitado")
     const formattedResponse: WebhookResponse = {
       titulo: responseData.titulo || "¡Consulta recibida!",
@@ -49,7 +56,9 @@ export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => 
       CostoTotalIndividual: responseData.CostoTotalIndividual?.toString(),
       // New fields
       id: responseData.id?.toString(),
-      submissionDate: responseData.submissionDate
+      submissionDate: responseData.submissionDate,
+      // Data object
+      data: dataObject
     };
     
     console.log("Processed webhook response:", formattedResponse);

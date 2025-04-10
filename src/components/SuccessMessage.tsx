@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, Loader, ArrowLeft } from "lucide-react";
+import { CheckCircle, Loader, ArrowLeft, Box, Truck, Package, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFormContext } from "@/contexts/form/FormContext";
 import { sendConfirmation } from "@/contexts/form/hooks/useWebhook";
@@ -265,6 +265,14 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
     }
   };
 
+  // Check if data fields exist
+  const hasDataFields = webhookResponse?.data && (
+    webhookResponse.data.lugarAlmacenamientoTiempo || 
+    webhookResponse.data.rutaTransporte || 
+    webhookResponse.data.InformacionProducto ||
+    webhookResponse.data.fechaInicioEstimada
+  );
+
   return (
     <Dialog 
       open={open} 
@@ -335,6 +343,59 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
               )}
             </CardContent>
           </Card>
+        )}
+        
+        {/* New section for data fields */}
+        {hasDataFields && (
+          <div className="mt-6 space-y-4">
+            {webhookResponse?.data?.lugarAlmacenamientoTiempo && (
+              <div className="border-t border-gray-200 pt-4">
+                <div className="flex items-start gap-3">
+                  <Box className="h-5 w-5 text-agri-primary flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-medium text-agri-secondary">Información sobre el almacenamiento</h4>
+                    <p className="text-sm text-gray-600 mt-1">{webhookResponse.data.lugarAlmacenamientoTiempo}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {webhookResponse?.data?.rutaTransporte && (
+              <div className="border-t border-gray-200 pt-4">
+                <div className="flex items-start gap-3">
+                  <Truck className="h-5 w-5 text-agri-primary flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-medium text-agri-secondary">Información sobre el transporte</h4>
+                    <p className="text-sm text-gray-600 mt-1">{webhookResponse.data.rutaTransporte}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {webhookResponse?.data?.InformacionProducto && (
+              <div className="border-t border-gray-200 pt-4">
+                <div className="flex items-start gap-3">
+                  <Package className="h-5 w-5 text-agri-primary flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-medium text-agri-secondary">Información del producto</h4>
+                    <p className="text-sm text-gray-600 mt-1">{webhookResponse.data.InformacionProducto}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {webhookResponse?.data?.fechaInicioEstimada && (
+              <div className="border-t border-gray-200 pt-4">
+                <div className="flex items-start gap-3">
+                  <Calendar className="h-5 w-5 text-agri-primary flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-medium text-agri-secondary">Fecha estimada de inicio</h4>
+                    <p className="text-sm text-gray-600 mt-1">{webhookResponse.data.fechaInicioEstimada}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         )}
 
         <DialogFooter className="flex flex-col sm:flex-row gap-3 sm:justify-between mt-4">

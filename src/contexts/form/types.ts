@@ -1,6 +1,13 @@
-
 // Define ServiceType for form state
 export type ServiceType = "storage" | "transport" | "both" | "";
+
+// Data interface for detailed information
+export interface WebhookResponseData {
+  lugarAlmacenamientoTiempo?: string;
+  rutaTransporte?: string;
+  InformacionProducto?: string;
+  fechaInicioEstimada?: string;
+}
 
 // WebhookResponse interface
 export interface WebhookResponse {
@@ -14,6 +21,7 @@ export interface WebhookResponse {
   CostoTotalIndividual?: string; // Added to handle the upper case version
   id?: string; // Added for confirmation flow
   submissionDate?: string; // Added for confirmation flow
+  data?: WebhookResponseData; // Added for detailed information
 }
 
 // Form State interface
