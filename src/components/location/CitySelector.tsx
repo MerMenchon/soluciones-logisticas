@@ -14,7 +14,7 @@ interface CitySelectorProps {
   cities: Location[];
   provinceValue: string;
   isLoading: boolean;
-  type: "origin" | "destination" | "storage" | "transport";
+  type: "origin" | "destination" | "storage" | "transport" | "both";
   onChange: (value: string) => void;
 }
 
