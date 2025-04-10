@@ -77,6 +77,18 @@ const formatValue = (value: string | undefined): string => {
   return value;
 };
 
+// New function to determine if a cost value should be displayed
+const shouldDisplayCost = (value: string | undefined): boolean => {
+  if (!value) return false;
+  
+  // If it's not a parseable number, always display it (like "Servicio no solicitado")
+  const numValue = parseFloat(value);
+  if (isNaN(numValue)) return true;
+  
+  // If it's a number, only display if it's not zero
+  return numValue !== 0;
+};
+
 const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
   const { toast } = useToast();
   const formContext = useFormContext();
@@ -169,13 +181,13 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
     ? webhookResponse.titulo.replace(/^"(.+)"$/, '$1') 
     : "¡Consulta enviada!";
   
-  // Check if we have cost information to display
-  const hasCostInfo = webhookResponse?.CostoTotal || 
-                     webhookResponse?.CostoTotalAlmacenamiento || 
-                     webhookResponse?.CostoTotalTransporte ||
-                     webhookResponse?.costoTotalIndividual ||
-                     webhookResponse?.CostoTotalIndividual ||
-                     webhookResponse?.precio;
+  // Check if we have cost information to display (not zero)
+  const hasCostInfo = shouldDisplayCost(webhookResponse?.CostoTotal) || 
+                     shouldDisplayCost(webhookResponse?.CostoTotalAlmacenamiento) || 
+                     shouldDisplayCost(webhookResponse?.CostoTotalTransporte) ||
+                     shouldDisplayCost(webhookResponse?.costoTotalIndividual) ||
+                     shouldDisplayCost(webhookResponse?.CostoTotalIndividual) ||
+                     shouldDisplayCost(webhookResponse?.precio);
   
   // Get the individual cost value from either capitalization version
   const individualCost = webhookResponse?.CostoTotalIndividual || webhookResponse?.costoTotalIndividual;
@@ -260,41 +272,39 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
         {hasCostInfo && (
           <Card className="border-2 border-agri-primary/20 bg-agri-primary/5">
             <CardContent className="pt-6">
-              {webhookResponse?.CostoTotal && (
+              {shouldDisplayCost(webhookResponse?.CostoTotal) && (
                 <div className="text-center mb-4">
                   <div className="text-sm text-muted-foreground mb-1">Costo Total:</div>
                   <div className="text-4xl font-bold text-agri-primary">
-                    {shouldShowCurrencySymbol(webhookResponse.CostoTotal) ? '$' : ''}
-                    {formatValue(webhookResponse.CostoTotal)}
+                    {shouldShowCurrencySymbol(webhookResponse?.CostoTotal) ? '$' : ''}
+                    {formatValue(webhookResponse?.CostoTotal)}
                   </div>
                 </div>
               )}
 
-              {(webhookResponse?.CostoTotalAlmacenamiento || webhookResponse?.CostoTotalTransporte) && (
-                <div className="grid grid-cols-2 gap-4 mt-4">
-                  {webhookResponse?.CostoTotalAlmacenamiento && (
-                    <div className="text-center">
-                      <div className="text-xs text-muted-foreground mb-1">Almacenamiento:</div>
-                      <div className="text-lg font-semibold text-agri-primary">
-                        {shouldShowCurrencySymbol(webhookResponse.CostoTotalAlmacenamiento) ? '$' : ''}
-                        {formatValue(webhookResponse.CostoTotalAlmacenamiento)}
-                      </div>
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                {shouldDisplayCost(webhookResponse?.CostoTotalAlmacenamiento) && (
+                  <div className="text-center">
+                    <div className="text-xs text-muted-foreground mb-1">Almacenamiento:</div>
+                    <div className="text-lg font-semibold text-agri-primary">
+                      {shouldShowCurrencySymbol(webhookResponse?.CostoTotalAlmacenamiento) ? '$' : ''}
+                      {formatValue(webhookResponse?.CostoTotalAlmacenamiento)}
                     </div>
-                  )}
-                  
-                  {webhookResponse?.CostoTotalTransporte && (
-                    <div className="text-center">
-                      <div className="text-xs text-muted-foreground mb-1">Transporte:</div>
-                      <div className="text-lg font-semibold text-agri-primary">
-                        {shouldShowCurrencySymbol(webhookResponse.CostoTotalTransporte) ? '$' : ''}
-                        {formatValue(webhookResponse.CostoTotalTransporte)}
-                      </div>
+                  </div>
+                )}
+                
+                {shouldDisplayCost(webhookResponse?.CostoTotalTransporte) && (
+                  <div className="text-center">
+                    <div className="text-xs text-muted-foreground mb-1">Transporte:</div>
+                    <div className="text-lg font-semibold text-agri-primary">
+                      {shouldShowCurrencySymbol(webhookResponse?.CostoTotalTransporte) ? '$' : ''}
+                      {formatValue(webhookResponse?.CostoTotalTransporte)}
                     </div>
-                  )}
-                </div>
-              )}
+                  </div>
+                )}
+              </div>
               
-              {individualCost && (
+              {shouldDisplayCost(individualCost) && (
                 <div className="text-center mt-4 pt-4 border-t border-agri-primary/20">
                   <div className="text-xs text-muted-foreground mb-1">Costo por unidad:</div>
                   <div className="text-lg font-semibold text-agri-primary">
