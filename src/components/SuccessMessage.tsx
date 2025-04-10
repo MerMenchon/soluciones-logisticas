@@ -43,7 +43,7 @@ const ConfirmationMessage = () => {
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 1.5 }}
         className="text-green-500 mb-6"
       >
         <CheckCircle size={60} strokeWidth={1.5} />
@@ -52,7 +52,7 @@ const ConfirmationMessage = () => {
       <motion.h2
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
+        transition={{ delay: 0.2, duration: 1.5 }}
         className="text-2xl font-semibold text-agri-primary mb-3 text-center"
       >
         ¡Solicitud enviada con éxito!
@@ -61,7 +61,7 @@ const ConfirmationMessage = () => {
       <motion.p
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.5 }}
+        transition={{ delay: 0.3, duration: 1.5 }}
         className="text-center text-muted-foreground"
       >
         Nos pondremos en contacto con usted a la brevedad.
