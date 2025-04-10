@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import ServiceSelector from "@/components/ServiceSelector";
 import ProductDetails from "@/components/ProductDetails";
@@ -143,15 +142,6 @@ const LogisticsForm = () => {
                   markFieldTouched('destinationCity');
                 }}
                 selectedService={selectedService}
-                useOriginAsStorage={useOriginAsStorage}
-                handleUseOriginAsStorageChange={handleUseOriginAsStorageChange}
-                useDestinationAsStorage={useDestinationAsStorage}
-                handleUseDestinationAsStorageChange={handleUseDestinationAsStorageChange}
-                estimatedStorageTime={estimatedStorageTime}
-                setEstimatedStorageTime={(value) => {
-                  setEstimatedStorageTime(value);
-                  markFieldTouched('estimatedStorageTime');
-                }}
                 isFieldTouched={isFieldTouched}
                 getFieldError={getFieldError}
                 markFieldTouched={markFieldTouched}
