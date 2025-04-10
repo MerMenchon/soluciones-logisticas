@@ -49,7 +49,7 @@ const ValueInput = ({
       <div className="flex items-stretch gap-2">
         <div className="w-1/3">
           <div className="relative">
-            <span className="absolute inset-y-0 left-0 flex items-center pl-3 pr-1 text-muted-foreground">
+            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
               usd
             </span>
             <Input
@@ -58,7 +58,10 @@ const ValueInput = ({
               value={localValue}
               onChange={handleValueChange}
               onBlur={handleBlur}
-              className={`w-full pl-7 ${hasError ? 'border-red-500' : ''}`}
+              className={cn(
+            "w-full pl-14 h-10 leading-none flex items-center", 
+            hasError && "border-red-500"
+          )}
               required
             />
           </div>
