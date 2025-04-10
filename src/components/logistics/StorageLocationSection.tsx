@@ -5,6 +5,8 @@ import LocationSelector from "@/components/LocationSelector";
 import { FormState } from "@/contexts/form/types";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useStorageAvailability } from "@/hooks/useStorageAvailability";
 
 interface StorageLocationSectionProps {
   selectedService: string;
@@ -51,6 +53,10 @@ const StorageLocationSection = ({
   handleUseOriginAsStorageChange,
   handleUseDestinationAsStorageChange,
 }: StorageLocationSectionProps) => {
+  // Check storage availability for origin and destination
+  const { hasStorage: hasOriginStorage } = useStorageAvailability(originProvince, originCity);
+  const { hasStorage: hasDestinationStorage } = useStorageAvailability(destinationProvince, destinationCity);
+  
   // Update the handler to use resetFieldError when value changes
   const handleEstimatedTimeChange = (value: string) => {
     if (resetFieldError) {
@@ -68,6 +74,11 @@ const StorageLocationSection = ({
     }
   };
 
+  // Determine if we show the "no storage available" message
+  const noStorageAvailable = selectedService === "both" && 
+                            originCity && destinationCity && 
+                            !hasOriginStorage && !hasDestinationStorage;
+
   return (
     <div className="reference-form-section">
       <h2 className="reference-form-subtitle">
@@ -81,27 +92,39 @@ const StorageLocationSection = ({
             Seleccione dónde desea almacenar su mercadería:
           </div>
           
-          <RadioGroup 
-            value={useOriginAsStorage ? "origin" : useDestinationAsStorage ? "destination" : ""}
-            onValueChange={handleStorageLocationChange}
-            className="space-y-4"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="origin" id="storage-origin" />
-              <Label htmlFor="storage-origin" className="cursor-pointer">
-                Almacenar en origen: {originCity ? `${originCity}, ${originProvince}` : "No seleccionado"}
-              </Label>
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="destination" id="storage-destination" />
-              <Label htmlFor="storage-destination" className="cursor-pointer">
-                Almacenar en destino: {destinationCity ? `${destinationCity}, ${destinationProvince}` : "No seleccionado"}
-              </Label>
-            </div>
-          </RadioGroup>
+          {noStorageAvailable ? (
+            <Alert className="bg-muted/50 border">
+              <AlertDescription>
+                No se habilitan opciones de almacenamiento porque no hay depósitos disponibles en las localidades seleccionadas.
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <RadioGroup 
+              value={useOriginAsStorage ? "origin" : useDestinationAsStorage ? "destination" : ""}
+              onValueChange={handleStorageLocationChange}
+              className="space-y-4"
+            >
+              {originCity && hasOriginStorage && (
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="origin" id="storage-origin" />
+                  <Label htmlFor="storage-origin" className="cursor-pointer">
+                    Almacenar en origen: {originCity}, {originProvince}
+                  </Label>
+                </div>
+              )}
+              
+              {destinationCity && hasDestinationStorage && (
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="destination" id="storage-destination" />
+                  <Label htmlFor="storage-destination" className="cursor-pointer">
+                    Almacenar en destino: {destinationCity}, {destinationProvince}
+                  </Label>
+                </div>
+              )}
+            </RadioGroup>
+          )}
           
-          {/* Storage time input */}
+          {/* Storage time input - only show when a location is selected */}
           {(useOriginAsStorage || useDestinationAsStorage) && (
             <div className="mt-4 p-4 border rounded-md bg-muted/10">
               <Label htmlFor="estimated-storage-time" className="block mb-2">
