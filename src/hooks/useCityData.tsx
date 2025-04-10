@@ -25,17 +25,18 @@ export const useCityData = (
           
           console.log(`Cities loaded in ${Math.round(endTime - startTime)}ms - Found ${citiesData.length} cities`);
           
+          // Log cities that have storage for debugging
+          const storageCount = citiesData.filter(city => city.hasStorage).length;
+          console.log(`Cities with storage: ${storageCount} / ${citiesData.length}`);
+          
           if (isMounted) {
             setCities(citiesData);
             
-            if (type === "storage") {
-              const citiesWithStorage = citiesData.filter(city => city.hasStorage);
-              if (citiesWithStorage.length === 0) {
-                toast({
-                  title: "Información",
-                  description: "No hay ciudades con almacenamiento disponible en esta provincia.",
-                });
-              }
+            if ((type === "storage" || type === "both") && storageCount === 0) {
+              toast({
+                title: "Información",
+                description: "No hay ciudades con almacenamiento disponible en esta provincia.",
+              });
             }
           }
         } catch (error) {

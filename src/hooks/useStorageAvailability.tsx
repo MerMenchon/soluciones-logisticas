@@ -25,15 +25,17 @@ export const useStorageAvailability = (provinceValue: string, cityValue: string)
     prevValuesRef.current = { province: provinceValue, city: cityValue };
     
     const checkStorageAvailability = async () => {
-      // Only check if both province and city are provided and we're not already checking
-      if (provinceValue && cityValue && !isChecking) {
+      // Only check if both province and city are provided
+      if (provinceValue && cityValue) {
         setIsChecking(true);
+        setHasInitialCheck(false); // Reset initial check while loading
         
         try {
           console.log(`Checking storage availability for ${cityValue}, ${provinceValue}`);
           const storageAvailable = await isStorageAvailable(provinceValue, cityValue);
           
           if (isMounted) {
+            console.log(`Storage availability result for ${cityValue}: ${storageAvailable}`);
             setHasStorage(storageAvailable);
             setHasInitialCheck(true);
             setIsChecking(false);
@@ -56,6 +58,9 @@ export const useStorageAvailability = (provinceValue: string, cityValue: string)
         if (cityValue === '' && hasInitialCheck) {
           setHasInitialCheck(false);
         }
+        
+        // Make sure we're not in checking state
+        setIsChecking(false);
       }
     };
 
@@ -64,7 +69,7 @@ export const useStorageAvailability = (provinceValue: string, cityValue: string)
     return () => {
       isMounted = false;
     };
-  }, [provinceValue, cityValue]); // Removed extra dependencies causing re-renders
+  }, [provinceValue, cityValue]); // Only depend on the province and city values
 
   return {
     hasStorage,

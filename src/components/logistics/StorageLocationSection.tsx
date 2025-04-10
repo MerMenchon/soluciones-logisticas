@@ -53,13 +53,13 @@ const StorageLocationSection = ({
   handleUseOriginAsStorageChange,
   handleUseDestinationAsStorageChange,
 }: StorageLocationSectionProps) => {
-  // Check storage availability for origin and destination - limit re-renders
-  const { hasStorage: hasOriginStorage } = useStorageAvailability(
+  // Check storage availability for origin and destination
+  const { hasStorage: hasOriginStorage, hasInitialCheck: originChecked } = useStorageAvailability(
     originProvince,
     originCity
   );
   
-  const { hasStorage: hasDestinationStorage } = useStorageAvailability(
+  const { hasStorage: hasDestinationStorage, hasInitialCheck: destinationChecked } = useStorageAvailability(
     destinationProvince,
     destinationCity
   );
@@ -87,25 +87,31 @@ const StorageLocationSection = ({
     }
   };
 
-  // Determine if we show the "no storage available" message - memoized to prevent re-renders
+  // Determine if we show the "no storage available" message
   const noStorageAvailable = useMemo(() => {
+    // Only show the message if both cities are selected and checked for storage
     return selectedService === "both" && 
            originCity && destinationCity && 
+           originChecked && destinationChecked &&
            !hasOriginStorage && !hasDestinationStorage;
-  }, [selectedService, originCity, destinationCity, hasOriginStorage, hasDestinationStorage]);
+  }, [selectedService, originCity, destinationCity, hasOriginStorage, hasDestinationStorage, originChecked, destinationChecked]);
 
-  // Only log when values actually change, not on every render
+  // Log changes to storage availability for debugging
   React.useEffect(() => {
-    if (originCity && originProvince) {
+    if (originCity && originProvince && originChecked) {
       console.log(`Origin storage (${originCity}, ${originProvince}): ${hasOriginStorage}`);
     }
-  }, [originCity, originProvince, hasOriginStorage]);
+  }, [originCity, originProvince, hasOriginStorage, originChecked]);
 
   React.useEffect(() => {
-    if (destinationCity && destinationProvince) {
+    if (destinationCity && destinationProvince && destinationChecked) {
       console.log(`Destination storage (${destinationCity}, ${destinationProvince}): ${hasDestinationStorage}`);
     }
-  }, [destinationCity, destinationProvince, hasDestinationStorage]);
+  }, [destinationCity, destinationProvince, hasDestinationStorage, destinationChecked]);
+
+  // Determine if options should be enabled based on storage availability
+  const canUseOriginStorage = originCity && hasOriginStorage && originChecked;
+  const canUseDestinationStorage = destinationCity && hasDestinationStorage && destinationChecked;
 
   return (
     <div className="reference-form-section">
@@ -125,41 +131,51 @@ const StorageLocationSection = ({
             onValueChange={handleStorageLocationChange}
             className="space-y-4"
           >
-            {/* Always show origin option, but disable if no storage available */}
+            {/* Origin storage option */}
             <div className="flex items-center space-x-2">
               <RadioGroupItem 
                 value="origin" 
                 id="storage-origin" 
-                disabled={!originCity || !hasOriginStorage}
+                disabled={!canUseOriginStorage}
               />
               <Label 
                 htmlFor="storage-origin" 
-                className={(!originCity || !hasOriginStorage) ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer"}
+                className={!canUseOriginStorage ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer"}
               >
                 Almacenar en origen: {originCity ? `${originCity}, ${originProvince}` : "Seleccione una ciudad de origen"}
-                {originCity && !hasOriginStorage && (
+                {originCity && originChecked && !hasOriginStorage && (
                   <span className="block text-xs text-muted-foreground">
                     No hay depósito disponible en esta ubicación
+                  </span>
+                )}
+                {originCity && !originChecked && (
+                  <span className="block text-xs text-muted-foreground">
+                    Verificando disponibilidad...
                   </span>
                 )}
               </Label>
             </div>
             
-            {/* Always show destination option, but disable if no storage available */}
+            {/* Destination storage option */}
             <div className="flex items-center space-x-2">
               <RadioGroupItem 
                 value="destination" 
                 id="storage-destination" 
-                disabled={!destinationCity || !hasDestinationStorage}
+                disabled={!canUseDestinationStorage}
               />
               <Label 
                 htmlFor="storage-destination" 
-                className={(!destinationCity || !hasDestinationStorage) ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer"}
+                className={!canUseDestinationStorage ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer"}
               >
                 Almacenar en destino: {destinationCity ? `${destinationCity}, ${destinationProvince}` : "Seleccione una ciudad de destino"}
-                {destinationCity && !hasDestinationStorage && (
+                {destinationCity && destinationChecked && !hasDestinationStorage && (
                   <span className="block text-xs text-muted-foreground">
                     No hay depósito disponible en esta ubicación
+                  </span>
+                )}
+                {destinationCity && !destinationChecked && (
+                  <span className="block text-xs text-muted-foreground">
+                    Verificando disponibilidad...
                   </span>
                 )}
               </Label>
@@ -170,7 +186,7 @@ const StorageLocationSection = ({
           {noStorageAvailable && (
             <Alert className="bg-muted/50 border mt-4">
               <AlertDescription>
-                Debe elegir alguna ciudad con depósito en origen o destino.
+                Debe elegir alguna ciudad con depósito en origen o destino para continuar.
               </AlertDescription>
             </Alert>
           )}
