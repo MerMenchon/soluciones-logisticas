@@ -1,6 +1,6 @@
 
 export interface LocationSelectorProps {
-  type: "origin" | "destination" | "storage" | "transport";
+  type: "origin" | "destination" | "storage" | "transport" | "both";
   provinceValue: string;
   cityValue: string;
   onProvinceChange: (value: string) => void;
@@ -14,7 +14,7 @@ export interface LocationSelectorProps {
 }
 
 export interface UseLocationSelectHookParams {
-  type: "origin" | "destination" | "storage" | "transport";
+  type: "origin" | "destination" | "storage" | "transport" | "both";
   provinceValue: string;
   cityValue: string;
   onCityChange: (value: string, hasStorage: boolean) => void;

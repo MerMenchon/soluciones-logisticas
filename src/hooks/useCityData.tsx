@@ -5,7 +5,7 @@ import { getCiudades, Location } from "@/data/locations";
 
 export const useCityData = (
   provinceValue: string,
-  type: "origin" | "destination" | "storage" | "transport"
+  type: "origin" | "destination" | "storage" | "transport" | "both"
 ) => {
   const [cities, setCities] = useState<Location[]>([]);
   const [isLoadingCities, setIsLoadingCities] = useState(false);
