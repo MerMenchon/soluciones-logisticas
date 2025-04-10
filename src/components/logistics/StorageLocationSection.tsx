@@ -54,12 +54,12 @@ const StorageLocationSection = ({
   handleUseDestinationAsStorageChange,
 }: StorageLocationSectionProps) => {
   // Check storage availability for origin and destination
-  const { hasStorage: hasOriginStorage, hasInitialCheck: originChecked } = useStorageAvailability(
+  const { hasStorage: hasOriginStorage, hasInitialCheck: originChecked, isChecking: isCheckingOrigin } = useStorageAvailability(
     originProvince,
     originCity
   );
   
-  const { hasStorage: hasDestinationStorage, hasInitialCheck: destinationChecked } = useStorageAvailability(
+  const { hasStorage: hasDestinationStorage, hasInitialCheck: destinationChecked, isChecking: isCheckingDestination } = useStorageAvailability(
     destinationProvince,
     destinationCity
   );
@@ -143,14 +143,19 @@ const StorageLocationSection = ({
                 className={!canUseOriginStorage ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer"}
               >
                 Almacenar en origen: {originCity ? `${originCity}, ${originProvince}` : "Seleccione una ciudad de origen"}
-                {originCity && originChecked && !hasOriginStorage && (
+                {originCity && isCheckingOrigin && (
+                  <span className="block text-xs text-muted-foreground">
+                    Verificando disponibilidad...
+                  </span>
+                )}
+                {originCity && originChecked && !hasOriginStorage && !isCheckingOrigin && (
                   <span className="block text-xs text-muted-foreground">
                     No hay depósito disponible en esta ubicación
                   </span>
                 )}
-                {originCity && !originChecked && (
-                  <span className="block text-xs text-muted-foreground">
-                    Verificando disponibilidad...
+                {originCity && originChecked && hasOriginStorage && (
+                  <span className="block text-xs text-green-600">
+                    Depósito disponible
                   </span>
                 )}
               </Label>
@@ -168,14 +173,19 @@ const StorageLocationSection = ({
                 className={!canUseDestinationStorage ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer"}
               >
                 Almacenar en destino: {destinationCity ? `${destinationCity}, ${destinationProvince}` : "Seleccione una ciudad de destino"}
-                {destinationCity && destinationChecked && !hasDestinationStorage && (
+                {destinationCity && isCheckingDestination && (
+                  <span className="block text-xs text-muted-foreground">
+                    Verificando disponibilidad...
+                  </span>
+                )}
+                {destinationCity && destinationChecked && !hasDestinationStorage && !isCheckingDestination && (
                   <span className="block text-xs text-muted-foreground">
                     No hay depósito disponible en esta ubicación
                   </span>
                 )}
-                {destinationCity && !destinationChecked && (
-                  <span className="block text-xs text-muted-foreground">
-                    Verificando disponibilidad...
+                {destinationCity && destinationChecked && hasDestinationStorage && (
+                  <span className="block text-xs text-green-600">
+                    Depósito disponible
                   </span>
                 )}
               </Label>

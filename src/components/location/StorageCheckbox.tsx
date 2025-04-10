@@ -42,6 +42,11 @@ const StorageCheckbox = ({
             No hay servicio de almacenamiento disponible en esta ciudad
           </p>
         )}
+        {hasStorage && cityValue && (
+          <p className="text-xs text-green-600">
+            Depósito disponible en esta ciudad
+          </p>
+        )}
         {disabled && hasStorage && cityValue && (
           <p className="text-xs text-muted-foreground">
             Ya hay otra ubicación seleccionada para almacenamiento

@@ -98,7 +98,7 @@ const LocationSelector = ({
           hasStorage={hasStorage}
           cityValue={cityValue}
           onChange={onUseAsStorageChange}
-          disabled={disableStorageOption} // Pass the prop correctly
+          disabled={disableStorageOption}
         />
       )}
 
