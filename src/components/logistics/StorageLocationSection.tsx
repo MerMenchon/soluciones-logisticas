@@ -69,8 +69,10 @@ const StorageLocationSection = ({
   const handleStorageLocationChange = (value: string) => {
     if (value === "origin" && handleUseOriginAsStorageChange) {
       handleUseOriginAsStorageChange(true);
+      handleUseDestinationAsStorageChange?.(false);
     } else if (value === "destination" && handleUseDestinationAsStorageChange) {
       handleUseDestinationAsStorageChange(true);
+      handleUseOriginAsStorageChange?.(false);
     }
   };
 
@@ -95,7 +97,7 @@ const StorageLocationSection = ({
           {noStorageAvailable ? (
             <Alert className="bg-muted/50 border">
               <AlertDescription>
-                No se habilitan opciones de almacenamiento porque no hay depósitos disponibles en las localidades seleccionadas.
+                Debe elegir alguna ciudad con depósito en origen o destino.
               </AlertDescription>
             </Alert>
           ) : (
