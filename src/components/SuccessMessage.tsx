@@ -33,9 +33,13 @@ const LoadingMessage = () => {
         <Loader size={60} strokeWidth={1.5} className="animate-spin" />
       </motion.div>
       
+      <div className="text-center text-lg text-gray-600">
+        Estamos enviando su consulta...
+      </div>
     </div>
   );
 };
+
 
 const ConfirmationMessage = () => {
   return (
