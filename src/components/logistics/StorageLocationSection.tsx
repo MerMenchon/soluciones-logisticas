@@ -85,6 +85,9 @@ const StorageLocationSection = ({
                             originCity && destinationCity && 
                             !hasOriginStorage && !hasDestinationStorage;
 
+  console.log(`Origin storage (${originCity}, ${originProvince}): ${hasOriginStorage}`);
+  console.log(`Destination storage (${destinationCity}, ${destinationProvince}): ${hasDestinationStorage}`);
+
   return (
     <div className="reference-form-section">
       <h2 className="reference-form-subtitle">

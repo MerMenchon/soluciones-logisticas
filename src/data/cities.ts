@@ -143,11 +143,18 @@ function parseCitiesFromCSV(csvText: string, provinceLabel: string): City[] {
         
         // Only process if province matches and city name is valid
         if (rowProvince === normalizedProvinceLabel && cityName && !citySet.has(cityName)) {
+          // Improved check for storage availability based on "deposito" column value
+          // Check if the value in the deposito column is "si", "sí", or "yes" (case insensitive)
           const hasStorage = storageColumnIndex !== -1 && fields.length > storageColumnIndex ? 
             fields[storageColumnIndex].toLowerCase() === 'si' || 
             fields[storageColumnIndex].toLowerCase() === 'sí' || 
             fields[storageColumnIndex].toLowerCase() === 'yes' : 
             false;
+          
+          // Log for debugging
+          if (hasStorage) {
+            console.log(`City with storage: ${cityName} (${fields[storageColumnIndex]})`);
+          }
           
           cities.push({
             value: cityName.toLowerCase().replace(/\s+/g, '-'),
@@ -167,6 +174,11 @@ function parseCitiesFromCSV(csvText: string, provinceLabel: string): City[] {
   
   // Sort alphabetically
   cities.sort((a, b) => a.label.localeCompare(b.label));
+  
+  // Log cities with storage
+  const citiesWithStorage = cities.filter(city => city.hasStorage);
+  console.log(`Found ${citiesWithStorage.length} cities with storage for province ${provinceLabel}`);
+  citiesWithStorage.forEach(city => console.log(`- ${city.label}`));
   
   console.log(`Parsed ${cities.length} unique cities for province ${provinceLabel} (total matches: ${matchCount})`);
   return cities;
@@ -206,9 +218,18 @@ export const getCiudades = async (provincia: string): Promise<Location[]> => {
 // Check if storage is available in a location
 export const isStorageAvailable = async (provincia: string, ciudad: string): Promise<boolean> => {
   try {
+    if (!provincia || !ciudad) {
+      return false;
+    }
+    
+    console.log(`Checking storage for ${ciudad}, ${provincia}`);
     const cities = await getCiudades(provincia);
     const selectedCity = cities.find(c => c.ciudad === ciudad);
-    return selectedCity?.hasStorage || false;
+    
+    const hasStorage = selectedCity?.hasStorage || false;
+    console.log(`Storage check result for ${ciudad}, ${provincia}: ${hasStorage}`);
+    
+    return hasStorage;
   } catch (error) {
     console.error(`Error checking storage availability for ${provincia}/${ciudad}:`, error);
     return false;
