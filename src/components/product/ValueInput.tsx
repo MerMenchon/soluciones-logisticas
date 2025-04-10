@@ -58,10 +58,10 @@ const ValueInput = ({
               value={localValue}
               onChange={handleValueChange}
               onBlur={handleBlur}
-              className={cn(
-            "w-full pl-14 h-10 leading-none flex items-center", 
-            hasError && "border-red-500"
-          )}
+             className={cn(
+  "w-full pl-14 h-10 leading-none flex items-center", 
+  hasError && "border-red-500"
+)}
               required
             />
           </div>
