@@ -69,10 +69,14 @@ const StorageLocationSection = ({
   const handleStorageLocationChange = (value: string) => {
     if (value === "origin" && handleUseOriginAsStorageChange) {
       handleUseOriginAsStorageChange(true);
-      handleUseDestinationAsStorageChange?.(false);
+      if (handleUseDestinationAsStorageChange) {
+        handleUseDestinationAsStorageChange(false);
+      }
     } else if (value === "destination" && handleUseDestinationAsStorageChange) {
       handleUseDestinationAsStorageChange(true);
-      handleUseOriginAsStorageChange?.(false);
+      if (handleUseOriginAsStorageChange) {
+        handleUseOriginAsStorageChange(false);
+      }
     }
   };
 
