@@ -158,7 +158,10 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
         open={open} 
         onOpenChange={(isOpen) => {
           console.log("Success dialog onOpenChange:", isOpen);
-          if (!isOpen) onClose();
+          if (!isOpen) {
+            onClose();
+            resetForm(); // Reset form when the success dialog is closed
+          }
         }}
       >
         <DialogContent 
@@ -169,7 +172,10 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
           
           <DialogFooter className="mt-6">
             <Button
-              onClick={onClose}
+              onClick={() => {
+                onClose();
+                resetForm(); // Reset form when close button is clicked
+              }}
               className="w-full bg-agri-primary hover:bg-agri-dark text-white"
             >
               Cerrar
@@ -245,12 +251,16 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
         false
       );
       
+      // Reset form when dialog is closed
+      resetForm();
+      
       // Close dialog
       onClose();
       
     } catch (error) {
       console.error("Error sending cancel confirmation:", error);
-      // Still close the dialog even if there's an error
+      // Still close the dialog and reset the form even if there's an error
+      resetForm();
       onClose();
     }
   };
@@ -260,7 +270,10 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
       open={open} 
       onOpenChange={(isOpen) => {
         console.log("Response dialog onOpenChange:", isOpen);
-        if (!isOpen) onClose();
+        if (!isOpen) {
+          resetForm(); // Reset form when dialog is closed
+          onClose();
+        }
       }}
     >
       <DialogContent 
