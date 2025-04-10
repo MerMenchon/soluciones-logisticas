@@ -107,7 +107,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
     //   if (timeoutId) {
     //     clearTimeout(timeoutId);
     //   }
-    };
+   // };
   }, [showSuccessConfirmation, open, onClose]);
   
   // Display loading message while waiting for response
