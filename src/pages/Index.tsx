@@ -1,6 +1,6 @@
 
 import React from "react";
-import { FormProvider } from "@/contexts/form";
+import { FormProvider } from "@/contexts/form/FormContext";
 import LogisticsForm from "@/components/LogisticsForm";
 
 const Index = () => {
