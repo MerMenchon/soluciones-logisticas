@@ -14,12 +14,6 @@ interface TransportRouteSectionProps {
   setDestinationProvince: (province: string) => void;
   setDestinationCity: (city: string) => void;
   selectedService: string;
-  useOriginAsStorage: boolean;
-  handleUseOriginAsStorageChange: (checked: boolean) => void;
-  useDestinationAsStorage: boolean;
-  handleUseDestinationAsStorageChange: (checked: boolean) => void;
-  estimatedStorageTime: string;
-  setEstimatedStorageTime: (time: string) => void;
   isFieldTouched: (fieldName: keyof FormState) => boolean;
   getFieldError: (fieldName: string) => string | null;
   markFieldTouched: (fieldName: keyof FormState) => void;
@@ -36,12 +30,6 @@ const TransportRouteSection = ({
   setDestinationProvince,
   setDestinationCity,
   selectedService,
-  useOriginAsStorage,
-  handleUseOriginAsStorageChange,
-  useDestinationAsStorage,
-  handleUseDestinationAsStorageChange,
-  estimatedStorageTime,
-  setEstimatedStorageTime,
   isFieldTouched,
   getFieldError,
   markFieldTouched,
@@ -67,16 +55,10 @@ const TransportRouteSection = ({
             onProvinceChange={setOriginProvince}
             onCityChange={setOriginCity}
             label="Origen"
-            // Remove storage options for "transport" service
-            useAsStorage={selectedService === "both" ? useOriginAsStorage : undefined}
-            onUseAsStorageChange={
-              selectedService === "both" 
-                ? handleUseOriginAsStorageChange 
-                : undefined
-            }
-            estimatedTime={selectedService === "both" && useOriginAsStorage ? estimatedStorageTime : undefined}
-            onEstimatedTimeChange={selectedService === "both" && useOriginAsStorage ? setEstimatedStorageTime : undefined}
-            disableStorageOption={useDestinationAsStorage}
+            // Remove storage options for "transport" service entirely
+            useAsStorage={undefined}
+            onUseAsStorageChange={undefined}
+            disableStorageOption={true}
           />
         </div>
         
@@ -92,16 +74,10 @@ const TransportRouteSection = ({
             onProvinceChange={setDestinationProvince}
             onCityChange={setDestinationCity}
             label="Destino"
-            // Remove storage options for "transport" service
-            useAsStorage={selectedService === "both" ? useDestinationAsStorage : undefined}
-            onUseAsStorageChange={
-              selectedService === "both"
-                ? handleUseDestinationAsStorageChange
-                : undefined
-            }
-            estimatedTime={selectedService === "both" && useDestinationAsStorage ? estimatedStorageTime : undefined}
-            onEstimatedTimeChange={selectedService === "both" && useDestinationAsStorage ? setEstimatedStorageTime : undefined}
-            disableStorageOption={useOriginAsStorage}
+            // Remove storage options for "transport" service entirely
+            useAsStorage={undefined}
+            onUseAsStorageChange={undefined}
+            disableStorageOption={true}
           />
         </div>
       </div>
