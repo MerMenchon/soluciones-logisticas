@@ -99,7 +99,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
       // You can adjust this value to make the message display longer
       timeoutId = setTimeout(() => {
         onClose();
-      }, 5000); // 5 seconds
+      }, 500000); // 5 seconds
     }
     
     // Clean up the timeout when the component unmounts or when dependencies change
