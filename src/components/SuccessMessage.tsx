@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, Loader, ArrowLeft } from "lucide-react";
@@ -143,7 +142,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
       >
         <DialogContent 
           className="sm:max-w-md" 
-          hideCloseButton
+          hideCloseButton={true} // Hide close button for loading state
         >
           <LoadingMessage />
         </DialogContent>
@@ -164,6 +163,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
       >
         <DialogContent 
           className="sm:max-w-md"
+          hideCloseButton={true} // Hide close button for success confirmation
         >
           <ConfirmationMessage />
           
@@ -179,7 +179,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
       </Dialog>
     );
   }
-  
+
   // Clean up the title by removing extra quotes if they exist
   const cleanTitle = webhookResponse?.titulo 
     ? webhookResponse.titulo.replace(/^"(.+)"$/, '$1') 
