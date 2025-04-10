@@ -59,7 +59,7 @@ const ValueInput = ({
               value={localValue}
               onChange={handleValueChange}
               onBlur={handleBlur}
-              className={cn("w-full pl-7 leading-normal", hasError ? "border-red-500" : "")}
+              className={cn("w-full pl-13 leading-normal", hasError ? "border-red-500" : "")}
               required
             />
           </div>
