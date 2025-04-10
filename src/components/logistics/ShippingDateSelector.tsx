@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -24,6 +24,8 @@ const ShippingDateSelector = ({
   errorMessage = null,
   onBlur
 }: ShippingDateSelectorProps) => {
+  const [open, setOpen] = useState(false); // Estado para controlar el popover
+
   return (
     <div className="reference-form-section">
       <h2 className="reference-form-subtitle">
@@ -34,7 +36,7 @@ const ShippingDateSelector = ({
         ¿A partir de qué fecha lo solicitás?
       </p>
       <div className="space-y-4">
-        <Popover>
+        <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
               id="shippingDate"
@@ -48,7 +50,7 @@ const ShippingDateSelector = ({
             >
               <Calendar className="mr-2 h-4 w-4" />
               {selectedDate
-                ? format(selectedDate, "PPP", { locale: es }) 
+                ? format(selectedDate, "PPP", { locale: es })
                 : <span>Seleccione una fecha</span>}
             </Button>
           </PopoverTrigger>
@@ -56,10 +58,13 @@ const ShippingDateSelector = ({
             <CalendarComponent
               mode="single"
               selected={selectedDate}
-              onSelect={onDateSelect}
+              onSelect={(date) => {
+                onDateSelect(date);
+                setOpen(false); // Cierra el popover al seleccionar
+              }}
               disabled={disabledDays}
               initialFocus
-              locale={es} 
+              locale={es} // Muestra el calendario en español
               className={cn("p-3 pointer-events-auto")}
             />
           </PopoverContent>
