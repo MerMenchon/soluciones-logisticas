@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { memo, useMemo } from "react";
 import { Warehouse } from "lucide-react";
 import LocationSelector from "@/components/LocationSelector";
 import { FormState } from "@/contexts/form/types";
@@ -53,9 +53,16 @@ const StorageLocationSection = ({
   handleUseOriginAsStorageChange,
   handleUseDestinationAsStorageChange,
 }: StorageLocationSectionProps) => {
-  // Check storage availability for origin and destination
-  const { hasStorage: hasOriginStorage } = useStorageAvailability(originProvince, originCity);
-  const { hasStorage: hasDestinationStorage } = useStorageAvailability(destinationProvince, destinationCity);
+  // Check storage availability for origin and destination - limit re-renders
+  const { hasStorage: hasOriginStorage } = useStorageAvailability(
+    originProvince,
+    originCity
+  );
+  
+  const { hasStorage: hasDestinationStorage } = useStorageAvailability(
+    destinationProvince,
+    destinationCity
+  );
   
   // Update the handler to use resetFieldError when value changes
   const handleEstimatedTimeChange = (value: string) => {
@@ -80,13 +87,25 @@ const StorageLocationSection = ({
     }
   };
 
-  // Determine if we show the "no storage available" message
-  const noStorageAvailable = selectedService === "both" && 
-                            originCity && destinationCity && 
-                            !hasOriginStorage && !hasDestinationStorage;
+  // Determine if we show the "no storage available" message - memoized to prevent re-renders
+  const noStorageAvailable = useMemo(() => {
+    return selectedService === "both" && 
+           originCity && destinationCity && 
+           !hasOriginStorage && !hasDestinationStorage;
+  }, [selectedService, originCity, destinationCity, hasOriginStorage, hasDestinationStorage]);
 
-  console.log(`Origin storage (${originCity}, ${originProvince}): ${hasOriginStorage}`);
-  console.log(`Destination storage (${destinationCity}, ${destinationProvince}): ${hasDestinationStorage}`);
+  // Only log when values actually change, not on every render
+  React.useEffect(() => {
+    if (originCity && originProvince) {
+      console.log(`Origin storage (${originCity}, ${originProvince}): ${hasOriginStorage}`);
+    }
+  }, [originCity, originProvince, hasOriginStorage]);
+
+  React.useEffect(() => {
+    if (destinationCity && destinationProvince) {
+      console.log(`Destination storage (${destinationCity}, ${destinationProvince}): ${hasDestinationStorage}`);
+    }
+  }, [destinationCity, destinationProvince, hasDestinationStorage]);
 
   return (
     <div className="reference-form-section">
@@ -198,4 +217,5 @@ const StorageLocationSection = ({
   );
 };
 
-export default StorageLocationSection;
+// Use memo to prevent unnecessary re-renders
+export default memo(StorageLocationSection);

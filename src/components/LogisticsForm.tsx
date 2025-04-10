@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useState, useCallback } from "react";
 import ServiceSelector from "@/components/ServiceSelector";
 import ProductDetails from "@/components/ProductDetails";
 import ContactDetails from "@/components/ContactDetails";
@@ -64,14 +65,15 @@ const LogisticsForm = () => {
     resetFieldError,
   } = useFormContext();
 
-  // State for form validation
+  // State for form validation - use useState to prevent continuous re-renders
   const [isFormValid, setIsFormValid] = useState(false);
 
-  // Effect to validate the form when relevant values change
-  useEffect(() => {
+  // Memoize the validateForm callback to prevent recreating on every render
+  const memoizedValidateForm = useCallback(() => {
     const isValid = validateForm() === null;
-    setIsFormValid(isValid);
+    return isValid;
   }, [
+    validateForm,
     selectedService,
     storageProvince,
     storageCity,
@@ -85,9 +87,16 @@ const LogisticsForm = () => {
     quantityUnit,
     cargoValue,
     shippingTime,
-    estimatedStorageTime,
-    validateForm
+    estimatedStorageTime
   ]);
+
+  // Effect to validate the form when relevant values change - with stable dependencies
+  useEffect(() => {
+    const isValid = memoizedValidateForm();
+    setIsFormValid(isValid);
+    // This useEffect intentionally has memoizedValidateForm as the only dependency
+    // since memoizedValidateForm captures all the form values we need
+  }, [memoizedValidateForm]);
 
   // For date picker
   const selectedDate = shippingTime ? new Date(shippingTime) : undefined;
@@ -96,12 +105,13 @@ const LogisticsForm = () => {
   // Disable past dates
   const disabledDays = { before: today };
   
-  const handleDateSelect = (date: Date | undefined) => {
+  // Memoize date handler to prevent recreation on every render
+  const handleDateSelect = useCallback((date: Date | undefined) => {
     if (date) {
       setShippingTime(date.toISOString());
       markFieldTouched('shippingTime');
     }
-  };
+  }, [setShippingTime, markFieldTouched]);
 
   return (
     <>
