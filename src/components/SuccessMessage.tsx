@@ -1,3 +1,4 @@
+
 import React from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, Loader, ArrowLeft } from "lucide-react";
@@ -93,7 +94,16 @@ const formatValue = (value: string | undefined): string => {
 
 const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
   const { toast } = useToast();
-  const { webhookResponse, isWaitingForResponse, resetForm, showSuccessConfirmation } = useFormContext();
+  const formContext = useFormContext();
+  const { 
+    webhookResponse, 
+    isWaitingForResponse, 
+    resetForm, 
+    showSuccessConfirmation,
+    updateSubmissionState,
+    setShowResponseDialog, 
+    setShowSuccessConfirmation 
+  } = formContext;
   
   // Display loading message while waiting for response
   if (isWaitingForResponse) {
@@ -174,7 +184,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
       );
       
       // Update state to show confirmation message
-      useFormContext().updateSubmissionState({
+      updateSubmissionState({
         showResponseDialog: false,
         showSuccessConfirmation: true
       });

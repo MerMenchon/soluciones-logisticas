@@ -193,5 +193,8 @@ export const useFormState = () => {
     
     // Form action methods
     resetForm,
+    
+    // Make sure updateSubmissionState is explicitly exposed
+    updateSubmissionState: submissionState.updateSubmissionState,
   };
 };

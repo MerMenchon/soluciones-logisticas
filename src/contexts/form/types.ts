@@ -107,6 +107,9 @@ export interface FormContextType extends FormState {
   setShowConfirmation: (showConfirmation: boolean) => void;
   setDistanceValue: (distanceValue: string | null) => void;
   validateForm: () => string | null;
+  
+  // Add the missing method that's needed in SuccessMessage.tsx
+  updateSubmissionState: (updates: Partial<FormState>) => void;
 }
 
 // FormProviderProps interface
