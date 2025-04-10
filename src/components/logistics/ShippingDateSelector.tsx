@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 interface ShippingDateSelectorProps {
   selectedDate: Date | undefined;
@@ -47,7 +47,9 @@ const ShippingDateSelector = ({
               onBlur={onBlur}
             >
               <Calendar className="mr-2 h-4 w-4" />
-              {selectedDate ? format(selectedDate, "PPP") : <span>Seleccione una fecha</span>}
+              {selectedDate
+                ? format(selectedDate, "PPP", { locale: es }) 
+                : <span>Seleccione una fecha</span>}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
@@ -57,6 +59,7 @@ const ShippingDateSelector = ({
               onSelect={onDateSelect}
               disabled={disabledDays}
               initialFocus
+              locale={es} 
               className={cn("p-3 pointer-events-auto")}
             />
           </PopoverContent>
