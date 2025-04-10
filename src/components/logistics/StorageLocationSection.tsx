@@ -72,6 +72,9 @@ const StorageLocationSection = ({
     setEstimatedStorageTime(value);
   };
 
+  // Determine the current storage location selection
+  const storageLocation = useOriginAsStorage ? "origin" : useDestinationAsStorage ? "destination" : "";
+
   // Set storage location based on selection
   const handleStorageLocationChange = (value: string) => {
     if (value === "origin" && handleUseOriginAsStorageChange) {
@@ -100,14 +103,16 @@ const StorageLocationSection = ({
   React.useEffect(() => {
     if (originCity && originProvince && originChecked) {
       console.log(`Origin storage (${originCity}, ${originProvince}): ${hasOriginStorage}`);
+      console.log(`useOriginAsStorage: ${useOriginAsStorage}`);
     }
-  }, [originCity, originProvince, hasOriginStorage, originChecked]);
+  }, [originCity, originProvince, hasOriginStorage, originChecked, useOriginAsStorage]);
 
   React.useEffect(() => {
     if (destinationCity && destinationProvince && destinationChecked) {
       console.log(`Destination storage (${destinationCity}, ${destinationProvince}): ${hasDestinationStorage}`);
+      console.log(`useDestinationAsStorage: ${useDestinationAsStorage}`);
     }
-  }, [destinationCity, destinationProvince, hasDestinationStorage, destinationChecked]);
+  }, [destinationCity, destinationProvince, hasDestinationStorage, destinationChecked, useDestinationAsStorage]);
 
   // Determine if options should be enabled based on storage availability
   const canUseOriginStorage = originCity && hasOriginStorage && originChecked;
@@ -127,7 +132,7 @@ const StorageLocationSection = ({
           </div>
           
           <RadioGroup 
-            value={useOriginAsStorage ? "origin" : useDestinationAsStorage ? "destination" : ""}
+            value={storageLocation}
             onValueChange={handleStorageLocationChange}
             className="space-y-4"
           >
@@ -137,6 +142,7 @@ const StorageLocationSection = ({
                 value="origin" 
                 id="storage-origin" 
                 disabled={!canUseOriginStorage}
+                checked={useOriginAsStorage}
               />
               <Label 
                 htmlFor="storage-origin" 
@@ -167,6 +173,7 @@ const StorageLocationSection = ({
                 value="destination" 
                 id="storage-destination" 
                 disabled={!canUseDestinationStorage}
+                checked={useDestinationAsStorage}
               />
               <Label 
                 htmlFor="storage-destination" 
