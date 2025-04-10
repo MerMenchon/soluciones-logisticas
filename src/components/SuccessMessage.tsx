@@ -33,14 +33,6 @@ const LoadingMessage = () => {
         <Loader size={60} strokeWidth={1.5} className="animate-spin" />
       </motion.div>
       
-      <motion.h2
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
-        className="text-2xl font-semibold text-agri-primary mb-3"
-      >
-        Procesando su consulta
-      </motion.h2>
     </div>
   );
 };
