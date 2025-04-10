@@ -52,7 +52,8 @@ export const useFormActions = ({
       updateSubmissionState({ 
         isSubmitting: false,
         isWaitingForResponse: false,
-        webhookResponse
+        webhookResponse,
+        showResponseDialog: true // Ensure dialog stays open
       });
     } catch (error) {
       console.error("Error handling webhook response:", error);
@@ -74,6 +75,7 @@ export const useFormActions = ({
 
   // Dialog close handler
   const handleCloseResponseDialog = () => {
+    console.log("handleCloseResponseDialog called");
     updateSubmissionState({ 
       showResponseDialog: false,
       showSuccessConfirmation: false 
@@ -89,6 +91,7 @@ export const useFormActions = ({
 
   // Cancel request
   const cancelRequest = () => {
+    console.log("cancelRequest called");
     updateSubmissionState({ 
       isSubmitting: false,
       isWaitingForResponse: false,
@@ -99,6 +102,7 @@ export const useFormActions = ({
 
   // Reset form function
   const resetForm = () => {
+    console.log("resetForm called in useFormActions");
     // Reset submission state
     updateSubmissionState({
       isSubmitting: false,

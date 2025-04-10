@@ -57,6 +57,7 @@ const LogisticsForm = () => {
     estimatedStorageTime,
     setEstimatedStorageTime,
     showResponseDialog,
+    showSuccessConfirmation,
     handleCloseResponseDialog,
     isWaitingForResponse,
     isFieldTouched,
@@ -67,6 +68,13 @@ const LogisticsForm = () => {
 
   // State for form validation - use useState to prevent continuous re-renders
   const [isFormValid, setIsFormValid] = useState(false);
+
+  // Log dialog state for debugging
+  useEffect(() => {
+    console.log("LogisticsForm - showResponseDialog:", showResponseDialog);
+    console.log("LogisticsForm - showSuccessConfirmation:", showSuccessConfirmation);
+    console.log("LogisticsForm - isWaitingForResponse:", isWaitingForResponse);
+  }, [showResponseDialog, showSuccessConfirmation, isWaitingForResponse]);
 
   // Memoize the validateForm callback to prevent recreating on every render
   const memoizedValidateForm = useCallback(() => {
@@ -113,11 +121,17 @@ const LogisticsForm = () => {
     }
   }, [setShippingTime, markFieldTouched]);
 
+  // Custom onClose handler to ensure state is properly updated
+  const handleDialogClose = useCallback(() => {
+    console.log("handleDialogClose called in LogisticsForm");
+    handleCloseResponseDialog();
+  }, [handleCloseResponseDialog]);
+
   return (
     <>
       <SuccessMessage 
         open={showResponseDialog || isWaitingForResponse} 
-        onClose={handleCloseResponseDialog} 
+        onClose={handleDialogClose} 
       />
       
       <form onSubmit={handleSubmit} className="reference-form space-y-8">

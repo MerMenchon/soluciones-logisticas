@@ -92,12 +92,16 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
   
   // Add effect to close the confirmation dialog after a delay
   useEffect(() => {
+    console.log("SuccessMessage - showSuccessConfirmation:", showSuccessConfirmation);
+    console.log("SuccessMessage - open:", open);
+    
     let timeoutId: NodeJS.Timeout;
     
     if (showSuccessConfirmation && open) {
+      console.log("Setting timeout to close dialog after 5 seconds");
       // Set a timeout to close the dialog after 5 seconds (5000ms)
-      // You can adjust this value to make the message display longer
       timeoutId = setTimeout(() => {
+        console.log("Auto-closing dialog after timeout");
         onClose();
       }, 5000); // 5 seconds
     }
@@ -112,11 +116,14 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
   
   // Display loading message while waiting for response
   if (isWaitingForResponse) {
+    console.log("Showing loading message");
     return (
       <Dialog 
         open={open} 
-        onOpenChange={onClose}
-        modal={true}
+        onOpenChange={(isOpen) => {
+          console.log("Loading dialog onOpenChange:", isOpen);
+          if (!isOpen) onClose();
+        }}
       >
         <DialogContent 
           className="sm:max-w-md" 
@@ -130,10 +137,14 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
   
   // Display confirmation message after form is successfully submitted
   if (showSuccessConfirmation) {
+    console.log("Showing success confirmation message");
     return (
       <Dialog 
         open={open} 
-        modal={true}
+        onOpenChange={(isOpen) => {
+          console.log("Success dialog onOpenChange:", isOpen);
+          if (!isOpen) onClose();
+        }}
       >
         <DialogContent 
           className="sm:max-w-md"
@@ -188,8 +199,9 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
       );
       
       // Update state to show confirmation message
+      console.log("Setting showSuccessConfirmation to true");
       updateSubmissionState({
-        showResponseDialog: false,
+        showResponseDialog: true,
         showSuccessConfirmation: true
       });
       
@@ -228,7 +240,13 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog 
+      open={open} 
+      onOpenChange={(isOpen) => {
+        console.log("Response dialog onOpenChange:", isOpen);
+        if (!isOpen) onClose();
+      }}
+    >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold text-agri-primary">
