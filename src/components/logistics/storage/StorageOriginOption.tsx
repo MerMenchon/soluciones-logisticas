@@ -23,25 +23,29 @@ const StorageOriginOption = ({
   originChecked
 }: StorageOriginOptionProps) => {
   return (
-    <div className="flex items-center space-x-2">
+    <div className={`flex items-start space-x-2 p-3 rounded-md ${useOriginAsStorage ? 'bg-muted/50 border' : ''}`}>
       <RadioGroupItem 
         value="origin" 
         id="storage-origin" 
         disabled={!canUseOriginStorage}
         checked={useOriginAsStorage}
+        className="mt-1"
       />
-      <Label 
-        htmlFor="storage-origin" 
-        className={!canUseOriginStorage ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer"}
-      >
-        Almacenar en origen: {originCity ? `${originCity}, ${originProvince}` : "Seleccione una ciudad de origen"}
+      <div className="grid gap-1">
+        <Label 
+          htmlFor="storage-origin" 
+          className={!canUseOriginStorage ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer"}
+        >
+          Almacenar en origen: {originCity ? `${originCity}, ${originProvince}` : "Seleccione una ciudad de origen"}
+        </Label>
+        
         {originCity && isCheckingOrigin && (
           <span className="block text-xs text-muted-foreground">
             Verificando disponibilidad...
           </span>
         )}
         {originCity && originChecked && !hasOriginStorage && !isCheckingOrigin && (
-          <span className="block text-xs text-muted-foreground">
+          <span className="block text-xs text-destructive">
             No hay depósito disponible en esta ubicación
           </span>
         )}
@@ -50,7 +54,7 @@ const StorageOriginOption = ({
             Depósito disponible
           </span>
         )}
-      </Label>
+      </div>
     </div>
   );
 };

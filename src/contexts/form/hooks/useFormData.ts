@@ -6,6 +6,32 @@ import { translateServiceType } from "../validation";
  * Prepares form data for submission
  */
 export const prepareFormData = (formState: FormState) => {
+  // Determine the effective storage location based on user selection
+  let effectiveStorageProvince = null;
+  let effectiveStorageCity = null;
+  
+  if (formState.selectedService === "storage") {
+    // For "storage" service, use the direct storage location
+    effectiveStorageProvince = formState.storageProvince;
+    effectiveStorageCity = formState.storageCity;
+  } else if (formState.selectedService === "both") {
+    // For "both" service, use the location selected by radio buttons
+    if (formState.useOriginAsStorage) {
+      effectiveStorageProvince = formState.originProvince;
+      effectiveStorageCity = formState.originCity;
+    } else if (formState.useDestinationAsStorage) {
+      effectiveStorageProvince = formState.destinationProvince;
+      effectiveStorageCity = formState.destinationCity;
+    }
+  }
+  
+  console.log("Form submission - storage location:", {
+    useOriginAsStorage: formState.useOriginAsStorage,
+    useDestinationAsStorage: formState.useDestinationAsStorage,
+    effectiveStorageProvince,
+    effectiveStorageCity
+  });
+
   return {
     submissionDate: new Date().toISOString(), // Add current date and time
     userId: 123456, // Add the user ID as requested
@@ -14,9 +40,13 @@ export const prepareFormData = (formState: FormState) => {
     },
     locations: {
       storage: {
-        province: formState.selectedService === "storage" || formState.selectedService === "both" ? formState.storageProvince : null,
-        city: formState.selectedService === "storage" || formState.selectedService === "both" ? formState.storageCity : null,
-        estimatedStorageTime: formState.selectedService === "storage" || formState.selectedService === "both" 
+        province: (formState.selectedService === "storage" || formState.selectedService === "both") 
+          ? effectiveStorageProvince 
+          : null,
+        city: (formState.selectedService === "storage" || formState.selectedService === "both") 
+          ? effectiveStorageCity 
+          : null,
+        estimatedStorageTime: (formState.selectedService === "storage" || formState.selectedService === "both") 
           ? (formState.estimatedStorageTime ? parseInt(formState.estimatedStorageTime) : null) 
           : null
       },

@@ -59,10 +59,14 @@ export const useStorageOptions = ({
   // Determine if we show the "no storage available" message
   const noStorageAvailable = useMemo(() => {
     // Only show the message if both cities are selected and checked for storage
+    const bothCitiesSelected = originCity && destinationCity;
+    const bothCitiesChecked = originChecked && destinationChecked;
+    const noStorageInEither = !hasOriginStorage && !hasDestinationStorage;
+    
     return selectedService === "both" && 
-           originCity && destinationCity && 
-           originChecked && destinationChecked &&
-           !hasOriginStorage && !hasDestinationStorage;
+           bothCitiesSelected && 
+           bothCitiesChecked &&
+           noStorageInEither;
   }, [selectedService, originCity, destinationCity, hasOriginStorage, hasDestinationStorage, originChecked, destinationChecked]);
 
   return {

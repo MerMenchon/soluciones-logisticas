@@ -1,5 +1,5 @@
 
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import { Warehouse } from "lucide-react";
 import LocationSelector from "@/components/LocationSelector";
 import { FormState } from "@/contexts/form/types";
@@ -88,18 +88,31 @@ const StorageLocationSection = ({
 
   // Set storage location based on selection
   const handleStorageLocationChange = (value: string) => {
+    console.log(`Storage location changed to: ${value}`);
+    
     if (value === "origin" && handleUseOriginAsStorageChange) {
       handleUseOriginAsStorageChange(true);
-      if (handleUseDestinationAsStorageChange) {
-        handleUseDestinationAsStorageChange(false);
-      }
     } else if (value === "destination" && handleUseDestinationAsStorageChange) {
       handleUseDestinationAsStorageChange(true);
-      if (handleUseOriginAsStorageChange) {
-        handleUseOriginAsStorageChange(false);
-      }
     }
+    
+    // Mark the field as touched to trigger validation
+    markFieldTouched('storageCity');
+    markFieldTouched('storageProvince');
   };
+  
+  // Debug current state
+  useEffect(() => {
+    if (selectedService === "both") {
+      console.log("StorageLocationSection state:", {
+        useOriginAsStorage,
+        useDestinationAsStorage,
+        canUseOriginStorage,
+        canUseDestinationStorage,
+        storageLocation
+      });
+    }
+  }, [selectedService, useOriginAsStorage, useDestinationAsStorage, canUseOriginStorage, canUseDestinationStorage, storageLocation]);
 
   return (
     <div className="reference-form-section">

@@ -16,6 +16,15 @@ const StorageTimeInput = ({
   isFieldTouched,
   getFieldError
 }: StorageTimeInputProps) => {
+  // Handle natural numbers only in estimated time input
+  const handleEstimatedTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow empty string or natural numbers (positive integers)
+    if (value === '' || (/^\d+$/.test(value) && parseInt(value) > 0)) {
+      onEstimatedTimeChange(value);
+    }
+  };
+
   return (
     <div className="mt-4 p-4 border rounded-md bg-muted/10">
       <Label htmlFor="estimated-storage-time" className="block mb-2">
@@ -27,7 +36,7 @@ const StorageTimeInput = ({
           type="number"
           min="1"
           value={estimatedStorageTime}
-          onChange={(e) => onEstimatedTimeChange(e.target.value)}
+          onChange={handleEstimatedTimeChange}
           className="w-32 h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
           placeholder="30"
         />
