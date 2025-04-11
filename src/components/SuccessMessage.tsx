@@ -227,6 +227,9 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
         showSuccessConfirmation: true
       });
       
+      // Reset form when "Enviar solicitud" is clicked
+      resetForm();
+      
     } catch (error) {
       console.error("Error sending confirmation:", error);
       toast({
@@ -240,9 +243,9 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
     }
   };
   
-  // Handle closing dialog (optionally send confirmation with false)
+  // Handle closing dialog (sends confirmation with false, but doesn't reset the form)
   const handleClose = async () => {
-    console.log("Closing dialog");
+    console.log("Closing dialog without resetting form");
     try {
       // Send confirmation with confirmacion: false
       await sendConfirmation(
@@ -251,16 +254,12 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
         false
       );
       
-      // Reset form when dialog is closed
-      resetForm();
-      
-      // Close dialog
+      // Close dialog without resetting the form
       onClose();
       
     } catch (error) {
       console.error("Error sending cancel confirmation:", error);
-      // Still close the dialog and reset the form even if there's an error
-      resetForm();
+      // Still close the dialog even if there's an error
       onClose();
     }
   };
@@ -279,7 +278,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
       onOpenChange={(isOpen) => {
         console.log("Response dialog onOpenChange:", isOpen);
         if (!isOpen) {
-          resetForm(); // Reset form when dialog is closed
+          // Don't reset form here, let the buttons handle that
           onClose();
         }
       }}
