@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import { useFormContext } from "@/contexts/form/FormContext";
 import { sendConfirmation } from "@/contexts/form/hooks/useWebhook";
@@ -22,8 +23,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
     resetForm, 
     showSuccessConfirmation,
     updateSubmissionState,
-    setShowResponseDialog, 
-    setShowSuccessConfirmation 
+    handleCloseResponseDialog, 
   } = formContext;
   
   // Add effect to close the confirmation dialog after a delay
@@ -97,11 +97,13 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
       
       // Close dialog without resetting the form
       onClose();
+      handleCloseResponseDialog();
       
     } catch (error) {
       console.error("Error sending cancel confirmation:", error);
       // Still close the dialog even if there's an error
       onClose();
+      handleCloseResponseDialog();
     }
   };
 
