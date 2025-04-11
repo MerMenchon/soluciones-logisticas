@@ -35,20 +35,9 @@ const CitySelector = ({
   // Search state
   const [searchQuery, setSearchQuery] = useState<string>("");
   
-  // Update status message when cities or loading status changes
-  useEffect(() => {
-    if (isLoading) {
-      setStatusMessage(`Cargando ciudades...`);
-    } else if (cities.length === 0 && provinceValue) {
-      setStatusMessage("No hay ciudades disponibles para esta provincia");
-    } else {
-      // Remove count as requested
-      setStatusMessage("");
-    }
-  }, [cities, isLoading, provinceValue]);
-  
   // Filter cities based on storage availability if this is a storage selector
   const filteredCities = React.useMemo(() => {
+    // For storage type, only show cities with storage
     let cityList = type === "storage" 
       ? cities.filter(city => city.hasStorage)
       : cities;
@@ -62,6 +51,19 @@ const CitySelector = ({
     
     return cityList;
   }, [cities, type, searchQuery]);
+  
+  // Update status message when cities or loading status changes
+  useEffect(() => {
+    if (isLoading) {
+      setStatusMessage(`Cargando ciudades...`);
+    } else if (filteredCities.length === 0 && cities.length > 0 && type === "storage") {
+      setStatusMessage("No hay ciudades con almacenamiento en esta provincia");
+    } else if (filteredCities.length === 0 && provinceValue) {
+      setStatusMessage("No hay ciudades disponibles para esta provincia");
+    } else {
+      setStatusMessage("");
+    }
+  }, [filteredCities, cities, isLoading, provinceValue, type]);
   
   // Determine if we should show storage availability based on selected service type
   const shouldShowStorageInfo = 
