@@ -111,7 +111,10 @@ const LocationSelector = ({
       )}
 
       {type === "storage" && !hasStorage && cityValue && hasInitialCheck && (
-        <StorageAlert show={true} />
+        <StorageAlert 
+          show={true} 
+          message="No hay servicio de almacenamiento disponible en esta ciudad"
+        />
       )}
     </div>
   );

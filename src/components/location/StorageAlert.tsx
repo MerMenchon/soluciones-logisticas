@@ -5,16 +5,17 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface StorageAlertProps {
   show: boolean;
+  message?: string;
 }
 
-const StorageAlert = ({ show }: StorageAlertProps) => {
+const StorageAlert = ({ show, message }: StorageAlertProps) => {
   if (!show) return null;
   
   return (
     <Alert variant="destructive" className="mt-2">
       <AlertCircle className="h-4 w-4" />
       <AlertDescription>
-        No hay servicio de almacenamiento disponible en esta ciudad
+        {message || "No hay servicio de almacenamiento disponible en esta ciudad"}
       </AlertDescription>
     </Alert>
   );

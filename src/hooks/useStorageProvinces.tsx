@@ -16,33 +16,19 @@ export const useStorageProvinces = (type: "origin" | "destination" | "storage" |
       setIsLoadingProvinces(true);
       try {
         const startTime = performance.now();
-        let provincesData = await getProvincias();
+        // Always get all provinces first
+        const provincesData = await getProvincias();
         
-        // If this is a storage selector, we only want provinces that have cities with storage
-        if (type === "storage") {
-          console.log("Filtering provinces for storage availability");
-          
-          // Create a filtered list of provinces with storage
-          const provincesWithStorage: string[] = [];
-          
-          // Process each province to check if it has cities with storage
-          for (const province of provincesData) {
-            const cities = await getCiudades(province);
-            if (cities.some(city => city.hasStorage)) {
-              provincesWithStorage.push(province);
-            }
-          }
-          
-          console.log(`Found ${provincesWithStorage.length} provinces with storage out of ${provincesData.length}`);
-          provincesData = provincesWithStorage;
-        }
-        
-        const endTime = performance.now();
-        console.log(`Provinces loaded in ${Math.round(endTime - startTime)}ms - Found ${provincesData.length} provinces`);
+        // For storage type, we'll show all provinces but filter cities later
+        // We no longer filter provinces based on storage availability
+        console.log(`Showing all ${provincesData.length} provinces for type ${type}`);
         
         if (isMounted) {
           setProvinces(provincesData);
         }
+        
+        const endTime = performance.now();
+        console.log(`Provinces loaded in ${Math.round(endTime - startTime)}ms - Found ${provincesData.length} provinces`);
       } catch (error) {
         console.error("Error loading provinces:", error);
         if (isMounted) {

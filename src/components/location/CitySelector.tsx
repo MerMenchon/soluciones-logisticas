@@ -7,6 +7,7 @@ import { useFormContext } from "@/contexts/form";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
+import StorageAlert from "./StorageAlert";
 
 interface CitySelectorProps {
   id: string;
@@ -51,19 +52,23 @@ const CitySelector = ({
     
     return cityList;
   }, [cities, type, searchQuery]);
+
+  // Check if we have cities but none with storage for the storage type
+  const noStorageCitiesAvailable = 
+    type === "storage" && cities.length > 0 && filteredCities.length === 0;
   
   // Update status message when cities or loading status changes
   useEffect(() => {
     if (isLoading) {
       setStatusMessage(`Cargando ciudades...`);
-    } else if (filteredCities.length === 0 && cities.length > 0 && type === "storage") {
+    } else if (noStorageCitiesAvailable) {
       setStatusMessage("No hay ciudades con almacenamiento en esta provincia");
     } else if (filteredCities.length === 0 && provinceValue) {
       setStatusMessage("No hay ciudades disponibles para esta provincia");
     } else {
       setStatusMessage("");
     }
-  }, [filteredCities, cities, isLoading, provinceValue, type]);
+  }, [filteredCities, cities, isLoading, provinceValue, type, noStorageCitiesAvailable]);
   
   // Determine if we should show storage availability based on selected service type
   const shouldShowStorageInfo = 
@@ -139,6 +144,14 @@ const CitySelector = ({
           ))}
         </SelectContent>
       </Select>
+
+      {/* Show alert for no storage cities - specific to storage type */}
+      {type === "storage" && noStorageCitiesAvailable && provinceValue && (
+        <StorageAlert 
+          show={true} 
+          message="No hay ciudades con servicio de almacenamiento disponible en esta provincia"
+        />
+      )}
     </div>
   );
 };
