@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Box, Truck, Package, Calendar } from "lucide-react";
+import { Warehouse, Truck, Package, Calendar } from "lucide-react";
 
 interface DetailFieldsProps {
   webhookResponse: any;
@@ -26,7 +26,7 @@ const DetailFields = ({ webhookResponse }: DetailFieldsProps) => {
       {data.lugarAlmacenamientoTiempo && (
         <div className="border-t border-gray-200 pt-4">
           <div className="flex items-start gap-3">
-            <Box className="h-5 w-5 text-agri-primary flex-shrink-0 mt-0.5" />
+            <Warehouse className="h-5 w-5 text-agri-primary flex-shrink-0 mt-0.5" />
             <div>
               <h4 className="text-sm font-medium text-agri-secondary">Información sobre el almacenamiento</h4>
               <p className="text-sm text-gray-600 mt-1">{data.lugarAlmacenamientoTiempo}</p>
@@ -75,3 +75,4 @@ const DetailFields = ({ webhookResponse }: DetailFieldsProps) => {
 };
 
 export default DetailFields;
+
