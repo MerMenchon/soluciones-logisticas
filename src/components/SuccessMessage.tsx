@@ -44,8 +44,8 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
         showSuccessConfirmation: true
       });
       
-      // Reset form when "Enviar solicitud" is clicked
-      resetForm();
+      // DON'T reset form when "Enviar solicitud" is clicked to maintain the success confirmation
+      // The form will be reset only when the user explicitly closes the dialog
       
     } catch (error) {
       console.error("Error sending confirmation:", error);
@@ -114,7 +114,8 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
           console.log("Success dialog onOpenChange:", isOpen);
           if (!isOpen) {
             onClose();
-            resetForm(); // Reset form when the success dialog is closed
+            // Reset form when the success dialog is closed by user action
+            resetForm();
           }
         }}
       >
