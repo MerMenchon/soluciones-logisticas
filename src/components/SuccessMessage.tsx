@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import { useFormContext } from "@/contexts/form/FormContext";
 import { sendConfirmation } from "@/contexts/form/hooks/useWebhook";
 import { useToast } from "@/hooks/use-toast";
@@ -25,30 +25,6 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
     updateSubmissionState,
     handleCloseResponseDialog, 
   } = formContext;
-  
-  // Add effect to close the confirmation dialog after a delay
-  useEffect(() => {
-    console.log("SuccessMessage - showSuccessConfirmation:", showSuccessConfirmation);
-    console.log("SuccessMessage - open:", open);
-    
-    let timeoutId: NodeJS.Timeout;
-    
-    if (showSuccessConfirmation && open) {
-      console.log("Setting timeout to close dialog after 5 seconds");
-      // Set a timeout to close the dialog after 5 seconds (5000ms)
-      timeoutId = setTimeout(() => {
-        console.log("Auto-closing dialog after timeout");
-        onClose();
-      }, 5000); // 5 seconds
-    }
-    
-    // Clean up the timeout when the component unmounts or when dependencies change
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-   };
-  }, [showSuccessConfirmation, open, onClose]);
   
   // Function to handle submit request (send confirmation with true)
   const handleSubmitRequest = async () => {
