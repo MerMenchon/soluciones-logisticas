@@ -6,8 +6,8 @@ import { fetchProvinces } from "../provinces";
 export const fetchCitiesFromApi = async (provinceLabel: string, storageOnly: boolean = false): Promise<string[]> => {
   try {
     // Construct the API URL with the province parameter
-    let apiUrl = `https://script.google.com/macros/s/AKfycbw_VTuDSsRwpsRw__bNwWiK2SvKJ6AJhutNZx9mvFzEd40OmLF2qqIuY7Z-u3hPVqQJ/exec?province=${encodeURIComponent(provinceLabel)}`;
-    
+    let apiUrl = `https://script.google.com/macros/s/AKfycbzeKFfW18NESYzYKkfLOPYG7Jn9HeWwX41jXStcPClgl4vEiFJuqwyL8CSNwrZgUZxb/exec?province=${encodeURIComponent(provinceLabel)}`;
+
     // Add the storage filter parameter if needed
     if (storageOnly) {
       apiUrl += `&soloConDeposito=si`;
