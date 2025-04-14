@@ -1,5 +1,6 @@
 
 import { Province } from "@/types/locations";
+import { getFromCache, isCacheValid, setToCache } from "./cache/locationCache";
 
 // Fetch provinces from the new API endpoint
 export const fetchProvinces = async (): Promise<Province[]> => {
@@ -10,15 +11,11 @@ export const fetchProvinces = async (): Promise<Province[]> => {
     // Create a cache key
     const cacheKey = `provinces-api`;
     
-    // Check for cached data that's less than 30 minutes old (reduced TTL for live API)
-    const cachedData = localStorage.getItem(cacheKey);
-    if (cachedData) {
-      const { data, timestamp } = JSON.parse(cachedData);
-      const thirtyMinutes = 30 * 60 * 1000; // 30 minutes in milliseconds
-      if (Date.now() - timestamp < thirtyMinutes) {
-        console.log("Using cached provinces data");
-        return data;
-      }
+    // Check for cached data
+    const cachedItem = getFromCache<Province[]>(cacheKey);
+    if (cachedItem && isCacheValid(cachedItem.timestamp, 30 * 60 * 1000)) { // 30 minutes TTL
+      console.log("Using cached provinces data");
+      return cachedItem.data;
     }
     
     console.log("Fetching provinces data from API");
@@ -45,9 +42,10 @@ export const fetchProvinces = async (): Promise<Province[]> => {
     
     // Parse the JSON response - API returns a string array
     const provincesArray: string[] = await response.json();
-    console.log(`Received ${provincesArray.length} provinces from API`);
+    console.log(`Received ${provincesArray.length} provinces directly from API`);
     
     // Transform the string array into Province objects
+    // Important: Use the exact province names from the API as labels
     const provinces: Province[] = provincesArray.map(provinceName => ({
       value: provinceName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-"),
       label: provinceName,
@@ -55,10 +53,7 @@ export const fetchProvinces = async (): Promise<Province[]> => {
     })).sort((a, b) => a.label.localeCompare(b.label));
     
     // Cache the result
-    localStorage.setItem(cacheKey, JSON.stringify({
-      data: provinces,
-      timestamp: Date.now()
-    }));
+    setToCache(cacheKey, provinces);
     
     return provinces;
   } catch (error) {

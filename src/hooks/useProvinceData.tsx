@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { getProvincias } from "@/data/locations";
+import { getProvincias } from "@/data/provinces";
 
 export const useProvinceData = () => {
   const [provinces, setProvinces] = useState<string[]>([]);

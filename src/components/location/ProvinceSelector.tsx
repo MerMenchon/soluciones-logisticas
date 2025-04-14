@@ -18,28 +18,25 @@ const ProvinceSelector = ({
   isLoading,
   onChange,
 }: ProvinceSelectorProps) => {
-  // Determine if we should show a message about no provinces with storage
-  const noProvincesWithStorage = !isLoading && provinces.length === 0;
-  
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <Label htmlFor={id}>Provincia</Label>
-        {noProvincesWithStorage && (
-          <span className="text-xs text-destructive">No hay provincias con almacenamiento disponible</span>
+        {!isLoading && provinces.length === 0 && (
+          <span className="text-xs text-destructive">No hay provincias disponibles</span>
         )}
       </div>
       <Select 
         value={value} 
         onValueChange={onChange}
-        disabled={isLoading || noProvincesWithStorage}
+        disabled={isLoading || provinces.length === 0}
       >
         <SelectTrigger id={id} className="w-full">
           <SelectValue placeholder={
             isLoading 
               ? "Cargando provincias..." 
-              : noProvincesWithStorage
-                ? "No hay provincias con almacenamiento"
+              : provinces.length === 0
+                ? "No hay provincias disponibles"
                 : "Seleccione provincia"
           } />
         </SelectTrigger>
