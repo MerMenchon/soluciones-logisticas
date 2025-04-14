@@ -1,6 +1,16 @@
 
 import { City, Location } from "@/types/locations";
 import { fetchProvinces } from "./provinces";
+import { fetchCitiesFromApi } from "./api/cityApi";
+import { 
+  CACHE_DURATIONS, 
+  getCitiesCacheKey,
+  getStorageCheckCacheKey,
+  getFromCache,
+  setToCache,
+  isCacheValid
+} from "./cache/locationCache";
+import { transformCityNames, citiesToLocations } from "./utils/cityUtils";
 
 // Fetch cities for a province from the new API
 export const fetchCitiesForProvince = async (provinceValue: string, storageOnly: boolean = false): Promise<City[]> => {
@@ -19,65 +29,23 @@ export const fetchCitiesForProvince = async (provinceValue: string, storageOnly:
     }
     
     // Create a cache key based on the province and storage filter
-    const cacheKey = `cities-api-${provinceValue}-${storageOnly ? 'storage' : 'all'}`;
+    const cacheKey = getCitiesCacheKey(provinceValue, storageOnly);
     
     // Check for cached data that's less than 15 minutes old
-    const cachedData = localStorage.getItem(cacheKey);
-    if (cachedData) {
-      const { data, timestamp } = JSON.parse(cachedData);
-      const fifteenMinutes = 15 * 60 * 1000; // 15 minutes in milliseconds
-      if (Date.now() - timestamp < fifteenMinutes) {
-        console.log(`Using cached cities data for ${province.label} (storage only: ${storageOnly})`);
-        return data;
-      }
+    const cachedData = getFromCache<City[]>(cacheKey);
+    if (cachedData && isCacheValid(cachedData.timestamp, CACHE_DURATIONS.CITIES)) {
+      console.log(`Using cached cities data for ${province.label} (storage only: ${storageOnly})`);
+      return cachedData.data;
     }
     
-    // Construct the API URL with the province parameter
-    let apiUrl = `https://script.google.com/macros/s/AKfycbw_VTuDSsRwpsRw__bNwWiK2SvKJ6AJhutNZx9mvFzEd40OmLF2qqIuY7Z-u3hPVqQJ/exec?province=${encodeURIComponent(province.label)}`;
-    
-    // Add the storage filter parameter if needed
-    if (storageOnly) {
-      apiUrl += `&soloConDeposito=si`;
-    }
-    
-    console.log(`Fetching cities for ${province.label} from API (storage only: ${storageOnly})`);
-    
-    // Add timeout to the fetch request
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-    
-    const response = await fetch(apiUrl, {
-      signal: controller.signal,
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "max-age=900" // 15 minutes cache
-      }
-    });
-    
-    // Clear the timeout
-    clearTimeout(timeoutId);
-    
-    if (!response.ok) {
-      throw new Error(`Error al cargar las ciudades: ${response.status} ${response.statusText}`);
-    }
-    
-    // Parse the JSON response
-    const citiesArray: string[] = await response.json();
-    console.log(`Received ${citiesArray.length} cities for ${province.label} from API`);
+    // Fetch cities from API
+    const citiesArray = await fetchCitiesFromApi(province.label, storageOnly);
     
     // Transform the string array into City objects
-    // For storage-only requests, all cities have storage=true
-    const cities: City[] = citiesArray.map(cityName => ({
-      value: cityName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-"),
-      label: cityName,
-      hasStorage: storageOnly ? true : false // All cities in storage-only request have storage
-    })).sort((a, b) => a.label.localeCompare(b.label));
+    const cities = transformCityNames(citiesArray, storageOnly);
     
     // Cache the result
-    localStorage.setItem(cacheKey, JSON.stringify({
-      data: cities,
-      timestamp: Date.now()
-    }));
+    setToCache(cacheKey, cities);
     
     return cities;
   } catch (error) {
@@ -97,15 +65,11 @@ export const isStorageAvailable = async (provincia: string, ciudad: string): Pro
     console.log(`Checking storage for ${ciudad}, ${provincia}`);
     
     // First try to get from cache
-    const cacheKey = `storage-check-${provincia}-${ciudad}`;
-    const cachedResult = localStorage.getItem(cacheKey);
-    if (cachedResult) {
-      const { hasStorage, timestamp } = JSON.parse(cachedResult);
-      const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
-      if (Date.now() - timestamp < oneHour) {
-        console.log(`Using cached storage check for ${ciudad}, ${provincia}: ${hasStorage}`);
-        return hasStorage;
-      }
+    const cacheKey = getStorageCheckCacheKey(provincia, ciudad);
+    const cachedResult = getFromCache<boolean>(cacheKey);
+    if (cachedResult && isCacheValid(cachedResult.timestamp, CACHE_DURATIONS.STORAGE_CHECK)) {
+      console.log(`Using cached storage check for ${ciudad}, ${provincia}: ${cachedResult.data}`);
+      return cachedResult.data;
     }
     
     // Get the province label from the province value
@@ -126,10 +90,7 @@ export const isStorageAvailable = async (provincia: string, ciudad: string): Pro
     console.log(`Storage check result for ${ciudad}, ${provincia}: ${cityHasStorage}`);
     
     // Cache the result
-    localStorage.setItem(cacheKey, JSON.stringify({
-      hasStorage: cityHasStorage,
-      timestamp: Date.now()
-    }));
+    setToCache(cacheKey, cityHasStorage);
     
     return cityHasStorage;
   } catch (error) {
@@ -167,16 +128,8 @@ export const getCiudades = async (provincia: string): Promise<Location[]> => {
     // Get storage-only cities
     const storageCities = await fetchCitiesForProvince(provinceValue, true);
     
-    // Create a set of city names with storage
-    const storageCityNames = new Set(storageCities.map(city => city.label));
-    
-    // Merge the information: mark cities that have storage
-    const cities: Location[] = allCities.map(city => ({
-      ciudad: city.label,
-      hasStorage: storageCityNames.has(city.label)
-    }));
-    
-    return cities;
+    // Convert to Location objects for backwards compatibility
+    return citiesToLocations(allCities, storageCities);
   } catch (error) {
     console.error(`Error in getCiudades for ${provincia}:`, error);
     return [];
