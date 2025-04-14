@@ -50,6 +50,7 @@ const CitySelector = ({
       );
     }
     
+    console.log(`Filtered ${cities.length} cities to ${cityList.length} cities for type ${type}`);
     return cityList;
   }, [cities, type, searchQuery]);
 
@@ -65,6 +66,10 @@ const CitySelector = ({
       setStatusMessage("No hay ciudades con almacenamiento en esta provincia");
     } else if (filteredCities.length === 0 && provinceValue) {
       setStatusMessage("No hay ciudades disponibles para esta provincia");
+    } else if (filteredCities.length > 0) {
+      const storageCount = filteredCities.filter(city => city.hasStorage).length;
+      console.log(`Type: ${type}, Cities: ${filteredCities.length}, With storage: ${storageCount}`);
+      setStatusMessage("");
     } else {
       setStatusMessage("");
     }

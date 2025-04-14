@@ -7,7 +7,7 @@ export function transformCityNames(cityNames: string[], storageOnly: boolean): C
     .map(cityName => ({
       value: normalizeCityName(cityName),
       label: cityName,
-      hasStorage: storageOnly ? true : false // All cities in storage-only request have storage
+      hasStorage: storageOnly // If coming from storageOnly endpoint, all have storage
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 }
@@ -23,12 +23,12 @@ export function normalizeCityName(cityName: string): string {
 
 // Convert City objects to Location objects (for backwards compatibility)
 export function citiesToLocations(cities: City[], storageCities: City[]): Location[] {
-  // Create a set of city names with storage
-  const storageCityNames = new Set(storageCities.map(city => city.label));
+  // Create a set of city labels with storage
+  const storageCityLabels = new Set(storageCities.map(city => city.label));
   
   // Merge the information: mark cities that have storage
   return cities.map(city => ({
     ciudad: city.label,
-    hasStorage: storageCityNames.has(city.label)
+    hasStorage: storageCityLabels.has(city.label)
   }));
 }

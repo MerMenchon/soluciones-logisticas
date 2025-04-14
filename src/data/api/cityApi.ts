@@ -17,14 +17,15 @@ export const fetchCitiesFromApi = async (provinceLabel: string, storageOnly: boo
     
     // Add timeout to the fetch request
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
     
     const response = await fetch(apiUrl, {
       signal: controller.signal,
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "max-age=900" // 15 minutes cache
-      }
+        "Cache-Control": "no-cache" // Disable cache to get fresh data
+      },
+      mode: "cors" // Explicitly set CORS mode
     });
     
     // Clear the timeout
@@ -36,11 +37,12 @@ export const fetchCitiesFromApi = async (provinceLabel: string, storageOnly: boo
     
     // Parse the JSON response
     const citiesArray: string[] = await response.json();
-    console.log(`Received ${citiesArray.length} cities for ${provinceLabel} from API`);
+    console.log(`Received ${citiesArray.length} cities for ${provinceLabel} from API (storage only: ${storageOnly})`);
     
     return citiesArray;
   } catch (error) {
-    console.error(`Error fetching cities from API for province ${provinceLabel}:`, error);
+    console.error(`Error fetching cities from API for province ${provinceLabel} (storage only: ${storageOnly}):`, error);
+    
     // Return empty array if fetch fails
     return [];
   }

@@ -83,10 +83,10 @@ export const isStorageAvailable = async (provincia: string, ciudad: string): Pro
     }
     
     // Fetch cities with storage from the API
-    const storageOnlyCities = await fetchCitiesForProvince(provincia, true);
+    const storageOnlyCities = await fetchCitiesFromApi(province.label, true);
     
     // Check if the selected city is in the list of cities with storage
-    const cityHasStorage = storageOnlyCities.some(city => city.label === ciudad);
+    const cityHasStorage = storageOnlyCities.some(city => city === ciudad);
     
     console.log(`Storage check result for ${ciudad}, ${provincia}: ${cityHasStorage}`);
     
