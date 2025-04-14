@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { getCiudades } from "@/data/locations";
+import { Location } from "@/types/locations"; // Import the correct Location type
 
 export const useCityData = (
   provinceValue: string,

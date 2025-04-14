@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useStorageProvinces } from "@/hooks/useStorageProvinces";
 import { useProvinceData } from "@/hooks/useProvinceData";
+import { Location } from "@/types/locations"; // Import the correct Location type
 
 const LocationSelector = ({
   type,
