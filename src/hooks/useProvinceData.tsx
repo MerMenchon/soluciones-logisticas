@@ -10,6 +10,8 @@ export const useProvinceData = () => {
 
   useEffect(() => {
     let isMounted = true;
+    let retryCount = 0;
+    const maxRetries = 1;
     
     const loadProvinces = async () => {
       setIsLoadingProvinces(true);
@@ -23,12 +25,26 @@ export const useProvinceData = () => {
         if (isMounted) {
           if (provincesData.length === 0) {
             console.log("No provinces returned from API");
+            toast({
+              title: "Advertencia",
+              description: "No se pudieron cargar las provincias correctamente.",
+              variant: "destructive",
+            });
+          } else {
+            console.log(`Loaded ${provincesData.length} provinces successfully`);
           }
           setProvinces(provincesData);
         }
       } catch (error) {
         console.error("Error loading provinces:", error);
         if (isMounted) {
+          if (retryCount < maxRetries) {
+            console.log(`Retrying province load (${retryCount + 1}/${maxRetries})...`);
+            retryCount++;
+            setTimeout(loadProvinces, 1000); // Wait 1 second before retry
+            return;
+          }
+          
           toast({
             title: "Error",
             description: "No se pudieron cargar las provincias. Intente nuevamente.",
