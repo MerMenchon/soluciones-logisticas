@@ -39,6 +39,7 @@ export const fetchCitiesForProvince = async (provinceValue: string, storageOnly:
     }
     
     // Fetch cities from API
+    console.log(`Fetching cities for ${province.label} from API (storage only: ${storageOnly})`);
     const citiesArray = await fetchCitiesFromApi(province.label, storageOnly);
     
     // Transform the string array into City objects
