@@ -1,53 +1,58 @@
 
 import { Province } from "@/types/locations";
 
-// Fetch provinces from Google Sheets with pagination
+// Fetch provinces from the new API endpoint
 export const fetchProvinces = async (): Promise<Province[]> => {
   try {
-    const sheetId = "1bI2xqgZ9-ooLHCH8ublDX7mfg25sV-tw3fTEdm1hZp4";
-    const sheetName = "LOCALIDADES";
+    // New API endpoint for provinces
+    const apiUrl = "https://script.google.com/macros/s/AKfycbw_VTuDSsRwpsRw__bNwWiK2SvKJ6AJhutNZx9mvFzEd40OmLF2qqIuY7Z-u3hPVqQJ/exec";
     
-    // Create a cache key based on the sheet ID and name
-    const cacheKey = `provinces-${sheetId}-${sheetName}`;
+    // Create a cache key
+    const cacheKey = `provinces-api`;
     
-    // Clear existing cache to force fresh data load with the new sheet ID
-    localStorage.removeItem(cacheKey);
-    
+    // Check for cached data that's less than 30 minutes old (reduced TTL for live API)
     const cachedData = localStorage.getItem(cacheKey);
-    
-    // Check if we have cached data that's less than 1 hour old
     if (cachedData) {
       const { data, timestamp } = JSON.parse(cachedData);
-      const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
-      if (Date.now() - timestamp < oneHour) {
+      const thirtyMinutes = 30 * 60 * 1000; // 30 minutes in milliseconds
+      if (Date.now() - timestamp < thirtyMinutes) {
         console.log("Using cached provinces data");
         return data;
       }
     }
     
-    console.log("Fetching provinces data from Google Sheets");
+    console.log("Fetching provinces data from API");
     
-    // Build URL with CSV output format
-    const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+    // Add timeout to the fetch request
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
     
-    const response = await fetch(sheetUrl, {
+    const response = await fetch(apiUrl, {
+      signal: controller.signal,
       headers: {
-        "Content-Type": "text/csv",
-        // Add cache control headers
-        "Cache-Control": "max-age=3600"
+        "Content-Type": "application/json",
+        "Cache-Control": "max-age=1800" // 30 minutes cache
       }
     });
+    
+    // Clear the timeout
+    clearTimeout(timeoutId);
     
     if (!response.ok) {
       console.error(`Failed to fetch provinces: ${response.status} ${response.statusText}`);
       throw new Error("Error al cargar las provincias");
     }
     
-    const csvText = await response.text();
-    console.log(`Received CSV data: ${csvText.length} characters`);
+    // Parse the JSON response - API returns a string array
+    const provincesArray: string[] = await response.json();
+    console.log(`Received ${provincesArray.length} provinces from API`);
     
-    // Parse CSV more efficiently
-    const provinces = parseProvincesFromCSV(csvText);
+    // Transform the string array into Province objects
+    const provinces: Province[] = provincesArray.map(provinceName => ({
+      value: provinceName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-"),
+      label: provinceName,
+      cities: []
+    })).sort((a, b) => a.label.localeCompare(b.label));
     
     // Cache the result
     localStorage.setItem(cacheKey, JSON.stringify({
@@ -82,86 +87,6 @@ export const fetchProvinces = async (): Promise<Province[]> => {
       },
     ];
   }
-};
-
-// More efficient CSV parsing function for provinces
-function parseProvincesFromCSV(csvText: string): Province[] {
-  // Split by newlines
-  const lines = csvText.split('\n');
-  if (lines.length <= 1) {
-    console.error("CSV data is empty or invalid");
-    throw new Error("CSV data is empty or invalid");
-  }
-  
-  console.log(`Processing ${lines.length} lines of CSV data for provinces`);
-  
-  // Find the header row and locate the province column
-  const headerRow = lines[0];
-  const headers = headerRow.split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
-  const provinceColumnIndex = headers.indexOf('province');
-  
-  console.log(`CSV headers: ${headers.join(', ')}. Province column index: ${provinceColumnIndex}`);
-  
-  if (provinceColumnIndex === -1) {
-    throw new Error("No se encontró la columna 'province' en la hoja");
-  }
-  
-  // Extract provinces using a Set for uniqueness
-  const provinceSet = new Set<string>();
-  
-  // Process in batches to avoid blocking the UI thread
-  const batchSize = 1000; // Increased batch size for performance
-  for (let i = 1; i < lines.length; i += batchSize) {
-    const endIndex = Math.min(i + batchSize, lines.length);
-    let batchCount = 0;
-    
-    for (let j = i; j < endIndex; j++) {
-      const line = lines[j];
-      if (!line.trim()) continue; // Skip empty lines
-      
-      // More robust CSV parsing
-      let fields: string[] = [];
-      let inQuotes = false;
-      let currentField = '';
-      
-      for (let k = 0; k < line.length; k++) {
-        const char = line[k];
-        
-        if (char === '"') {
-          inQuotes = !inQuotes;
-        } else if (char === ',' && !inQuotes) {
-          fields.push(currentField.replace(/"/g, '').trim());
-          currentField = '';
-        } else {
-          currentField += char;
-        }
-      }
-      
-      // Add the last field
-      fields.push(currentField.replace(/"/g, '').trim());
-      
-      // Get province value if the field exists
-      if (fields.length > provinceColumnIndex) {
-        const provinceName = fields[provinceColumnIndex];
-        if (provinceName) {
-          provinceSet.add(provinceName);
-          batchCount++;
-        }
-      }
-    }
-    
-    console.log(`Processed batch ${i}-${endIndex}: Found ${batchCount} provinces`);
-  }
-  
-  // Convert Set to array of Province objects
-  const provinces: Province[] = Array.from(provinceSet).map(provinceName => ({
-    value: provinceName.toLowerCase().replace(/\s+/g, '-'),
-    label: provinceName,
-    cities: []
-  })).sort((a, b) => a.label.localeCompare(b.label)); // Sort alphabetically
-  
-  console.log(`Parsed ${provinces.length} unique provinces`);
-  return provinces;
 };
 
 // Legacy function for backward compatibility

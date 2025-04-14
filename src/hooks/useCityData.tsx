@@ -30,8 +30,6 @@ export const useCityData = (
           
           if (isMounted) {
             setCities(citiesData);
-            
-            // Removed the toast for storage cities
           }
         } catch (error) {
           console.error("Error loading cities:", error);
@@ -65,4 +63,3 @@ export const useCityData = (
     isLoadingCities
   };
 };
-
