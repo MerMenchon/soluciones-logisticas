@@ -6,8 +6,8 @@ import { getFromCache, isCacheValid, setToCache } from "./cache/locationCache";
 export const fetchProvinces = async (): Promise<Province[]> => {
   try {
     // New API endpoint for provinces
-    const apiUrl = "https://script.google.com/macros/s/AKfycbw_VTuDSsRwpsRw__bNwWiK2SvKJ6AJhutNZx9mvFzEd40OmLF2qqIuY7Z-u3hPVqQJ/exec";
-    
+    const apiUrl = "https://script.google.com/macros/s/AKfycbzeKFfW18NESYzYKkfLOPYG7Jn9HeWwX41jXStcPClgl4vEiFJuqwyL8CSNwrZgUZxb/exec";
+
     // Create a cache key
     const cacheKey = `provinces-api`;
     
