@@ -2,8 +2,8 @@
 // Cache duration constants
 export const CACHE_DURATIONS = {
   PROVINCES: 30 * 60 * 1000, // 30 minutes
-  CITIES: 5 * 60 * 1000,     // 5 minutes (reduced from 15)
-  STORAGE_CHECK: 10 * 60 * 1000, // 10 minutes (reduced from 60)
+  CITIES: 15 * 60 * 1000,    // 15 minutes
+  STORAGE_CHECK: 60 * 60 * 1000, // 1 hour
 };
 
 // Cache keys
@@ -15,19 +15,13 @@ export const getStorageCheckCacheKey = (provincia: string, ciudad: string): stri
 
 // Generic cache getter function
 export function getFromCache<T>(key: string): { data: T; timestamp: number } | null {
+  const cachedItem = localStorage.getItem(key);
+  if (!cachedItem) return null;
+  
   try {
-    const cachedItem = localStorage.getItem(key);
-    if (!cachedItem) return null;
-    
     return JSON.parse(cachedItem);
   } catch (error) {
     console.error(`Error parsing cached item for key ${key}:`, error);
-    // If there's an error, clear the cache item
-    try {
-      localStorage.removeItem(key);
-    } catch (e) {
-      // Ignore error if localStorage is not available
-    }
     return null;
   }
 }
@@ -47,20 +41,4 @@ export function setToCache<T>(key: string, data: T): void {
 // Check if cache is valid based on TTL
 export function isCacheValid(timestamp: number, ttl: number): boolean {
   return Date.now() - timestamp < ttl;
-}
-
-// Clear all location-related cache
-export function clearLocationCache(): void {
-  try {
-    // Get all cache keys
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && (key.startsWith('cities-api-') || key.startsWith('storage-check-'))) {
-        localStorage.removeItem(key);
-      }
-    }
-    console.log('Location cache cleared');
-  } catch (error) {
-    console.error('Error clearing location cache:', error);
-  }
 }

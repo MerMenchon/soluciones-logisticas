@@ -39,7 +39,6 @@ export const fetchCitiesForProvince = async (provinceValue: string, storageOnly:
     }
     
     // Fetch cities from API
-    console.log(`Fetching cities for ${province.label} from API (storage only: ${storageOnly})`);
     const citiesArray = await fetchCitiesFromApi(province.label, storageOnly);
     
     // Transform the string array into City objects
@@ -83,10 +82,10 @@ export const isStorageAvailable = async (provincia: string, ciudad: string): Pro
     }
     
     // Fetch cities with storage from the API
-    const storageOnlyCities = await fetchCitiesFromApi(province.label, true);
+    const storageOnlyCities = await fetchCitiesForProvince(provincia, true);
     
     // Check if the selected city is in the list of cities with storage
-    const cityHasStorage = storageOnlyCities.some(city => city === ciudad);
+    const cityHasStorage = storageOnlyCities.some(city => city.label === ciudad);
     
     console.log(`Storage check result for ${ciudad}, ${provincia}: ${cityHasStorage}`);
     

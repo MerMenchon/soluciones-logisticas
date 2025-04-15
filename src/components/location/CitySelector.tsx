@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Location } from "@/types/locations"; // Import the correct Location type
+import { Location } from "@/data/locations";
 import { useFormContext } from "@/contexts/form";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -50,7 +50,6 @@ const CitySelector = ({
       );
     }
     
-    console.log(`Filtered ${cities.length} cities to ${cityList.length} cities for type ${type}`);
     return cityList;
   }, [cities, type, searchQuery]);
 
@@ -66,10 +65,6 @@ const CitySelector = ({
       setStatusMessage("No hay ciudades con almacenamiento en esta provincia");
     } else if (filteredCities.length === 0 && provinceValue) {
       setStatusMessage("No hay ciudades disponibles para esta provincia");
-    } else if (filteredCities.length > 0) {
-      const storageCount = filteredCities.filter(city => city.hasStorage).length;
-      console.log(`Type: ${type}, Cities: ${filteredCities.length}, With storage: ${storageCount}`);
-      setStatusMessage("");
     } else {
       setStatusMessage("");
     }

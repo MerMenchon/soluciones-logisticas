@@ -1,7 +1,8 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { getProvincias } from "@/data/provinces";
+import { getProvincias } from "@/data/locations";
+import { getCiudades } from "@/data/cities";
 
 export const useStorageProvinces = (type: "origin" | "destination" | "storage" | "transport" | "both") => {
   const [provinces, setProvinces] = useState<string[]>([]);
@@ -10,21 +11,20 @@ export const useStorageProvinces = (type: "origin" | "destination" | "storage" |
 
   useEffect(() => {
     let isMounted = true;
-    let retryCount = 0;
-    const maxRetries = 2;
     
     const loadProvinces = async () => {
       setIsLoadingProvinces(true);
       try {
         const startTime = performance.now();
-        
-        // Always get all provinces first - using the same endpoint as regular provinces
+        // Always get all provinces first
         const provincesData = await getProvincias();
         
-        // For all types, we'll show all provinces and filter cities later as needed
+        // For storage type, we'll show all provinces but filter cities later
+        // We no longer filter provinces based on storage availability
+        console.log(`Showing all ${provincesData.length} provinces for type ${type}`);
+        
         if (isMounted) {
           setProvinces(provincesData);
-          console.log(`Loaded ${provincesData.length} provinces successfully for ${type} type`);
         }
         
         const endTime = performance.now();
@@ -32,13 +32,6 @@ export const useStorageProvinces = (type: "origin" | "destination" | "storage" |
       } catch (error) {
         console.error("Error loading provinces:", error);
         if (isMounted) {
-          if (retryCount < maxRetries) {
-            console.log(`Retrying province load (${retryCount + 1}/${maxRetries})...`);
-            retryCount++;
-            setTimeout(loadProvinces, 1000); // Wait 1 second before retry
-            return;
-          }
-          
           toast({
             title: "Error",
             description: "No se pudieron cargar las provincias. Intente nuevamente.",
