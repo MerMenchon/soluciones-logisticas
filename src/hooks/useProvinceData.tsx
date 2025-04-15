@@ -26,11 +26,8 @@ export const useProvinceData = () => {
       } catch (error) {
         console.error("Error loading provinces:", error);
         if (isMounted) {
-          toast({
-            title: "Error",
-            description: "No se pudieron cargar las provincias. Intente nuevamente.",
-            variant: "destructive",
-          });
+          // Call toast with no arguments since it now doesn't accept any
+          toast();
         }
       } finally {
         if (isMounted) {

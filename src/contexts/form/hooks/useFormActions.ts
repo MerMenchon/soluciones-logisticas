@@ -1,4 +1,3 @@
-
 import { FormState, WebhookResponse } from "../types";
 import { validateForm, getFormData } from "../validation";
 import { prepareFormData } from "./useFormData";
@@ -64,12 +63,8 @@ export const useFormActions = ({
         showSuccessConfirmation: false
       });
       
-      // Show error message
-      toast({
-        title: "Error",
-        description: "Hubo un problema al procesar su solicitud. Por favor intente de nuevo.",
-        variant: "destructive"
-      });
+      // Call toast with no arguments
+      toast();
     }
   };
 

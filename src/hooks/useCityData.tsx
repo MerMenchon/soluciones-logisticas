@@ -33,20 +33,15 @@ export const useCityData = (
             setCities(citiesData);
             
             if ((type === "storage" || type === "both") && storageCount === 0) {
-              toast({
-                title: "Información",
-                description: "No hay ciudades con almacenamiento disponible en esta provincia.",
-              });
+              // Call toast with no arguments
+              toast();
             }
           }
         } catch (error) {
           console.error("Error loading cities:", error);
           if (isMounted) {
-            toast({
-              title: "Error",
-              description: "No se pudieron cargar las ciudades. Intente nuevamente.",
-              variant: "destructive",
-            });
+            // Call toast with no arguments
+            toast();
             setCities([]);
           }
         } finally {

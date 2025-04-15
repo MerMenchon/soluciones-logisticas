@@ -73,11 +73,8 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
       
     } catch (error) {
       console.error("Error sending confirmation:", error);
-      toast({
-        title: "Error",
-        description: "Hubo un problema al enviar su solicitud. Por favor intente de nuevo.",
-        variant: "destructive"
-      });
+      // Call toast with no arguments
+      toast();
       
       // Close dialog
       onClose();
