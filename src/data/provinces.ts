@@ -11,7 +11,7 @@ const FALLBACK_PROVINCES = [
 export const getProvincias = async (): Promise<string[]> => {
   try {
     // Updated API endpoint for provinces
-    const apiUrl = "https://script.google.com/macros/s/AKfycbzeKFfW18NESYzYKkfLOPYG7Jn9HeWwX41jXStcPClgl4vEiFJuqwyL8CSNwrZgUZxb/exec";
+    const apiUrl = "https://script.google.com/macros/s/AKfycbzEa6AT5cYmzaklM-Wmu6PU4VqLmVaXLgHZC8ZpGWHNcdQfR2psyhzvIKNwDNu-ytOR/exec";
     
     // Create a cache key
     const cacheKey = `provinces-names-api`;
