@@ -100,7 +100,7 @@ const CitySelector = ({
                 placeholder="Buscar ciudad..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 h-9"
+                className="pl-8 h-9 w-full"
               />
               {searchQuery && (
                 <button 
