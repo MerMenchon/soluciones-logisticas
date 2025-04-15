@@ -42,7 +42,24 @@ export const getProvincias = async (): Promise<string[]> => {
   }
 });
 
+    ///CODIGO PARA DEBUG
+    // Clear the timeout
+clearTimeout(timeoutId);
 
+// Intenta leer el texto y parsearlo
+const rawText = await response.text();
+try {
+  const provinceNames: string[] = JSON.parse(rawText);
+  console.log("Parsed province names:", provinceNames);
+
+  // Cachearlo y devolverlo
+  setToCache(cacheKey, provinceNames);
+  return provinceNames;
+} catch (err) {
+  console.error("No se pudo parsear JSON:", rawText);
+  throw err;
+}
+////// HASTA ACA
     // Clear the timeout
     clearTimeout(timeoutId);
     
