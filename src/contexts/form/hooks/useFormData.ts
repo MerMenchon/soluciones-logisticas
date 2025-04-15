@@ -32,11 +32,24 @@ export const prepareFormData = (formState: FormState) => {
     effectiveStorageCity
   });
 
+  // Access prestashop global with type safety
+  const userId = typeof window !== "undefined" && typeof (window as any).prestashop !== "undefined" 
+    ? (window as any).prestashop.customer?.uid ?? 123456 
+    : 123456;
+    
+  const userEmail = typeof window !== "undefined" && typeof (window as any).prestashop !== "undefined" 
+    ? (window as any).prestashop.customer?.email ?? "Sin información de email" 
+    : "Sin información de email";
+    
+  const userCuit = typeof window !== "undefined" && typeof (window as any).prestashop !== "undefined" 
+    ? (window as any).prestashop.customer?.siret ?? 123456 
+    : 123456;
+
   return {
     submissionDate: new Date().toISOString(), // Add current date and time
-    userId: typeof prestashop !== "undefined" ? prestashop.customer?.uid ?? 123456 : 123456,
-    userEmail: typeof prestashop !== "undefined" ? prestashop.customer?.email ?? "Sin información de email" : "Sin información de email",
-    userCuit: typeof prestashop !== "undefined" ? prestashop.customer?.siret ?? 123456 : 123456,
+    userId,
+    userEmail,
+    userCuit,
 
     service: {
       type: translateServiceType(formState.selectedService),
