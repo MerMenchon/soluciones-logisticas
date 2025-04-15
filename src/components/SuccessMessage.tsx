@@ -44,6 +44,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
 
   // Handle dialog close with form reset
   const handleDialogClose = () => {
+    console.log("handleDialogClose called");
     if (!isWaitingForResponse) {
       onClose();
       resetForm();
@@ -75,9 +76,11 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
         open={open}
         onOpenChange={(isOpen) => {
           console.log("Success dialog onOpenChange:", isOpen);
-          if (!isOpen) handleDialogClose();
+          // We don't want to close the dialog automatically
+          // Only the button will trigger the close
         }}
         hideCloseButton={false}
+        preventAutoClose={true} // Prevent auto-closing this dialog
       >
         <ConfirmationMessage />
         
