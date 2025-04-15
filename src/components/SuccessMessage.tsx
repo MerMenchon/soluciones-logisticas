@@ -26,7 +26,8 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
     setShowSuccessConfirmation 
   } = formContext;
   
-  // Add effect to close the confirmation dialog after a delay
+  // Remove the automatic timeout effect
+  // Keep the existing logic, but remove the setTimeout
   useEffect(() => {
     console.log("SuccessMessage - showSuccessConfirmation:", showSuccessConfirmation);
     console.log("SuccessMessage - open:", open);
@@ -49,7 +50,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
       }
    };
   }, [showSuccessConfirmation, open, onClose]);
-  
+
   // Function to handle submit request (send confirmation with true)
   const handleSubmitRequest = async () => {
     console.log("Enviar solicitud clicked");
@@ -92,13 +93,15 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
         false
       );
       
-      // Close dialog without resetting the form
+      // Close dialog and reset form
       onClose();
+      resetForm();
       
     } catch (error) {
       console.error("Error sending cancel confirmation:", error);
       // Still close the dialog even if there's an error
       onClose();
+      resetForm();
     }
   };
 
