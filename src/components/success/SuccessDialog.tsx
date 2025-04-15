@@ -30,18 +30,18 @@ const SuccessDialog = ({
     <Dialog 
       open={open} 
       onOpenChange={handleOpenChange}
-      // To prevent closing via Escape key when preventAutoClose is true
-      onEscapeKeyDown={(e) => {
-        if (preventAutoClose) {
-          e.preventDefault();
-        }
-      }}
     >
       <DialogContent 
         className="sm:max-w-md" 
         hideCloseButton={hideCloseButton}
         // To prevent closing via outside clicks when preventAutoClose is true
         onPointerDownOutside={(e) => {
+          if (preventAutoClose) {
+            e.preventDefault();
+          }
+        }}
+        // To prevent closing via Escape key when preventAutoClose is true
+        onEscapeKeyDown={(e) => {
           if (preventAutoClose) {
             e.preventDefault();
           }
