@@ -34,9 +34,9 @@ export const prepareFormData = (formState: FormState) => {
 
   return {
     submissionDate: new Date().toISOString(), // Add current date and time
-    userId: prestashop.customer.uid || 123456;
-    userEmail:prestashop.customer.email || "Sin información de email";
-    userCuit: prestashop.customer.siret || 123456; 
+    userId: prestashop.customer.uid || 123456,
+    userEmail:prestashop.customer.email || "Sin información de email",
+    userCuit: prestashop.customer.siret || 123456,
     service: {
       type: translateServiceType(formState.selectedService),
     },
