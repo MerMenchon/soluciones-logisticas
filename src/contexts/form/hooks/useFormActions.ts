@@ -78,8 +78,7 @@ export const useFormActions = ({
     console.log("handleCloseResponseDialog called");
     updateSubmissionState({ 
       showResponseDialog: false,
-      // We don't reset showSuccessConfirmation here anymore
-      // This allows the success confirmation to persist until explicit user action
+      showSuccessConfirmation: false 
     });
   };
 
@@ -104,14 +103,13 @@ export const useFormActions = ({
   // Reset form function
   const resetForm = () => {
     console.log("resetForm called in useFormActions");
-    // Reset submission state without affecting showSuccessConfirmation
-    // We'll manage showSuccessConfirmation separately in the SuccessMessage component
+    // Reset submission state
     updateSubmissionState({
       isSubmitting: false,
       isWaitingForResponse: false,
       showResponseDialog: false,
       webhookResponse: undefined,
-      // Don't reset showSuccessConfirmation here
+      showSuccessConfirmation: false
     });
     
     // Reset field tracking

@@ -7,7 +7,6 @@ import { useFormContext } from "@/contexts/form";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
-import StorageAlert from "./StorageAlert";
 
 interface CitySelectorProps {
   id: string;
@@ -36,9 +35,20 @@ const CitySelector = ({
   // Search state
   const [searchQuery, setSearchQuery] = useState<string>("");
   
+  // Update status message when cities or loading status changes
+  useEffect(() => {
+    if (isLoading) {
+      setStatusMessage(`Cargando ciudades...`);
+    } else if (cities.length === 0 && provinceValue) {
+      setStatusMessage("No hay ciudades disponibles para esta provincia");
+    } else {
+      // Remove count as requested
+      setStatusMessage("");
+    }
+  }, [cities, isLoading, provinceValue]);
+  
   // Filter cities based on storage availability if this is a storage selector
   const filteredCities = React.useMemo(() => {
-    // For storage type, only show cities with storage
     let cityList = type === "storage" 
       ? cities.filter(city => city.hasStorage)
       : cities;
@@ -52,23 +62,6 @@ const CitySelector = ({
     
     return cityList;
   }, [cities, type, searchQuery]);
-
-  // Check if we have cities but none with storage for the storage type
-  const noStorageCitiesAvailable = 
-    type === "storage" && cities.length > 0 && filteredCities.length === 0;
-  
-  // Update status message when cities or loading status changes
-  useEffect(() => {
-    if (isLoading) {
-      setStatusMessage(`Cargando ciudades...`);
-    } else if (noStorageCitiesAvailable) {
-      setStatusMessage("No hay ciudades con almacenamiento en esta provincia");
-    } else if (filteredCities.length === 0 && provinceValue) {
-      setStatusMessage("No hay ciudades disponibles para esta provincia");
-    } else {
-      setStatusMessage("");
-    }
-  }, [filteredCities, cities, isLoading, provinceValue, type, noStorageCitiesAvailable]);
   
   // Determine if we should show storage availability based on selected service type
   const shouldShowStorageInfo = 
@@ -144,14 +137,6 @@ const CitySelector = ({
           ))}
         </SelectContent>
       </Select>
-
-      {/* Show alert for no storage cities - specific to storage type */}
-      {type === "storage" && noStorageCitiesAvailable && provinceValue && (
-        <StorageAlert 
-          show={true} 
-          message="No hay ciudades con servicio de almacenamiento disponible en esta provincia"
-        />
-      )}
     </div>
   );
 };
