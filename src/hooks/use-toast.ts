@@ -4,18 +4,20 @@ import * as React from "react"
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 1000000
 
-type ToastProps = {
+type ToastType = {
   id: string
+  title?: string
+  description?: string
+  action?: React.ReactNode
   open: boolean
 }
 
-type Toast = {
-  id?: string
-  dismiss?: () => void
-  update?: (props: ToastProps) => void
+const toastState = {
+  toasts: [] as ToastType[]
 }
 
-function toast(): Toast {
+// Simple toast function that doesn't take arguments but maintains compatibility
+function toast() {
   return {
     id: undefined,
     dismiss: () => {},
@@ -23,15 +25,14 @@ function toast(): Toast {
   };
 }
 
+// Custom hook to use toast functionality
 function useToast() {
-  const [state] = React.useState({ toasts: [] });
-
+  // Return a simplified version of toast state
   return {
-    ...state,
+    ...toastState,
     toast,
     dismiss: () => {}
   };
 }
 
 export { useToast, toast }
-

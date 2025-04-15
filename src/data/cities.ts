@@ -9,7 +9,7 @@ export const fetchCitiesForProvince = async (provinceValue: string): Promise<Cit
       return [];
     }
     
-    const sheetId = "1bI2xqgZ9-ooLHCH8ublDX7mfg25sV-tw3fTEdm1hZp4";
+    const sheetId = "1VYDCQfaz3-7IrhPUGpAO4UBLMDR1mEyl6UCHU1hznwQ";
     const sheetName = "LOCALIDADES";
     
     // Create a cache key based on the sheet ID, name and province

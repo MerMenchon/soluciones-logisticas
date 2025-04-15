@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -37,7 +38,7 @@ const ProductTypeSelector = ({
       setIsLoadingProducts(true);
       try {
         // Google Sheets needs to be published to the web as CSV
-        // Using the shared sheet with the correct sheet name
+        // Using the new sheet ID with the correct sheet name
         const sheetId = "1VYDCQfaz3-7IrhPUGpAO4UBLMDR1mEyl6UCHU1hznwQ";
         const sheetName = "PRODUCTOS"; // Specific sheet name
         const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
