@@ -67,7 +67,7 @@ const QuantityInput = ({
   return (
     <div>
       <label htmlFor="quantity" className="block text-sm font-medium text-agri-secondary mb-1">
-        Cantidad *
+        Cantidad total *
       </label>
       <div className="flex items-center gap-1">
         <Input

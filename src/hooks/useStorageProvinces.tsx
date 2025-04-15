@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { getProvincias } from "@/data/provinces";
 
-export const useProvinceData = () => {
+export const useStorageProvinces = (type: "origin" | "destination" | "storage" | "transport" | "both") => {
   const [provinces, setProvinces] = useState<string[]>([]);
   const [isLoadingProvinces, setIsLoadingProvinces] = useState(true);
   const { toast } = useToast();
@@ -17,24 +17,18 @@ export const useProvinceData = () => {
       setIsLoadingProvinces(true);
       try {
         const startTime = performance.now();
+        
+        // Always get all provinces first - using the same endpoint as regular provinces
         const provincesData = await getProvincias();
-        const endTime = performance.now();
         
-        console.log(`Provinces loaded in ${Math.round(endTime - startTime)}ms`);
-        
+        // For all types, we'll show all provinces and filter cities later as needed
         if (isMounted) {
-          if (provincesData.length === 0) {
-            console.log("No provinces returned from API");
-            toast({
-              title: "Advertencia",
-              description: "No se pudieron cargar las provincias correctamente.",
-              variant: "destructive",
-            });
-          } else {
-            console.log(`Loaded ${provincesData.length} provinces successfully`);
-          }
           setProvinces(provincesData);
+          console.log(`Loaded ${provincesData.length} provinces successfully for ${type} type`);
         }
+        
+        const endTime = performance.now();
+        console.log(`Provinces loaded in ${Math.round(endTime - startTime)}ms - Found ${provincesData.length} provinces`);
       } catch (error) {
         console.error("Error loading provinces:", error);
         if (isMounted) {
@@ -50,8 +44,6 @@ export const useProvinceData = () => {
             description: "No se pudieron cargar las provincias. Intente nuevamente.",
             variant: "destructive",
           });
-          // Ensure we set an empty array when there's an error
-          setProvinces([]);
         }
       } finally {
         if (isMounted) {
@@ -65,7 +57,7 @@ export const useProvinceData = () => {
     return () => {
       isMounted = false;
     };
-  }, [toast]);
+  }, [toast, type]);
 
   return {
     provinces,

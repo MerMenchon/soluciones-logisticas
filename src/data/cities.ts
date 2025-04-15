@@ -1,66 +1,52 @@
 
 import { City, Location } from "@/types/locations";
 import { fetchProvinces } from "./provinces";
+import { fetchCitiesFromApi } from "./api/cityApi";
+import { 
+  CACHE_DURATIONS, 
+  getCitiesCacheKey,
+  getStorageCheckCacheKey,
+  getFromCache,
+  setToCache,
+  isCacheValid
+} from "./cache/locationCache";
+import { transformCityNames, citiesToLocations } from "./utils/cityUtils";
 
-// Fetch cities for a province from Google Sheets
-export const fetchCitiesForProvince = async (provinceValue: string): Promise<City[]> => {
+// Fetch cities for a province from the new API
+export const fetchCitiesForProvince = async (provinceValue: string, storageOnly: boolean = false): Promise<City[]> => {
   try {
     if (!provinceValue) {
       return [];
     }
     
-    const sheetId = "1bI2xqgZ9-ooLHCH8ublDX7mfg25sV-tw3fTEdm1hZp4";
-    const sheetName = "LOCALIDADES";
-    
-    // Create a cache key based on the sheet ID, name and province
-    const cacheKey = `cities-${sheetId}-${sheetName}-${provinceValue}`;
-    
-    // Clear existing cache to force fresh data load with the new sheet ID
-    localStorage.removeItem(cacheKey);
-    
-    const cachedData = localStorage.getItem(cacheKey);
-    
-    // Check if we have cached data that's less than 1 hour old
-    if (cachedData) {
-      const { data, timestamp } = JSON.parse(cachedData);
-      const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
-      if (Date.now() - timestamp < oneHour) {
-        console.log(`Using cached cities data for ${provinceValue}`);
-        return data;
-      }
-    }
-    
-    console.log(`Fetching cities data for province: ${provinceValue}`);
-    
     // Get the province label from the province value
     const provinces = await fetchProvinces();
-    const provinceLabel = provinces.find(p => p.value === provinceValue)?.label || provinceValue;
+    const province = provinces.find(p => p.value === provinceValue);
     
-    // Build URL with CSV output format
-    const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
-    
-    const response = await fetch(sheetUrl, {
-      headers: {
-        "Content-Type": "text/csv",
-        // Add cache control headers
-        "Cache-Control": "max-age=3600"
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error("Error al cargar las ciudades");
+    if (!province) {
+      console.error(`Province not found for value: ${provinceValue}`);
+      return [];
     }
     
-    const csvText = await response.text();
+    // Create a cache key based on the province and storage filter
+    const cacheKey = getCitiesCacheKey(provinceValue, storageOnly);
     
-    // Parse CSV more efficiently and filter by province
-    const cities = parseCitiesFromCSV(csvText, provinceLabel);
+    // Check for cached data that's less than 15 minutes old
+    const cachedData = getFromCache<City[]>(cacheKey);
+    if (cachedData && isCacheValid(cachedData.timestamp, CACHE_DURATIONS.CITIES)) {
+      console.log(`Using cached cities data for ${province.label} (storage only: ${storageOnly})`);
+      return cachedData.data;
+    }
+    
+    // Fetch cities from API
+    console.log(`Fetching cities for ${province.label} from API (storage only: ${storageOnly})`);
+    const citiesArray = await fetchCitiesFromApi(province.label, storageOnly);
+    
+    // Transform the string array into City objects
+    const cities = transformCityNames(citiesArray, storageOnly);
     
     // Cache the result
-    localStorage.setItem(cacheKey, JSON.stringify({
-      data: cities,
-      timestamp: Date.now()
-    }));
+    setToCache(cacheKey, cities);
     
     return cities;
   } catch (error) {
@@ -70,125 +56,59 @@ export const fetchCitiesForProvince = async (provinceValue: string): Promise<Cit
   }
 };
 
-// More efficient CSV parsing function for cities, filtering by province
-function parseCitiesFromCSV(csvText: string, provinceLabel: string): City[] {
-  console.log(`Starting to parse cities for province: ${provinceLabel}`);
-  // Split by newlines
-  const lines = csvText.split('\n');
-  if (lines.length <= 1) {
-    console.error("CSV data is empty or invalid");
-    throw new Error("CSV data is empty or invalid");
-  }
-  
-  console.log(`Total lines in CSV: ${lines.length}`);
-  
-  // Find the header row and locate the province, city and storage columns
-  const headerRow = lines[0];
-  const headers = headerRow.split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
-  
-  console.log(`CSV headers: ${headers.join(', ')}`);
-  
-  const provinceColumnIndex = headers.indexOf('province');
-  const cityColumnIndex = headers.indexOf('city');
-  const storageColumnIndex = headers.indexOf('deposito');
-  
-  if (provinceColumnIndex === -1 || cityColumnIndex === -1) {
-    console.error(`Required columns not found. Province: ${provinceColumnIndex}, City: ${cityColumnIndex}`);
-    throw new Error("No se encontraron las columnas necesarias en la hoja");
-  }
-  
-  // Normalize the province label for comparison
-  const normalizedProvinceLabel = provinceLabel.toLowerCase();
-  
-  // Process in batches to avoid blocking the UI thread
-  const cities: (City & { hasStorage: boolean })[] = [];
-  const citySet = new Set<string>(); // To ensure unique city names
-  
-  const batchSize = 1000; // Increased batch size for performance
-  let matchCount = 0;
-  
-  for (let i = 1; i < lines.length; i += batchSize) {
-    const endIndex = Math.min(i + batchSize, lines.length);
-    let batchMatches = 0;
-    
-    for (let j = i; j < endIndex; j++) {
-      const line = lines[j];
-      if (!line.trim()) continue; // Skip empty lines
-      
-      // More robust CSV parsing
-      let fields: string[] = [];
-      let inQuotes = false;
-      let currentField = '';
-      
-      for (let k = 0; k < line.length; k++) {
-        const char = line[k];
-        
-        if (char === '"') {
-          inQuotes = !inQuotes;
-        } else if (char === ',' && !inQuotes) {
-          fields.push(currentField.replace(/"/g, '').trim());
-          currentField = '';
-        } else {
-          currentField += char;
-        }
-      }
-      
-      // Add the last field
-      fields.push(currentField.replace(/"/g, '').trim());
-      
-      // Get province, city and storage values if the fields exist
-      if (fields.length > Math.max(provinceColumnIndex, cityColumnIndex)) {
-        const rowProvince = fields[provinceColumnIndex].toLowerCase();
-        const cityName = fields[cityColumnIndex];
-        
-        // Only process if province matches and city name is valid
-        if (rowProvince === normalizedProvinceLabel && cityName && !citySet.has(cityName)) {
-          // Improved check for storage availability based on "deposito" column value
-          // Check if the value in the deposito column is "si", "sí", or "yes" (case insensitive)
-          const hasStorage = storageColumnIndex !== -1 && fields.length > storageColumnIndex ? 
-            fields[storageColumnIndex].toLowerCase() === 'si' || 
-            fields[storageColumnIndex].toLowerCase() === 'sí' || 
-            fields[storageColumnIndex].toLowerCase() === 'yes' : 
-            false;
-          
-          // Log for debugging
-          if (hasStorage) {
-            console.log(`City with storage: ${cityName} (${fields[storageColumnIndex]})`);
-          }
-          
-          cities.push({
-            value: cityName.toLowerCase().replace(/\s+/g, '-'),
-            label: cityName,
-            hasStorage
-          });
-          
-          citySet.add(cityName); // Mark as seen
-          batchMatches++;
-          matchCount++;
-        }
-      }
+// Modified function to check if storage is available in a location
+export const isStorageAvailable = async (provincia: string, ciudad: string): Promise<boolean> => {
+  try {
+    if (!provincia || !ciudad) {
+      return false;
     }
     
-    console.log(`Processed batch ${i}-${endIndex}: Found ${batchMatches} matches for province ${provinceLabel}`);
+    console.log(`Checking storage for ${ciudad}, ${provincia}`);
+    
+    // First try to get from cache
+    const cacheKey = getStorageCheckCacheKey(provincia, ciudad);
+    const cachedResult = getFromCache<boolean>(cacheKey);
+    if (cachedResult && isCacheValid(cachedResult.timestamp, CACHE_DURATIONS.STORAGE_CHECK)) {
+      console.log(`Using cached storage check for ${ciudad}, ${provincia}: ${cachedResult.data}`);
+      return cachedResult.data;
+    }
+    
+    // Get the province label from the province value
+    const provinces = await fetchProvinces();
+    const province = provinces.find(p => p.value === provincia);
+    
+    if (!province) {
+      console.error(`Province not found for value: ${provincia}`);
+      return false;
+    }
+    
+    // Fetch cities with storage from the API
+    const storageOnlyCities = await fetchCitiesFromApi(province.label, true);
+    
+    // Check if the selected city is in the list of cities with storage
+    const cityHasStorage = storageOnlyCities.some(city => city === ciudad);
+    
+    console.log(`Storage check result for ${ciudad}, ${provincia}: ${cityHasStorage}`);
+    
+    // Cache the result
+    setToCache(cacheKey, cityHasStorage);
+    
+    return cityHasStorage;
+  } catch (error) {
+    console.error(`Error checking storage availability for ${provincia}/${ciudad}:`, error);
+    return false;
   }
-  
-  // Sort alphabetically
-  cities.sort((a, b) => a.label.localeCompare(b.label));
-  
-  // Log cities with storage
-  const citiesWithStorage = cities.filter(city => city.hasStorage);
-  console.log(`Found ${citiesWithStorage.length} cities with storage for province ${provinceLabel}`);
-  citiesWithStorage.forEach(city => console.log(`- ${city.label}`));
-  
-  console.log(`Parsed ${cities.length} unique cities for province ${provinceLabel} (total matches: ${matchCount})`);
-  return cities;
 };
 
 // Legacy function for backward compatibility
 export const getCiudades = async (provincia: string): Promise<Location[]> => {
   try {
+    if (!provincia) {
+      return [];
+    }
+    
     const provinces = await fetchProvinces();
-    const normalizedProvinceName = provincia.toLowerCase().replace(/\s+/g, '-');
+    const normalizedProvinceName = provincia.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-");
     
     // Try to find by value (normalized) first
     let selectedProvince = provinces.find(p => p.value === normalizedProvinceName);
@@ -202,36 +122,17 @@ export const getCiudades = async (provincia: string): Promise<Location[]> => {
     const provinceValue = selectedProvince?.value || normalizedProvinceName;
     
     console.log(`Getting cities for province value: ${provinceValue}`);
-    const cities = await fetchCitiesForProvince(provinceValue);
     
-    // Convert to the expected Location format
-    return cities.map(city => ({
-      ciudad: city.label,
-      hasStorage: (city as any).hasStorage || false
-    }));
+    // Get all cities (not storage-only)
+    const allCities = await fetchCitiesForProvince(provinceValue, false);
+    
+    // Get storage-only cities
+    const storageCities = await fetchCitiesForProvince(provinceValue, true);
+    
+    // Convert to Location objects for backwards compatibility
+    return citiesToLocations(allCities, storageCities);
   } catch (error) {
     console.error(`Error in getCiudades for ${provincia}:`, error);
     return [];
-  }
-};
-
-// Check if storage is available in a location
-export const isStorageAvailable = async (provincia: string, ciudad: string): Promise<boolean> => {
-  try {
-    if (!provincia || !ciudad) {
-      return false;
-    }
-    
-    console.log(`Checking storage for ${ciudad}, ${provincia}`);
-    const cities = await getCiudades(provincia);
-    const selectedCity = cities.find(c => c.ciudad === ciudad);
-    
-    const hasStorage = selectedCity?.hasStorage || false;
-    console.log(`Storage check result for ${ciudad}, ${provincia}: ${hasStorage}`);
-    
-    return hasStorage;
-  } catch (error) {
-    console.error(`Error checking storage availability for ${provincia}/${ciudad}:`, error);
-    return false;
   }
 };

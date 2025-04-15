@@ -1,3 +1,4 @@
+
 import { FormState, WebhookResponse } from "../types";
 import { validateForm, getFormData } from "../validation";
 import { prepareFormData } from "./useFormData";
@@ -63,8 +64,12 @@ export const useFormActions = ({
         showSuccessConfirmation: false
       });
       
-      // Call toast with no arguments
-      toast();
+      // Show error message
+      toast({
+        title: "Error",
+        description: "Hubo un problema al procesar su solicitud. Por favor intente de nuevo.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -73,7 +78,8 @@ export const useFormActions = ({
     console.log("handleCloseResponseDialog called");
     updateSubmissionState({ 
       showResponseDialog: false,
-      showSuccessConfirmation: false 
+      // We don't reset showSuccessConfirmation here anymore
+      // This allows the success confirmation to persist until explicit user action
     });
   };
 
@@ -98,13 +104,14 @@ export const useFormActions = ({
   // Reset form function
   const resetForm = () => {
     console.log("resetForm called in useFormActions");
-    // Reset submission state
+    // Reset submission state without affecting showSuccessConfirmation
+    // We'll manage showSuccessConfirmation separately in the SuccessMessage component
     updateSubmissionState({
       isSubmitting: false,
       isWaitingForResponse: false,
       showResponseDialog: false,
       webhookResponse: undefined,
-      showSuccessConfirmation: false
+      // Don't reset showSuccessConfirmation here
     });
     
     // Reset field tracking

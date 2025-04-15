@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+
+import React from "react";
 import { useFormContext } from "@/contexts/form/FormContext";
 import { sendConfirmation } from "@/contexts/form/hooks/useWebhook";
 import { useToast } from "@/hooks/use-toast";
@@ -22,33 +23,8 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
     resetForm, 
     showSuccessConfirmation,
     updateSubmissionState,
-    setShowResponseDialog, 
-    setShowSuccessConfirmation 
+    handleCloseResponseDialog, 
   } = formContext;
-  
-  // Add effect to close the confirmation dialog after a delay
-  useEffect(() => {
-    console.log("SuccessMessage - showSuccessConfirmation:", showSuccessConfirmation);
-    console.log("SuccessMessage - open:", open);
-    
-    let timeoutId: NodeJS.Timeout;
-    
-    if (showSuccessConfirmation && open) {
-      console.log("Setting timeout to close dialog after 5 seconds");
-      // Set a timeout to close the dialog after 5 seconds (5000ms)
-      timeoutId = setTimeout(() => {
-        console.log("Auto-closing dialog after timeout");
-        onClose();
-      }, 5000); // 5 seconds
-    }
-    
-    // Clean up the timeout when the component unmounts or when dependencies change
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-   };
-  }, [showSuccessConfirmation, open, onClose]);
   
   // Function to handle submit request (send confirmation with true)
   const handleSubmitRequest = async () => {
@@ -68,13 +44,16 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
         showSuccessConfirmation: true
       });
       
-      // Reset form when "Enviar solicitud" is clicked
-      resetForm();
+      // DON'T reset form when "Enviar solicitud" is clicked to maintain the success confirmation
+      // The form will be reset only when the user explicitly closes the dialog
       
     } catch (error) {
       console.error("Error sending confirmation:", error);
-      // Call toast with no arguments
-      toast();
+      toast({
+        title: "Error",
+        description: "Hubo un problema al enviar su solicitud. Por favor intente de nuevo.",
+        variant: "destructive"
+      });
       
       // Close dialog
       onClose();
@@ -94,11 +73,13 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
       
       // Close dialog without resetting the form
       onClose();
+      handleCloseResponseDialog();
       
     } catch (error) {
       console.error("Error sending cancel confirmation:", error);
       // Still close the dialog even if there's an error
       onClose();
+      handleCloseResponseDialog();
     }
   };
 
@@ -133,7 +114,8 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
           console.log("Success dialog onOpenChange:", isOpen);
           if (!isOpen) {
             onClose();
-            resetForm(); // Reset form when the success dialog is closed
+            // Reset form when the success dialog is closed by user action
+            resetForm();
           }
         }}
       >

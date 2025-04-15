@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -45,8 +46,11 @@ const PresentationSelector = ({
         setPresentationOptions(presentations);
       } catch (error) {
         console.error("Error fetching presentations:", error);
-        // Call toast with no arguments
-        toast();
+        toast({
+          title: "Error",
+          description: "No se pudieron cargar los tipos de presentación. Usando opciones predeterminadas.",
+          variant: "destructive",
+        });
       } finally {
         setIsLoadingPresentations(false);
       }

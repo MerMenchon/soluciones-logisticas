@@ -9,6 +9,7 @@ export interface Province {
 export interface City {
   value: string;
   label: string;
+  hasStorage?: boolean;
 }
 
 // Legacy location type for backward compatibility
