@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import { useFormContext } from "@/contexts/form/FormContext";
 import { sendConfirmation } from "@/contexts/form/hooks/useWebhook";
@@ -26,30 +27,11 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
     setShowSuccessConfirmation 
   } = formContext;
   
-  // Remove the automatic timeout effect
-  // Keep the existing logic, but remove the setTimeout
+  // Removed auto-close timeout effect
   useEffect(() => {
     console.log("SuccessMessage - showSuccessConfirmation:", showSuccessConfirmation);
     console.log("SuccessMessage - open:", open);
-    
-    let timeoutId: NodeJS.Timeout;
-    
-    if (showSuccessConfirmation && open) {
-      console.log("Setting timeout to close dialog after 5 seconds");
-      // Set a timeout to close the dialog after 5 seconds (5000ms)
-      timeoutId = setTimeout(() => {
-        console.log("Auto-closing dialog after timeout");
-        onClose();
-      }, 5000); // 5 seconds
-    }
-    
-    // Clean up the timeout when the component unmounts or when dependencies change
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-   };
-  }, [showSuccessConfirmation, open, onClose]);
+  }, [showSuccessConfirmation, open]);
 
   // Function to handle submit request (send confirmation with true)
   const handleSubmitRequest = async () => {
@@ -142,7 +124,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
       >
         <DialogContent 
           className="sm:max-w-md"
-          hideCloseButton={true} // Hide close button for success confirmation
+          hideCloseButton={false} // Show close button for success confirmation
         >
           <ConfirmationMessage />
           
