@@ -3,7 +3,6 @@ import { useProvinceData } from "@/hooks/useProvinceData";
 import { useCityData } from "@/hooks/useCityData";
 import { useStorageAvailability } from "@/hooks/useStorageAvailability";
 import { UseLocationSelectHookParams } from "@/types/location";
-import { Location } from "@/types/locations"; // Import the correct Location type
 
 export const useLocationSelect = ({
   type,

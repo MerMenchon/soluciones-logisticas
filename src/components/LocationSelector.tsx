@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useLocationSelect } from "@/hooks/useLocationSelect";
 import ProvinceSelector from "@/components/location/ProvinceSelector";
@@ -8,9 +7,6 @@ import StorageAlert from "@/components/location/StorageAlert";
 import { LocationSelectorProps } from "@/types/location";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useStorageProvinces } from "@/hooks/useStorageProvinces";
-import { useProvinceData } from "@/hooks/useProvinceData";
-import { Location } from "@/types/locations"; // Import the correct Location type
 
 const LocationSelector = ({
   type,
@@ -25,18 +21,12 @@ const LocationSelector = ({
   onEstimatedTimeChange,
   disableStorageOption = false,
 }: LocationSelectorProps) => {
-  // Use the appropriate hook for provinces based on type
-  const { provinces: regularProvinces, isLoadingProvinces: isLoadingRegularProvinces } = useProvinceData();
-  const { provinces: storageProvinces, isLoadingProvinces: isLoadingStorageProvinces } = useStorageProvinces(type);
-  
-  // Use the appropriate provinces and loading state based on the selector type
-  const provinces = type === "storage" ? storageProvinces : regularProvinces;
-  const isLoadingProvinces = type === "storage" ? isLoadingStorageProvinces : isLoadingRegularProvinces;
-  
   const {
     cities,
+    provinces,
     hasStorage,
     hasInitialCheck,
+    isLoadingProvinces,
     isLoadingCities,
     handleCityChange
   } = useLocationSelect({
@@ -112,10 +102,7 @@ const LocationSelector = ({
       )}
 
       {type === "storage" && !hasStorage && cityValue && hasInitialCheck && (
-        <StorageAlert 
-          show={true} 
-          message="No hay servicio de almacenamiento disponible en esta ciudad"
-        />
+        <StorageAlert show={true} />
       )}
     </div>
   );

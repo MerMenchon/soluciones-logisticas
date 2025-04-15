@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -77,11 +76,8 @@ const ProductTypeSelector = ({
         setProductOptions(products);
       } catch (error) {
         console.error("Error fetching product types:", error);
-        toast({
-          title: "Error",
-          description: "No se pudieron cargar los tipos de productos. Usando opciones predeterminadas.",
-          variant: "destructive",
-        });
+        // Call toast with no arguments
+        toast();
         
         // Fallback to default options if fetch fails
         setProductOptions([

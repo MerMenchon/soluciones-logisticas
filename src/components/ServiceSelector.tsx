@@ -16,7 +16,7 @@ const ServiceSelector = ({
 }: ServiceSelectorProps) => {
   return (
     <div className="reference-form-section">
-      <h2 className="reference-form-subtitle">Seleccioná un servicio</h2>
+      <h2 className="reference-form-subtitle">Seleccione un servicio</h2>
       <div className="reference-form-cols-3">
         <div
           className={cn(
