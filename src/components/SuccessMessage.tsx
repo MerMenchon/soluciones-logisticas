@@ -38,8 +38,8 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
       showSuccessConfirmation: true
     });
     
-    // Reset form when "Enviar solicitud" is clicked
-    resetForm();
+    // We've removed resetForm() from here to prevent automatic closure
+    // The form will only be reset when the user clicks the "Cerrar" button
   };
 
   // Handle dialog close with form reset
@@ -47,7 +47,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
     console.log("handleDialogClose called");
     if (!isWaitingForResponse) {
       onClose();
-      resetForm();
+      resetForm(); // Only reset form when explicitly closing the dialog
     }
   };
 
