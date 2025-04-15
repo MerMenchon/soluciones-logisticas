@@ -4,11 +4,7 @@ import { getFromCache, isCacheValid, setToCache } from "./cache/locationCache";
 
 // Static fallback data in case the API is down
 const FALLBACK_PROVINCES = [
-  "Buenos Aires", "Catamarca", "Córdoba", "Corrientes", "Chaco", "Chubut",
-  "Entre Ríos", "Formosa", "Jujuy", "La Pampa", "La Rioja", "Mendoza",
-  "Misiones", "Neuquén", "Río Negro", "Salta", "San Juan", "San Luis",
-  "Santa Cruz", "Santa Fe", "Santiago del Estero", "Ciudad de Buenos Aires", 
-  "Tucumán", "Tierra del Fuego"
+  "Buenos Aires"
 ];
 
 // Fetch provinces directly from the API endpoint
