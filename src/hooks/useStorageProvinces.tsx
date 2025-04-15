@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { getProvincias } from "@/data/locations";
+import { getProvincias } from "@/data/provinces";
 
 export const useStorageProvinces = (type: "origin" | "destination" | "storage" | "transport" | "both") => {
   const [provinces, setProvinces] = useState<string[]>([]);
@@ -18,7 +18,7 @@ export const useStorageProvinces = (type: "origin" | "destination" | "storage" |
       try {
         const startTime = performance.now();
         
-        // Always get all provinces first
+        // Always get all provinces first - using the same endpoint as regular provinces
         const provincesData = await getProvincias();
         
         // For all types, we'll show all provinces and filter cities later as needed

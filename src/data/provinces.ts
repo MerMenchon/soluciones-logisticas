@@ -1,3 +1,4 @@
+
 import { Province } from "@/types/locations";
 import { getFromCache, isCacheValid, setToCache } from "./cache/locationCache";
 
@@ -13,8 +14,8 @@ const FALLBACK_PROVINCES = [
 // Fetch provinces directly from the API endpoint
 export const getProvincias = async (): Promise<string[]> => {
   try {
-    // API endpoint for provinces
-    const apiUrl = "https://script.google.com/macros/s/AKfycbw_VTuDSsRwpsRw__bNwWiK2SvKJ6AJhutNZx9mvFzEd40OmLF2qqIuY7Z-u3hPVqQJ/exec";
+    // Updated API endpoint for provinces
+    const apiUrl = "https://script.google.com/macros/s/AKfycbzeKFfW18NESYzYKkfLOPYG7Jn9HeWwX41jXStcPClgl4vEiFJuqwyL8CSNwrZgUZxb/exec";
     
     // Create a cache key
     const cacheKey = `provinces-names-api`;
@@ -36,8 +37,9 @@ export const getProvincias = async (): Promise<string[]> => {
       signal: controller.signal,
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "max-age=1800" // 30 minutes cache
-      }
+        "Cache-Control": "no-cache" // Disable cache to get fresh data
+      },
+      mode: "cors" // Explicitly set CORS mode
     });
     
     // Clear the timeout

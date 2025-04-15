@@ -11,7 +11,7 @@ export const useProvinceData = () => {
   useEffect(() => {
     let isMounted = true;
     let retryCount = 0;
-    const maxRetries = 1;
+    const maxRetries = 2;
     
     const loadProvinces = async () => {
       setIsLoadingProvinces(true);
