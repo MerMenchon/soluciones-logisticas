@@ -34,13 +34,13 @@ export const getProvincias = async (): Promise<string[]> => {
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
     
 
-      const response = await fetch(apiUrl, {
-        signal: controller.signal,
-        headers: {
-          "Cache-Control": "no-cache" // ✅ este está bien
-        },
-        mode: "cors"
-      });
+   const response = await fetch(apiUrl, {
+  signal: controller.signal,
+  mode: "cors",
+  headers: {
+    "Cache-Control": "no-cache"
+  }
+});
 
 
     // Clear the timeout
