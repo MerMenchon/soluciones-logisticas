@@ -37,7 +37,7 @@ const StorageTimeInput = ({
           min="1"
           value={estimatedStorageTime}
           onChange={handleEstimatedTimeChange}
-          className="w-32 h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+          className="w-32 h-10 rounded-md border border-input bg-background px-3-important py-2 text-sm"
           placeholder="30"
         />
         <span className="text-sm text-muted-foreground">días</span>

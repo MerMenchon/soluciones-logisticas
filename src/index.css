@@ -1,8 +1,10 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   * {
@@ -164,4 +166,27 @@
   .reference-form-cols-3 {
     @apply grid grid-cols-1 md:grid-cols-3 gap-6;
   }
+
+  .px-3-important {
+    @apply px-3 !important;
+}
+
+.pl-3-important {
+    @apply pl-3 !important;
+}
+
+.pl-12-important{
+    @apply pl-12 !important;
+}
+
+.pl-8-important{
+    @apply pl-8 !important;
+
+}
+
+.absolute-important{
+    @apply absolute !important;
+
+}
+
 }

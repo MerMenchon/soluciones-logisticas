@@ -51,19 +51,19 @@ const ProvinceSelector = ({
           <SelectValue placeholder={isLoading ? "Cargando provincias..." : "Seleccione provincia"} />
         </SelectTrigger>
         <SelectContent className="max-h-80 overflow-y-auto">
-          <div className="px-3 pt-2 pb-2 sticky top-0 bg-background z-10 border-b">
+          <div className="px-3-important pt-2 pb-2 sticky top-0 bg-background z-10 border-b">
             <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute-important left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Buscar provincia..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 h-9 w-full"
+                className="pl-8-important h-9 w-full"
               />
               {searchQuery && (
                 <button 
                   onClick={clearSearch}
-                  className="absolute right-2 top-2.5 text-muted-foreground"
+                  className="absolute-important right-2 top-2.5 text-muted-foreground"
                 >
                   <X className="h-4 w-4" />
                 </button>

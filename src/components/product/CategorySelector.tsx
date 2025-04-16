@@ -45,7 +45,7 @@ const CategorySelector = ({
               value={categoryOption} 
               aria-label={categoryOption}
               variant="bordered"
-              className="rounded-md text-sm px-3 py-1.5 border border-agri-light"
+              className="rounded-md text-sm px-3-important py-1.5 border border-agri-light"
             >
               {categoryOption}
             </ToggleGroupItem>

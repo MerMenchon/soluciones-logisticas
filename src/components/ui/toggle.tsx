@@ -17,7 +17,7 @@ const toggleVariants = cva(
           "border border-agri-light bg-transparent data-[state=on]:border-agri-primary data-[state=on]:bg-agri-primary/20 data-[state=on]:text-agri-primary data-[state=on]:font-semibold",
       },
       size: {
-        default: "h-10 px-3",
+        default: "h-10 px-3-important",
         sm: "h-9 px-2.5",
         lg: "h-11 px-5",
       },
