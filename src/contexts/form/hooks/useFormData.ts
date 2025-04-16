@@ -25,12 +25,6 @@ export const prepareFormData = (formState: FormState) => {
     }
   }
   
-  console.log("Form submission - storage location:", {
-    useOriginAsStorage: formState.useOriginAsStorage,
-    useDestinationAsStorage: formState.useDestinationAsStorage,
-    effectiveStorageProvince,
-    effectiveStorageCity
-  });
 
   // Access prestashop global with type safety
   const userId = typeof window !== "undefined" && typeof (window as any).prestashop !== "undefined" 

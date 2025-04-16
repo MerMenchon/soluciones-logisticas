@@ -25,12 +25,12 @@ export const fetchCitiesForProvince = async (provinceValue: string): Promise<Cit
       const { data, timestamp } = JSON.parse(cachedData);
       const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
       if (Date.now() - timestamp < oneHour) {
-        console.log(`Using cached cities data for ${provinceValue}`);
+        // console.log(`Using cached cities data for ${provinceValue}`);
         return data;
       }
     }
     
-    console.log(`Fetching cities data for province: ${provinceValue}`);
+    // console.log(`Fetching cities data for province: ${provinceValue}`);
     
     // Get the province label from the province value
     const provinces = await fetchProvinces();
@@ -72,7 +72,7 @@ export const fetchCitiesForProvince = async (provinceValue: string): Promise<Cit
 
 // More efficient CSV parsing function for cities, filtering by province
 function parseCitiesFromCSV(csvText: string, provinceLabel: string): City[] {
-  console.log(`Starting to parse cities for province: ${provinceLabel}`);
+  // console.log(`Starting to parse cities for province: ${provinceLabel}`);
   // Split by newlines
   const lines = csvText.split('\n');
   if (lines.length <= 1) {
@@ -80,13 +80,13 @@ function parseCitiesFromCSV(csvText: string, provinceLabel: string): City[] {
     throw new Error("CSV data is empty or invalid");
   }
   
-  console.log(`Total lines in CSV: ${lines.length}`);
+  // console.log(`Total lines in CSV: ${lines.length}`);
   
   // Find the header row and locate the province, city and storage columns
   const headerRow = lines[0];
   const headers = headerRow.split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
   
-  console.log(`CSV headers: ${headers.join(', ')}`);
+  // console.log(`CSV headers: ${headers.join(', ')}`);
   
   const provinceColumnIndex = headers.indexOf('province');
   const cityColumnIndex = headers.indexOf('city');
@@ -153,7 +153,7 @@ function parseCitiesFromCSV(csvText: string, provinceLabel: string): City[] {
           
           // Log for debugging
           if (hasStorage) {
-            console.log(`City with storage: ${cityName} (${fields[storageColumnIndex]})`);
+            // console.log(`City with storage: ${cityName} (${fields[storageColumnIndex]})`);
           }
           
           cities.push({
@@ -169,7 +169,7 @@ function parseCitiesFromCSV(csvText: string, provinceLabel: string): City[] {
       }
     }
     
-    console.log(`Processed batch ${i}-${endIndex}: Found ${batchMatches} matches for province ${provinceLabel}`);
+    // console.log(`Processed batch ${i}-${endIndex}: Found ${batchMatches} matches for province ${provinceLabel}`);
   }
   
   // Sort alphabetically
@@ -177,10 +177,10 @@ function parseCitiesFromCSV(csvText: string, provinceLabel: string): City[] {
   
   // Log cities with storage
   const citiesWithStorage = cities.filter(city => city.hasStorage);
-  console.log(`Found ${citiesWithStorage.length} cities with storage for province ${provinceLabel}`);
-  citiesWithStorage.forEach(city => console.log(`- ${city.label}`));
+  // console.log(`Found ${citiesWithStorage.length} cities with storage for province ${provinceLabel}`);
+  //citiesWithStorage.forEach(city => // console.log(`- ${city.label}`));
   
-  console.log(`Parsed ${cities.length} unique cities for province ${provinceLabel} (total matches: ${matchCount})`);
+  // console.log(`Parsed ${cities.length} unique cities for province ${provinceLabel} (total matches: ${matchCount})`);
   return cities;
 };
 
@@ -201,7 +201,7 @@ export const getCiudades = async (provincia: string): Promise<Location[]> => {
     // If still not found, use the provided name directly
     const provinceValue = selectedProvince?.value || normalizedProvinceName;
     
-    console.log(`Getting cities for province value: ${provinceValue}`);
+    // console.log(`Getting cities for province value: ${provinceValue}`);
     const cities = await fetchCitiesForProvince(provinceValue);
     
     // Convert to the expected Location format
@@ -222,12 +222,12 @@ export const isStorageAvailable = async (provincia: string, ciudad: string): Pro
       return false;
     }
     
-    console.log(`Checking storage for ${ciudad}, ${provincia}`);
+    // console.log(`Checking storage for ${ciudad}, ${provincia}`);
     const cities = await getCiudades(provincia);
     const selectedCity = cities.find(c => c.ciudad === ciudad);
     
     const hasStorage = selectedCity?.hasStorage || false;
-    console.log(`Storage check result for ${ciudad}, ${provincia}: ${hasStorage}`);
+    // console.log(`Storage check result for ${ciudad}, ${provincia}: ${hasStorage}`);
     
     return hasStorage;
   } catch (error) {

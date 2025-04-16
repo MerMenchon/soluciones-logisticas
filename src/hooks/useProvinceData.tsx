@@ -18,7 +18,7 @@ export const useProvinceData = () => {
         const provincesData = await getProvincias();
         const endTime = performance.now();
         
-        console.log(`Provinces loaded in ${Math.round(endTime - startTime)}ms`);
+        // console.log(`Provinces loaded in ${Math.round(endTime - startTime)}ms`);
         
         if (isMounted) {
           setProvinces(provincesData);

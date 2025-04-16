@@ -88,7 +88,7 @@ const StorageLocationSection = ({
 
   // Set storage location based on selection
   const handleStorageLocationChange = (value: string) => {
-    console.log(`Storage location changed to: ${value}`);
+    // console.log(`Storage location changed to: ${value}`);
     
     if (value === "origin" && handleUseOriginAsStorageChange) {
       handleUseOriginAsStorageChange(true);
@@ -102,17 +102,17 @@ const StorageLocationSection = ({
   };
   
   // Debug current state
-  useEffect(() => {
-    if (selectedService === "both") {
-      console.log("StorageLocationSection state:", {
-        useOriginAsStorage,
-        useDestinationAsStorage,
-        canUseOriginStorage,
-        canUseDestinationStorage,
-        storageLocation
-      });
-    }
-  }, [selectedService, useOriginAsStorage, useDestinationAsStorage, canUseOriginStorage, canUseDestinationStorage, storageLocation]);
+  // useEffect(() => {
+  //   if (selectedService === "both") {
+  //     /* console.log("StorageLocationSection state:", {
+  //       useOriginAsStorage,
+  //       useDestinationAsStorage,
+  //       canUseOriginStorage,
+  //       canUseDestinationStorage,
+  //       storageLocation
+  //     });
+  //   }
+  // }, [selectedService, useOriginAsStorage, useDestinationAsStorage, canUseOriginStorage, canUseDestinationStorage, storageLocation]);
 
   return (
     <div className="reference-form-section">

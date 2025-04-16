@@ -112,7 +112,7 @@ export const useFormLocation = (initialState: Partial<LocationState> = {}) => {
 
   // Boolean handlers with mutual exclusivity
   const handleUseOriginAsStorageChange = (checked: boolean) => {
-    console.log(`Setting useOriginAsStorage to: ${checked}`);
+    // console.log(`Setting useOriginAsStorage to: ${checked}`);
     updateLocationState({ 
       useOriginAsStorage: checked,
       // If we're enabling origin as storage, disable destination as storage
@@ -124,7 +124,7 @@ export const useFormLocation = (initialState: Partial<LocationState> = {}) => {
   };
 
   const handleUseDestinationAsStorageChange = (checked: boolean) => {
-    console.log(`Setting useDestinationAsStorage to: ${checked}`);
+    // console.log(`Setting useDestinationAsStorage to: ${checked}`);
     updateLocationState({ 
       useDestinationAsStorage: checked,
       // If we're enabling destination as storage, disable origin as storage

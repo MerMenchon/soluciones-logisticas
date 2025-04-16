@@ -26,13 +26,13 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
   
   // Logging for debugging
   useEffect(() => {
-    console.log("SuccessMessage - showSuccessConfirmation:", showSuccessConfirmation);
-    console.log("SuccessMessage - open:", open);
+    // console.log("SuccessMessage - showSuccessConfirmation:", showSuccessConfirmation);
+    // console.log("SuccessMessage - open:", open);
   }, [showSuccessConfirmation, open]);
 
   // Handle successful submission
   const handleSubmitSuccess = () => {
-    console.log("Setting showSuccessConfirmation to true");
+    // console.log("Setting showSuccessConfirmation to true");
     updateSubmissionState({
       showResponseDialog: true,
       showSuccessConfirmation: true
@@ -44,7 +44,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
 
   // Handle dialog close with form reset
   const handleDialogClose = () => {
-    console.log("handleDialogClose called");
+    // console.log("handleDialogClose called");
     if (!isWaitingForResponse) {
       onClose();
       resetForm(); // Only reset form when explicitly closing the dialog
@@ -53,12 +53,12 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
 
   // Display loading message while waiting for response
   if (isWaitingForResponse) {
-    console.log("Showing loading message");
+    // console.log("Showing loading message");
     return (
       <SuccessDialog 
         open={open}
         onOpenChange={(isOpen) => {
-          console.log("Loading dialog onOpenChange:", isOpen);
+          // console.log("Loading dialog onOpenChange:", isOpen);
           if (!isOpen) onClose();
         }}
         hideCloseButton={true}
@@ -70,12 +70,12 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
   
   // Display confirmation message after form is successfully submitted
   if (showSuccessConfirmation) {
-    console.log("Showing success confirmation message");
+    // console.log("Showing success confirmation message");
     return (
       <SuccessDialog 
         open={open}
         onOpenChange={(isOpen) => {
-          console.log("Success dialog onOpenChange:", isOpen);
+          // console.log("Success dialog onOpenChange:", isOpen);
           // We don't want to close the dialog automatically
           // Only the button will trigger the close
         }}
@@ -101,7 +101,7 @@ const SuccessMessage = ({ open, onClose }: SuccessMessageProps) => {
     <SuccessDialog 
       open={open}
       onOpenChange={(isOpen) => {
-        console.log("Response dialog onOpenChange:", isOpen);
+        // console.log("Response dialog onOpenChange:", isOpen);
         if (!isOpen) onClose();
       }}
     >

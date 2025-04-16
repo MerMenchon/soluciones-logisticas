@@ -15,7 +15,7 @@ export const fetchDistance = async (origin: string, destination: string): Promis
   // This is a simplified mock implementation
   // In a real application, you would integrate with a maps API
   
-  console.log(`Calculating distance from "${origin}" to "${destination}"`);
+  // console.log(`Calculating distance from "${origin}" to "${destination}"`);
   
   // Simulate API call latency
   await new Promise(resolve => setTimeout(resolve, 800));

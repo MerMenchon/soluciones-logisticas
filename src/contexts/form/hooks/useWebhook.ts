@@ -6,7 +6,7 @@ const WEBHOOK_TIMEOUT = 30000; // 30 seconds timeout
 
 export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => {
   try {
-    console.log("Sending data to webhook:", JSON.stringify(formData, null, 2));
+    // console.log("Sending data to webhook:", JSON.stringify(formData, null, 2));
     
     // Create an AbortController to handle timeouts
     const controller = new AbortController();
@@ -30,7 +30,7 @@ export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => 
 
     // Parse the response as JSON
     const rawResponse = await response.json();
-    console.log("Webhook response received:", rawResponse);
+    // console.log("Webhook response received:", rawResponse);
     
     // Handle array responses (API returns array with one object sometimes)
     const responseData = Array.isArray(rawResponse) ? rawResponse[0] : rawResponse;
@@ -61,7 +61,7 @@ export const sendToWebhook = async (formData: any): Promise<WebhookResponse> => 
       data: dataObject
     };
     
-    console.log("Processed webhook response:", formattedResponse);
+    // console.log("Processed webhook response:", formattedResponse);
     return formattedResponse;
   } catch (error) {
     if (error.name === 'AbortError') {
@@ -85,12 +85,7 @@ export const sendConfirmation = async (
       throw new Error('Missing required id or submissionDate for confirmation');
     }
 
-    console.log("Sending confirmation to webhook:", { 
-      id, 
-      submissionDate, 
-      confirmacion 
-    });
-    
+      
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), WEBHOOK_TIMEOUT);
     
@@ -113,11 +108,11 @@ export const sendConfirmation = async (
       throw new Error(`Confirmation webhook response was not ok: ${response.status}`);
     }
 
-    console.log("Confirmation sent successfully");
+    // console.log("Confirmation sent successfully");
     
     // Optional: process response if needed
     const responseData = await response.json();
-    console.log("Confirmation response:", responseData);
+    // console.log("Confirmation response:", responseData);
     
   } catch (error) {
     if (error.name === 'AbortError') {

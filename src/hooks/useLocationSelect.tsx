@@ -22,7 +22,7 @@ export const useLocationSelect = ({
     onCityChange(value, selectedLocation?.hasStorage || false);
     
     // Log for debugging
-    console.log(`City changed to ${value}, hasStorage: ${selectedLocation?.hasStorage || false}`);
+    // console.log(`City changed to ${value}, hasStorage: ${selectedLocation?.hasStorage || false}`);
   };
 
   return {

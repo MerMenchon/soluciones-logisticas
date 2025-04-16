@@ -87,7 +87,7 @@
 
   /* New reference form styles based on the image */
   .reference-form {
-    @apply bg-white rounded-xl shadow-lg p-8 max-w-5xl mx-auto;
+    @apply bg-white rounded-xl shadow-lg p-8 mx-auto;
   }
 
   .reference-form-title {

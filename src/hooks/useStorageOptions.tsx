@@ -37,15 +37,15 @@ export const useStorageOptions = ({
   // Log changes to storage availability for debugging
   useEffect(() => {
     if (originCity && originProvince && originChecked) {
-      console.log(`Origin storage (${originCity}, ${originProvince}): ${hasOriginStorage}`);
-      console.log(`useOriginAsStorage: ${useOriginAsStorage}`);
+      // console.log(`Origin storage (${originCity}, ${originProvince}): ${hasOriginStorage}`);
+      // console.log(`useOriginAsStorage: ${useOriginAsStorage}`);
     }
   }, [originCity, originProvince, hasOriginStorage, originChecked, useOriginAsStorage]);
 
   useEffect(() => {
     if (destinationCity && destinationProvince && destinationChecked) {
-      console.log(`Destination storage (${destinationCity}, ${destinationProvince}): ${hasDestinationStorage}`);
-      console.log(`useDestinationAsStorage: ${useDestinationAsStorage}`);
+      // console.log(`Destination storage (${destinationCity}, ${destinationProvince}): ${hasDestinationStorage}`);
+      // console.log(`useDestinationAsStorage: ${useDestinationAsStorage}`);
     }
   }, [destinationCity, destinationProvince, hasDestinationStorage, destinationChecked, useDestinationAsStorage]);
 

@@ -70,11 +70,11 @@ const LogisticsForm = () => {
   const [isFormValid, setIsFormValid] = useState(false);
 
   // Log dialog state for debugging
-  useEffect(() => {
-    console.log("LogisticsForm - showResponseDialog:", showResponseDialog);
-    console.log("LogisticsForm - showSuccessConfirmation:", showSuccessConfirmation);
-    console.log("LogisticsForm - isWaitingForResponse:", isWaitingForResponse);
-  }, [showResponseDialog, showSuccessConfirmation, isWaitingForResponse]);
+  // useEffect(() => {
+  //   // console.log("LogisticsForm - showResponseDialog:", showResponseDialog);
+  //   // console.log("LogisticsForm - showSuccessConfirmation:", showSuccessConfirmation);
+  //   // console.log("LogisticsForm - isWaitingForResponse:", isWaitingForResponse);
+  // }, [showResponseDialog, showSuccessConfirmation, isWaitingForResponse]);
 
   // Memoize the validateForm callback to prevent recreating on every render
   const memoizedValidateForm = useCallback(() => {
@@ -98,7 +98,9 @@ const LogisticsForm = () => {
     estimatedStorageTime
   ]);
 
-  // Effect to validate the form when relevant values change - with stable dependencies
+
+
+  // // Effect to validate the form when relevant values change - with stable dependencies
   useEffect(() => {
     const isValid = memoizedValidateForm();
     setIsFormValid(isValid);
@@ -123,7 +125,7 @@ const LogisticsForm = () => {
 
   // Custom onClose handler to ensure state is properly updated
   const handleDialogClose = useCallback(() => {
-    console.log("handleDialogClose called in LogisticsForm");
+    // console.log("handleDialogClose called in LogisticsForm");
     handleCloseResponseDialog();
   }, [handleCloseResponseDialog]);
 

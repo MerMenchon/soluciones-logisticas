@@ -20,12 +20,12 @@ export const fetchProvinces = async (): Promise<Province[]> => {
       const { data, timestamp } = JSON.parse(cachedData);
       const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
       if (Date.now() - timestamp < oneHour) {
-        console.log("Using cached provinces data");
+        // console.log("Using cached provinces data");
         return data;
       }
     }
     
-    console.log("Fetching provinces data from Google Sheets");
+    // console.log("Fetching provinces data from Google Sheets");
     
     // Build URL with CSV output format
     const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
@@ -44,7 +44,7 @@ export const fetchProvinces = async (): Promise<Province[]> => {
     }
     
     const csvText = await response.text();
-    console.log(`Received CSV data: ${csvText.length} characters`);
+    // console.log(`Received CSV data: ${csvText.length} characters`);
     
     // Parse CSV more efficiently
     const provinces = parseProvincesFromCSV(csvText);
@@ -93,14 +93,14 @@ function parseProvincesFromCSV(csvText: string): Province[] {
     throw new Error("CSV data is empty or invalid");
   }
   
-  console.log(`Processing ${lines.length} lines of CSV data for provinces`);
+  // console.log(`Processing ${lines.length} lines of CSV data for provinces`);
   
   // Find the header row and locate the province column
   const headerRow = lines[0];
   const headers = headerRow.split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
   const provinceColumnIndex = headers.indexOf('province');
   
-  console.log(`CSV headers: ${headers.join(', ')}. Province column index: ${provinceColumnIndex}`);
+  // console.log(`CSV headers: ${headers.join(', ')}. Province column index: ${provinceColumnIndex}`);
   
   if (provinceColumnIndex === -1) {
     throw new Error("No se encontró la columna 'province' en la hoja");
@@ -150,7 +150,7 @@ function parseProvincesFromCSV(csvText: string): Province[] {
       }
     }
     
-    console.log(`Processed batch ${i}-${endIndex}: Found ${batchCount} provinces`);
+    // console.log(`Processed batch ${i}-${endIndex}: Found ${batchCount} provinces`);
   }
   
   // Convert Set to array of Province objects
@@ -160,7 +160,7 @@ function parseProvincesFromCSV(csvText: string): Province[] {
     cities: []
   })).sort((a, b) => a.label.localeCompare(b.label)); // Sort alphabetically
   
-  console.log(`Parsed ${provinces.length} unique provinces`);
+  // console.log(`Parsed ${provinces.length} unique provinces`);
   return provinces;
 };
 
@@ -169,7 +169,7 @@ export const getProvincias = async (): Promise<string[]> => {
   try {
     const provinces = await fetchProvinces();
     const provinceNames = provinces.map(p => p.label);
-    console.log(`Returning ${provinceNames.length} province names`);
+    // console.log(`Returning ${provinceNames.length} province names`);
     return provinceNames;
   } catch (error) {
     console.error("Error in getProvincias:", error);

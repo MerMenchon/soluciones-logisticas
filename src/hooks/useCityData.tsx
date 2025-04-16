@@ -23,11 +23,11 @@ export const useCityData = (
           const citiesData = await getCiudades(provinceValue);
           const endTime = performance.now();
           
-          console.log(`Cities loaded in ${Math.round(endTime - startTime)}ms - Found ${citiesData.length} cities`);
+          // console.log(`Cities loaded in ${Math.round(endTime - startTime)}ms - Found ${citiesData.length} cities`);
           
           // Log cities that have storage for debugging
           const storageCount = citiesData.filter(city => city.hasStorage).length;
-          console.log(`Cities with storage: ${storageCount} / ${citiesData.length}`);
+          // console.log(`Cities with storage: ${storageCount} / ${citiesData.length}`);
           
           if (isMounted) {
             setCities(citiesData);

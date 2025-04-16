@@ -40,12 +40,12 @@ export const useFormActions = ({
       // Prepare full form data with proper structure
       const formData = prepareFormData(formState);
 
-      console.log("Sending form data to webhook and waiting for response...");
+      // console.log("Sending form data to webhook and waiting for response...");
       
       // Send to webhook and get response
       const webhookResponse = await sendToWebhook(formData);
       
-      console.log("Webhook response received:", webhookResponse);
+      // console.log("Webhook response received:", webhookResponse);
 
       // Update submission state with webhook response
       updateSubmissionState({ 
@@ -70,7 +70,7 @@ export const useFormActions = ({
 
   // Dialog close handler
   const handleCloseResponseDialog = () => {
-    console.log("handleCloseResponseDialog called");
+    // console.log("handleCloseResponseDialog called");
     updateSubmissionState({ 
       showResponseDialog: false,
       showSuccessConfirmation: false 
@@ -81,12 +81,12 @@ export const useFormActions = ({
   const confirmRequest = async () => {
     // The actual submission is now handled in the SuccessMessage component
     // This is kept for backward compatibility
-    console.log("Confirm request called");
+    // console.log("Confirm request called");
   };
 
   // Cancel request
   const cancelRequest = () => {
-    console.log("cancelRequest called");
+    // console.log("cancelRequest called");
     updateSubmissionState({ 
       isSubmitting: false,
       isWaitingForResponse: false,
@@ -97,7 +97,7 @@ export const useFormActions = ({
 
   // Reset form function
   const resetForm = () => {
-    console.log("resetForm called in useFormActions");
+    // console.log("resetForm called in useFormActions");
     // Reset submission state
     updateSubmissionState({
       isSubmitting: false,

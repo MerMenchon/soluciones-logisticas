@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, ReactNode } from "react";
+import React, { createContext, useContext, ReactNode, useMemo } from "react";
 import { FormContextType, FormProviderProps } from "./types";
 import { useFormState } from "./formState";
 
@@ -23,8 +23,11 @@ type FormProviderComponent = React.FC<{children: ReactNode}> & {
 export const FormProvider: FormProviderComponent = ({ children }) => {
   const formState = useFormState();
   
+  // Memoiza el valor del contexto para evitar re-renderizados innecesarios
+  const memoizedFormState = useMemo(() => formState, [formState]);
+
   return (
-    <CustomFormContext.Provider value={formState}>
+    <CustomFormContext.Provider value={memoizedFormState}>
       {children}
     </CustomFormContext.Provider>
   );

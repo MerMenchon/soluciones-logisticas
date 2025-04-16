@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { FormState } from "./types";
 import { 
   useFormService,
@@ -9,12 +8,9 @@ import {
 } from "./hooks";
 
 export const useFormState = () => {
-  // Create a state object to hold the combined state
+  // Estado inicial del formulario
   const [formState, setFormState] = useState<FormState>({
-    // Service state
     selectedService: "",
-    
-    // Location state
     storageProvince: "",
     storageCity: "",
     originProvince: "",
@@ -24,20 +20,14 @@ export const useFormState = () => {
     destinationCity: "",
     useDestinationAsStorage: false,
     estimatedStorageTime: "",
-
-    // UI state
     isSubmitting: false,
     formSubmitted: false,
     showConfirmation: false,
     distanceValue: null,
     isWaitingForResponse: false,
     showResponseDialog: false,
-    showSuccessConfirmation: false, // Add the new state here
-
-    // Contact state
+    showSuccessConfirmation: false,
     additionalInfo: "",
-
-    // Product state
     productType: "",
     description: "",
     presentation: "",
@@ -48,7 +38,7 @@ export const useFormState = () => {
     quantityUnit: "",
   });
 
-  // Use individual hooks for state management
+  // Hooks individuales para manejar partes del estado
   const serviceState = useFormService(formState.selectedService);
   const locationState = useFormLocation({
     storageProvince: formState.storageProvince,
@@ -72,78 +62,66 @@ export const useFormState = () => {
     quantityUnit: formState.quantityUnit,
     additionalInfo: formState.additionalInfo,
   });
-  
-  // Update the formState whenever any child state changes
-  useEffect(() => {
-    setFormState(prev => ({
-      ...prev,
-      // Service state
-      selectedService: serviceState.selectedService,
-      
-      // Location state
-      storageProvince: locationState.storageProvince,
-      storageCity: locationState.storageCity,
-      originProvince: locationState.originProvince,
-      originCity: locationState.originCity,
-      useOriginAsStorage: locationState.useOriginAsStorage,
-      destinationProvince: locationState.destinationProvince,
-      destinationCity: locationState.destinationCity,
-      useDestinationAsStorage: locationState.useDestinationAsStorage,
-      estimatedStorageTime: locationState.estimatedStorageTime,
-
-      // Product & Contact state
-      additionalInfo: productState.additionalInfo,
-      productType: productState.productType,
-      description: productState.description,
-      presentation: productState.presentation,
-      clarification: productState.clarification,
-      cargoValue: productState.cargoValue,
-      shippingTime: productState.shippingTime,
-      quantity: productState.quantity,
-      quantityUnit: productState.quantityUnit,
-    }));
-  }, [
-    serviceState,
-    locationState,
-    productState,
-  ]);
-
-  // Now use the submission hook with our current state
   const submissionState = useFormSubmission(formState);
 
-  // Update UI state from submission state
-  useEffect(() => {
-    setFormState(prev => ({
-      ...prev,
-      isSubmitting: submissionState.isSubmitting,
-      formSubmitted: submissionState.formSubmitted,
-      showConfirmation: submissionState.showConfirmation,
-      distanceValue: submissionState.distanceValue,
-      webhookResponse: submissionState.webhookResponse,
-      isWaitingForResponse: submissionState.isWaitingForResponse,
-      showResponseDialog: submissionState.showResponseDialog,
-      showSuccessConfirmation: submissionState.showSuccessConfirmation, // Add the new state here
-    }));
-  }, [submissionState]);
+  // Memoiza los valores derivados para evitar renders innecesarios
+  const derivedState = useMemo(() => ({
+    selectedService: serviceState.selectedService,
+    storageProvince: locationState.storageProvince,
+    storageCity: locationState.storageCity,
+    originProvince: locationState.originProvince,
+    originCity: locationState.originCity,
+    useOriginAsStorage: locationState.useOriginAsStorage,
+    destinationProvince: locationState.destinationProvince,
+    destinationCity: locationState.destinationCity,
+    useDestinationAsStorage: locationState.useDestinationAsStorage,
+    estimatedStorageTime: locationState.estimatedStorageTime,
+    additionalInfo: productState.additionalInfo,
+    productType: productState.productType,
+    description: productState.description,
+    presentation: productState.presentation,
+    clarification: productState.clarification,
+    cargoValue: productState.cargoValue,
+    shippingTime: productState.shippingTime,
+    quantity: productState.quantity,
+    quantityUnit: productState.quantityUnit,
+    isSubmitting: submissionState.isSubmitting,
+    formSubmitted: submissionState.formSubmitted,
+    showConfirmation: submissionState.showConfirmation,
+    distanceValue: submissionState.distanceValue,
+    isWaitingForResponse: submissionState.isWaitingForResponse,
+    showResponseDialog: submissionState.showResponseDialog,
+    showSuccessConfirmation: submissionState.showSuccessConfirmation,
+  }), [
+    serviceState.selectedService,
+    locationState,
+    productState,
+    submissionState,
+  ]);
 
-  // Custom setSelectedService that also resets locations
-  const setSelectedService = (service: string) => {
+  // Actualiza el estado del formulario solo cuando los valores derivados cambien
+  useEffect(() => {
+    setFormState((prev) => {
+      const newState = { ...prev, ...derivedState };
+      // Evita actualizaciones innecesarias comparando el estado anterior con el nuevo
+      if (JSON.stringify(prev) !== JSON.stringify(newState)) {
+        return newState;
+      }
+      return prev;
+    });
+  }, [derivedState]);
+
+  // Función memoizada para cambiar el servicio seleccionado
+  const setSelectedService = useCallback((service: string) => {
     serviceState.setSelectedService(service as any);
     locationState.resetLocations();
-  };
+  }, [serviceState, locationState]);
 
-  // Form reset function - Modified to reset everything properly like initial load
-  const resetForm = () => {
-    // Reset service state
+  // Función para reiniciar el formulario
+  const resetForm = useCallback(() => {
     serviceState.setSelectedService("");
-    
-    // Reset location states
     locationState.resetLocations();
-    
-    // Reset product details
     productState.resetProductDetails();
-    
-    // Reset submission state
     submissionState.updateSubmissionState({
       isSubmitting: false,
       formSubmitted: false,
@@ -152,22 +130,16 @@ export const useFormState = () => {
       webhookResponse: undefined,
       isWaitingForResponse: false,
       showResponseDialog: false,
-      showSuccessConfirmation: false // Add the new state here
+      showSuccessConfirmation: false,
     });
-    
-    // Reset field tracking state
     submissionState.resetFieldTracking();
-  };
+  }, [serviceState, locationState, productState, submissionState]);
 
+  // Retorna el estado combinado y las funciones
   return {
-    // Combine all state properties
     ...formState,
     ...submissionState,
-    
-    // Service methods
     setSelectedService,
-    
-    // Location methods
     setStorageProvince: locationState.setStorageProvince,
     setStorageCity: locationState.setStorageCity,
     setOriginProvince: locationState.setOriginProvince,
@@ -177,8 +149,6 @@ export const useFormState = () => {
     handleUseOriginAsStorageChange: locationState.handleUseOriginAsStorageChange,
     handleUseDestinationAsStorageChange: locationState.handleUseDestinationAsStorageChange,
     setEstimatedStorageTime: locationState.setEstimatedStorageTime,
-    
-    // Product methods
     setProductType: productState.setProductType,
     setDescription: productState.setDescription,
     setPresentation: productState.setPresentation,
@@ -187,14 +157,8 @@ export const useFormState = () => {
     setShippingTime: productState.setShippingTime,
     setQuantity: productState.setQuantity,
     setQuantityUnit: productState.setQuantityUnit,
-    
-    // Contact methods
     setAdditionalInfo: productState.setAdditionalInfo,
-    
-    // Form action methods
     resetForm,
-    
-    // Make sure updateSubmissionState is explicitly exposed
     updateSubmissionState: submissionState.updateSubmissionState,
   };
 };

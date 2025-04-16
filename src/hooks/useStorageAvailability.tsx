@@ -31,11 +31,11 @@ export const useStorageAvailability = (provinceValue: string, cityValue: string)
         setHasInitialCheck(false); // Reset initial check while loading
         
         try {
-          console.log(`Checking storage availability for ${cityValue}, ${provinceValue}`);
+          // console.log(`Checking storage availability for ${cityValue}, ${provinceValue}`);
           const storageAvailable = await isStorageAvailable(provinceValue, cityValue);
           
           if (isMounted) {
-            console.log(`Storage availability result for ${cityValue}: ${storageAvailable}`);
+            // console.log(`Storage availability result for ${cityValue}: ${storageAvailable}`);
             setHasStorage(storageAvailable);
             setHasInitialCheck(true);
             setIsChecking(false);

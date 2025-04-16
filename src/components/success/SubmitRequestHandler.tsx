@@ -20,7 +20,7 @@ const SubmitRequestHandler = ({
 
   // Function to handle submit request
   const handleSubmitRequest = async () => {
-    console.log("Enviar solicitud clicked");
+    // console.log("Enviar solicitud clicked");
     try {
       // Send confirmation with confirmacion: true
       await sendConfirmation(
@@ -44,7 +44,7 @@ const SubmitRequestHandler = ({
   
   // Handle closing dialog (sends confirmation with false)
   const handleClose = async () => {
-    console.log("Closing dialog without resetting form");
+    // console.log("Closing dialog without resetting form");
     try {
       // Send confirmation with confirmacion: false
       await sendConfirmation(
